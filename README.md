@@ -1,2 +1,2 @@
 # password-manager
-password manager using sqlite3
+password manager using python3 and sqlite3
