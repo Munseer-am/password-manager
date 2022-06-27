@@ -1,77 +1,76 @@
-#!/usr/bin/env python
-import os
-import sqlite3
+#! /usr/bin/env python3
 import argparse
 import config
-import time
 import threading
-from modules import pass_gen
-from modules import capture
-from modules import encoder
-from modules import logo
-from modules import log
-from modules import insert
-from modules import fetch
+from getpass import getpass
+from myModule import *
+from rich.traceback import install
+from rich.console import Console
+from rich.prompt import Prompt
 
-start = time.time()
-os.system("cp config.py ./modules")
-os.system("clear")
-
-logo.logo()
+install(show_locals=True)
+console = Console()
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-new", help="Enter Keyword to unlock database inserting", type=str)
-parser.add_argument("-a", help="Enter the name of the application", type=str)
-parser.add_argument("-u", help="Enter the username of the application", type=str)
-parser.add_argument("-e", help="Enter Email/phone of the application", type=str)
-parser.add_argument("-p", help="Enter the password of application", type=str)
+parser.add_argument(
+        "-new", help="Enter Keyword to unlock database inserting", type=str)
+parser.add_argument(
+        "-a", help="Enter the name of the application", type=str)
+parser.add_argument(
+        "-u", help="Enter the username of the application", type=str)
+parser.add_argument(
+        "-e", help="Enter Email/phone of the application", type=str)
+parser.add_argument(
+        "-p", help="Enter the password of application", type=str)
 
 args = parser.parse_args()
 
-class Main(object):
-	def __init__(self):
-		super(Main, self).__init__()
-		key_con = sqlite3.connect(config.database_file_path)
-		cur = key_con.cursor()
-		cur.execute("SELECT * FROM KEY")
-		keys = cur.fetchall()
-		for key in keys:
-			access_key = "".join(key)
-		if args.new:
-			insert.insert(str(args.a).capitalize(), args.u, args.e, args.p)
-		else:
-			self.security(access_key)
+console.print(f"[bold][blink][blue]{logo()} [/bold][/blink][/blue]")
+date = date()
+console.print(date.replace(":", "[blink]:[/blink]"))
 
-	def security(self, key):
-		i = 0
-		inp = str(input("\nEnter the password to unlock file: ")).strip()
-		hash = encoder.encode(inp)
-		while hash != key:
-			i += 1
-			print("Access Denied!")
-			inp = str(input("\nTry again: ")).strip()
-			hash = encoder.encode(inp)
-		else:
-			print("Access Granted!")
+class Main:
+    def __init__(self):
+        super().__init__()
+        self.key = key(config.PATH_TO_DATABASE)
+        if args.new:
+            insert(config.PATH_TO_DATABASE, args.a, args.u, args.e, args.p)
+        else:
+            self.security()
 
-	def main(self):
-		thread = threading.Thread(target=capture.capture, args=(config.log_dir,))
-		thread.daemon = True
-		thread.start()
-		app = str(input("Enter the name of the application: ")).strip()
-		log.txt_log(app, x, __file__)
-		fetch(app)
-		log.log(app, x, __file__)
-		pas = str(input("Do you need a new password: ")).strip().lower()
-		if pas in ("y", "yes"):
-			pass_gen.gen()
-		else:
-			pass
+    def main(self):
+        thread = threading.Thread(target=capture, args=(config.PATH_TO_LOG,))
+        thread.daemon = True
+        thread.start()
+        app = Prompt.ask("\nEnter the name of the application").strip()
+        log_txt(config.PATH_TO_LOG, app, __file__ , date)
+        creds(config.PATH_TO_DATABASE, app)
+        log(config.PATH_TO_DATABASE, app, __file__, date)
+        pas = Prompt.ask("\nDo you need a new password", choices=["y","n"], default="y").strip().lower()
+        if pas in ("y"):
+            password = generate_password(20)
+            console.print(password)
+        else:
+            pass
+
+    def security(self):
+        try:
+            i = 0
+            inp = str(getpass("Enter password to unlock file: ")).strip()
+            hash = md5_encoder(inp)
+            while self.key != hash:
+                print("Access Denied!")
+                i += 1
+                if i >= 3:
+                    break
+                else:
+                    inp = str(getpass("\nTry again: ")).strip()
+                    hash = md5_encoder(inp)
+            else:
+                print("Access Granted!")
+                self.main()
+        except Exception:
+            console.print_exception(show_locals=True)
 
 if __name__ == '__main__':
-	Main()
-		
-end = time.time()
-print(f"Executing time: {end-start}")
-time.sleep(3)
-os.system("clear")
+    Main()

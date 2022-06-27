@@ -1,2 +1,2 @@
-database_file_path = "Enter the path to your database file"
-log_dir = "Enter path to your log directory"
+PATH_TO_DATABASE = "add path to your database file"
+PATH_TO_LOG = "add path to a directory to keep log file"
