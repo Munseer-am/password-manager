@@ -1,4 +1,5 @@
 #! /usr/bin/env python3
+import time
 import argparse
 import config
 import threading
@@ -7,6 +8,10 @@ from myModule import *
 from rich.traceback import install
 from rich.console import Console
 from rich.prompt import Prompt
+
+start = time.time()
+
+cmd("clear")
 
 install(show_locals=True)
 console = Console()
@@ -25,7 +30,7 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-console.print(f"[bold][blink][blue]{logo()} [/bold][/blink][/blue]")
+console.print(f"[bold][blue]{logo()} [/bold][/blue]")
 date = date()
 console.print(date.replace(":", "[blink]:[/blink]"))
 
@@ -74,3 +79,8 @@ class Main:
 
 if __name__ == '__main__':
     Main()
+
+end = time.time()
+console.print(f"Execution Time: {end-start}")
+time.sleep(3)
+cmd("clear")
