@@ -27,7 +27,7 @@ nano config.py
 echo "Closing nano"
 sleep 2;
 echo "Moving Files"
-cp myModule.py config.py /usr/local/bin/
+cp lib.py config.py /usr/local/bin/
 cp manager.py /usr/local/bin/manager
 
 sleep 1;

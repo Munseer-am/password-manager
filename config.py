@@ -1,2 +1,2 @@
-PATH_TO_DATABASE = "Enter path to your database file"
-PATH_TO_LOG = "Enter path to a directory to keep logs"
+PATH_TO_DATABASE = "/home/munseer/code/database/db.sqlite3"
+PATH_TO_LOG = "/home/munseer/code/python/Log"

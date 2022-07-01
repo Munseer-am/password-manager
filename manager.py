@@ -83,4 +83,4 @@ if __name__ == '__main__':
 end = time.time()
 console.print(f"Execution Time: {end-start}")
 time.sleep(3)
-cmd("clear")
+#cmd("clear")

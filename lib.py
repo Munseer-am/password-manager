@@ -3,6 +3,7 @@ import cv2
 import os
 import sqlite3
 import random
+import pyperclip
 import time
 import datetime
 import subprocess
@@ -11,6 +12,7 @@ from rich.console import Console
 from string import *
 
 console = Console()
+
 
 def md5_encoder(word):
     enc = hashlib.md5(word.encode()).hexdigest()
@@ -31,10 +33,11 @@ def capture(path_to_log_dir):
     j.replace(":", "-")
     cam = cv2.VideoCapture(0)
     result, img = cam.read()
-    time.sleep(2)   
+    time.sleep(2)
     cv2.imwrite(os.path.join(path_to_log_dir, f"{j}.jpg"), img)
     cam.release()
     cv2.destroyAllWindows()
+
 
 def connect_to_db(path_to_database):
     conn = sqlite3.connect(path_to_database)
@@ -51,6 +54,11 @@ def generate_password(length):
 
 def clear():
     os.system("clear")
+
+
+def copy(text):
+    pyperclip.copy(text)
+    spam = pyperclip.paste()
 
 
 def date():
@@ -121,6 +129,7 @@ def creds(path_to_database, app):
             console.print(f'Username        : [bold]{b}[/bold]')
             console.print(f'Email/phone     : [bold]{c}[/bold]')
             console.print(f'Password        : [bold]{d}[/bold]')
+        #    copy(d)
     except sqlite3.Error as e:
         print(e)
 

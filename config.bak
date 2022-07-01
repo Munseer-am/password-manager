@@ -1,0 +1,2 @@
+PATH_TO_DATABASE = "Enter p<th to your database file"
+PATH_TO_LOG = "Enter path to a direcotry to keep logs"
