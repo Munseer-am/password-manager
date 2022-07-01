@@ -138,6 +138,6 @@ def log(path_to_database, app, script, time):
     log_con = connect_to_db(path_to_database)
     cur = log_con.cursor()
     insertQuery = f"""INSERT INTO LOG VALUES (?, ?, ?)"""
-    cur.execute(insertQuery, (app.capitalize(), time, __file__))
+    cur.execute(insertQuery, (app.capitalize(), time, script))
     log_con.commit()
     log_con.close()
