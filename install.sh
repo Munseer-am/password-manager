@@ -1,4 +1,6 @@
 #! /bin/bash
+# this script may not work for your system.
+# if it not worked try changing paths
 
 if [[ $(whoami) != "root" ]];then
 	echo "Try running script as root"
