@@ -4,7 +4,7 @@ import argparse
 import config
 import threading
 from getpass import getpass
-from myModule import *
+from lib import *
 from rich.traceback import install
 from rich.console import Console
 from rich.prompt import Prompt
