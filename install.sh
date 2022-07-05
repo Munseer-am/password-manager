@@ -9,6 +9,9 @@ else
 	:
 fi
 
+sudo pacman -S figlet lolcat
+sudo apt-get install figlet lolcat
+
 FILE=/usr/local/bin/manager
 if [[ -f "$FILE" ]];then
 	echo "Script Already Installed"
@@ -29,6 +32,7 @@ sleep 2;
 echo "Moving Files"
 cp lib.py config.py /usr/local/bin/
 cp manager.py /usr/local/bin/manager
+cp Bloody.flf /usr/share/figlet/fonts
 
 sleep 1;
 echo "Changing Permission"

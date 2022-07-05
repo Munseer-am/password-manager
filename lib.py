@@ -1,33 +1,32 @@
 import hashlib
+from attr import s
 import cv2
 import os
 import sqlite3
 import random
-import pyperclip
 import time
 import datetime
 import subprocess
+from pyperclip import *
 from playsound import playsound
 from rich.console import Console
+from functools import cache
+from getpass import getpass
+from config import *
 from string import *
 
 console = Console()
 
-
+@cache
 def md5_encoder(word):
     enc = hashlib.md5(word.encode()).hexdigest()
     return enc
 
-
+@cache
 def logo():
-    logo = """ __  __                                
-|  \/  |_   _ _ __  ___  ___  ___ _ __ 
-| |\/| | | | | '_ \/ __|/ _ \/ _ \ '__|
-| |  | | |_| | | | \__ \  __/  __/ |   
-|_|  |_|\__,_|_| |_|___/\___|\___|_|  """
-    return logo
+    os.system("figlet -c -f Bloody 'Munseer' | lolcat")
 
-
+@cache
 def capture(path_to_log_dir):
     j = str(datetime.datetime.now())
     j.replace(":", "-")
@@ -38,12 +37,13 @@ def capture(path_to_log_dir):
     cam.release()
     cv2.destroyAllWindows()
 
-
+@cache
 def connect_to_db(path_to_database):
     conn = sqlite3.connect(path_to_database)
     return conn
 
 
+@cache
 def generate_password(length):
     sym = ":;/@#$%^&*(){}[]"
     all_char = ascii_uppercase + ascii_lowercase + digits + sym
@@ -51,51 +51,46 @@ def generate_password(length):
     password = "".join(r)
     return f"Your password is ready: [bold]{password}[/bold]"
 
-
+@cache
 def clear():
     os.system("clear")
 
-
+@cache
 def copy(text):
-    pyperclip.copy(text)
-    spam = pyperclip.paste()
+    copy(text)
+    paste()
 
-
+@cache
 def date():
-    x = datetime.datetime.now().strftime("%H:%M:%S %b %d %Y")
+    x = str(datetime.datetime.now().strftime("%H:%M:%S %b %d %Y"))
     return x
 
+@cache
+def key():
+    return config["key"]
 
-def key(path_to_database):
-    key_con = connect_to_db(path_to_database)
-    cur = key_con.cursor()
-    cur.execute("SELECT * FROM KEY")
-    keys = cur.fetchall()
-    for key in keys:
-        key = "".join(key)
-    return key
-
-
+@cache
 def cmd(command):
     os.system(command)
 
-
+@cache
 def play(path_to_music):
     playsound(path_to_music)
 
-
+@cache
 def play_using_sox(path_to_music):
     subprocess.call(["play", path_to_music])
 
 
+@cache
 def chdir(path_to_directory):
     os.chdir(path_to_directory)
 
-
+@cache
 def play_video(path_to_video):
     subprocess.call(["mplayer", path_to_video, "-fs"])
 
-
+@cache
 def insert(path_to_database, app, user, email, password):
     try:
         pass_con = connect_to_db(path_to_database)
@@ -107,7 +102,7 @@ def insert(path_to_database, app, user, email, password):
     except Exception as e:
         print("Oops Something Went Wrong")
 
-
+@cache
 def creds(path_to_database, app):
     apps = []
     usernames = []
@@ -129,11 +124,11 @@ def creds(path_to_database, app):
             console.print(f'Username        : [bold]{b}[/bold]')
             console.print(f'Email/phone     : [bold]{c}[/bold]')
             console.print(f'Password        : [bold]{d}[/bold]')
-        #    copy(d)
     except sqlite3.Error as e:
         print(e)
 
 
+@cache
 def log_txt(path_to_log_dir, app, script, time):
     with open(f"{path_to_log_dir}/logs.log", "a") as f:
         # writing log
@@ -143,6 +138,7 @@ def log_txt(path_to_log_dir, app, script, time):
         f.close()
 
 
+@cache
 def log(path_to_database, app, script, time):
     log_con = connect_to_db(path_to_database)
     cur = log_con.cursor()

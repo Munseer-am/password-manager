@@ -1,86 +1,53 @@
-#! /usr/bin/env python3
+#! /usr/bin/python
 import time
-import argparse
-import config
-import threading
-from getpass import getpass
 from lib import *
-from rich.traceback import install
+from config import config
+from threading import Thread
 from rich.console import Console
 from rich.prompt import Prompt
 
-start = time.time()
-
+console = Console()
 cmd("clear")
 
-install(show_locals=True)
-console = Console()
-
-parser = argparse.ArgumentParser()
-parser.add_argument(
-        "-new", help="Enter Keyword to unlock database inserting", type=str)
-parser.add_argument(
-        "-a", help="Enter the name of the application", type=str)
-parser.add_argument(
-        "-u", help="Enter the username of the application", type=str)
-parser.add_argument(
-        "-e", help="Enter Email/phone of the application", type=str)
-parser.add_argument(
-        "-p", help="Enter the password of application", type=str)
-
-args = parser.parse_args()
-
-console.print(f"[bold][blue]{logo()} [/bold][/blue]")
-date = date()
-console.print(date.replace(":", "[blink]:[/blink]"))
-
-class Main:
+class main:
     def __init__(self):
-        super().__init__()
-        self.key = key(config.PATH_TO_DATABASE)
-        if args.new:
-            insert(config.PATH_TO_DATABASE, args.a, args.u, args.e, args.p)
-        else:
-            self.security()
+        logo()
+        self.key = key()
+        console.print(date().replace(":", "[blink]:[/blink]"))
+        self.security()
 
     def main(self):
-        thread = threading.Thread(target=capture, args=(config.PATH_TO_LOG,))
+        thread = Thread(target=capture, args=(config["PATH_TO_LOG"],))
         thread.daemon = True
         thread.start()
-        app = Prompt.ask("\nEnter the name of the application").strip()
-        log_txt(config.PATH_TO_LOG, app, __file__ , date)
-        creds(config.PATH_TO_DATABASE, app)
-        log(config.PATH_TO_DATABASE, app, __file__, date)
-        pas = Prompt.ask("\nDo you need a new password", choices=["y","n"], default="y").strip().lower()
+        app = str(Prompt.ask("\nEnter the name of the application")).strip()
+        log_txt(config["PATH_TO_LOG"], app, __file__, date())
+        creds(config["PATH_TO_DATABASE"], app)
+        log(config["PATH_TO_DATABASE"], app, __file__, date())
+        pas = str(Prompt.ask("\nDo you need a new password", choices=["y", "n"], default="y"))
         if pas in ("y"):
-            password = generate_password(20)
-            console.print(password)
+            console.print(generate_password(20))
         else:
             pass
 
     def security(self):
-        try:
-            i = 0
-            inp = str(getpass("Enter password to unlock file: ")).strip()
-            hash = md5_encoder(inp)
-            while self.key != hash:
-                print("Access Denied!")
-                i += 1
-                if i >= 3:
-                    break
-                else:
-                    inp = str(getpass("\nTry again: ")).strip()
-                    hash = md5_encoder(inp)
+        i = 0
+        inp = str(Prompt.ask("Enter the password to unlock file", password=True)).strip()
+        enc = md5_encoder(inp)
+        while self.key != enc:
+            i += 1
+            print("Invalid Password!")
+            if i >= 3:
+                break
             else:
-                print("Access Granted!")
-                self.main()
-        except Exception:
-            console.print_exception(show_locals=True)
+                inp = str(Prompt.ask("\nTry again", password=True))
+                enc = md5_encoder(inp)
+        else:
+            print("Access Granted!")
+            self.main()
 
-if __name__ == '__main__':
-    Main()
+if __name__ == "__main__":
+    main()
 
-end = time.time()
-console.print(f"Execution Time: {end-start}")
 time.sleep(3)
-#cmd("clear")
+cmd("clear")
