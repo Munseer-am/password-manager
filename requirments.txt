@@ -1,5 +1,2 @@
-opencv-python
 rich
-playsound
-argparse
 pyperclip
