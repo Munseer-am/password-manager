@@ -86,7 +86,7 @@ class Main:
                 emails.append(cred[2])
                 passwords.append(cred[3])
             
-            if len(apps) < 1:
+            if len(apps) == 0:
                 console.print("No creds found")
             else:
                 if len(apps) == 1:
@@ -137,9 +137,12 @@ class Main:
         option = int(input("\nSelect one option from menu: "))
         if option == 1:
             app = Prompt.ask("\nEnter the name of the application").strip()
-            self.log_txt(app, date(), __file__)
-            self.fetch(app)
-            self.log(app, date(), __file__)
+            if app != "":
+                self.log_txt(app, date(), __file__)
+                self.fetch(app)
+                self.log(app, date(), __file__)
+            else:
+                console.print("Invalid Input")
             pas = Prompt.ask("\nDo you need a new password", choices=["y", "n"], default="y")
             if pas != "y":
                 pass
