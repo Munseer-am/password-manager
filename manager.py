@@ -43,7 +43,7 @@ class Main:
             master = Prompt.ask("Set a master password to use", password=True).strip()
             ver = Prompt.ask("Enter the password again", password=True).strip()
             if master != ver:
-                console.print("Password Does not match. Try again...")
+                console.print("Password Does not match. Try again...\n")
                 self.set_details()
             else:
                 key = self.md5_encoder(master)
