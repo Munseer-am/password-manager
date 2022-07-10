@@ -4,3 +4,4 @@ def menu():
     print("2) Find accounts using email")
     print("3) Add new app to database")
     print("4) Exit")
+    print("------------------------------------")
