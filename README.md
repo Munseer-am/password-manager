@@ -7,3 +7,4 @@
 ### Open config.py file and add HASHED version of your password
 > You Must Use MD5 Algorithm
 ### And path the required paths
+#### You must run manager.py before running install.sh to set password
