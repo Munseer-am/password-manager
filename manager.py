@@ -28,7 +28,7 @@ x = str(datetime.datetime.now().strftime("%H:%M:%S %b %d %Y"))
 console.print(x.replace(":", "[blink]:[/blink]"))
 
 
-def generate_password(LENGTH):
+def generate_password(LENGTH :int):
     sym = ":;?/'@#$%^&*(){}[]~"
     all = ascii_lowercase + ascii_uppercase + digits + sym
     r = random.sample(all, LENGTH)
