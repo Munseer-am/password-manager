@@ -3,5 +3,6 @@
 ## Todo
 
 ### First git clone this repository
-### run install.sh as root
-### type "manager" to run script
+### Run install.sh as root
+### Type "manager" to run script
+### Enter the details 

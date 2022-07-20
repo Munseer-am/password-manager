@@ -77,6 +77,7 @@ class Main:
     def __init__(self):
         super(Main, self).__init__()
         self.home = os.path.expanduser("~")
+        print(self.home)
         try:
             if sys.argv[1] == "reset":
                 pass
@@ -90,6 +91,49 @@ class Main:
             else:
                 pass
 
+    def set_details(self):
+        createTable = """CREATE TABLE IF NOT EXISTS Passwords (
+            Application VARCHAR(100),
+            Username VARCHAR(100),
+            Email VARCHAR(100),
+            Password VARCHAR(100)
+        );"""
+        createLog = """CREATE TABLE IF NOT EXISTS Log (
+            App VARCHAR(100),
+            Time VARCHAR(100),
+            Script VARCHAR(100),
+        );"""
+        self.cur.execute(createTable)
+        self.cur.execute(createLog)
+        self.conn.commit()
+        self.conn.close()
+        master = Prompt.ask("Set a master password to use", password=True).strip()
+        val = Prompt.ask("Enter password again", password=True)
+        if master != val:
+            console.print("Password does not match")
+            self.set_details()
+        email = Prompt.ask("Enter your email address")
+        if "@" not in email:
+            console.print("Please enter a valid email address")
+            self.set_details()
+        else:
+            email = md5_encoder(email)
+        key = Fernet.generate_key()
+        enc = md5_encoder(master)
+        with open(f"{self.home}/.config/manager/config.py", "w") as f:
+            conf = f"""config = {{
+    'KEY': '{enc}',
+    'ENCRYPTION_KEY': {key},
+    'EMAIL': '{email}',
+    'PATH_TO_DATABASE': '{self.home}/.config/manager/db.sqlite3',
+    'PATH_TO_BACKUP': '{self.home}/.config/manager/backup/',
+    'PATH_TO_LOG': '{self.home}/.config/manager/log/'
+}}"""
+            f.write(conf)
+            f.close()
+            console.print("Please run the script again")
+            quit()
+
     def main(self):
         menu()
         option = int(input("Choose one option from menu: "))
@@ -98,6 +142,11 @@ class Main:
             log_txt(app, x, __file__)
             self.fetch(app)
             self.log(app, x, __file__)
+            pas = Prompt.ask("Do you need a new password", choices=["y", "n"], default="y")
+            if pas == "y":
+                password = generate_password()
+                console.print(f"Your password is ready: [bold]{password}[/bold]")
+                copy(password)
         elif option == 2:
             email = Prompt.ask("Enter the email/phone you want to search")
             self.email_search(email)
@@ -111,6 +160,7 @@ class Main:
             else:
                 password = str(Prompt.ask("Enter password", password=True)).strip()
             self.add(app, username, email, encrypt(config["ENCRYPTION_KEY"], password))
+            backup("backup.db", config["PATH_TO_DATABASE"], config["PATH_TO_BACKUP"])
         elif option == 4:
             pass
         else:
@@ -145,7 +195,7 @@ class Main:
     def email_search(self, email):
         self.cur.execute(f'SELECT APPLICATION FROM PASSWORDS WHERE EMAIL LIKE "%{email}%"')
         emails = self.cur.fetchall()
-        console.print(f"\nFound {len(emails)} apps connected to this email\n")
+        console.print(f"\nFound [blink]{len(emails)}[/blink] apps connected to this email\n")
         for email in emails:
             email = "".join(email)
             console.print(f"Application:  [bold]{email}[/bold]")
@@ -175,7 +225,8 @@ class Main:
 
 if __name__ == "__main__":
     Main()
+
 end = time.time()
-console.print(f"Execution time: {end-start}")
-time.sleep(3)
+console.print(f"Execution time: {end - start}")
+time.sleep(5)
 os.system("clear")
