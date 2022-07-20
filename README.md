@@ -1,4 +1,4 @@
-# Simple Password Manager Using Python And Sqlite3
+# Password Manager Using Python And Sqlite3
 
 ## Todo
 
