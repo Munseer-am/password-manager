@@ -27,7 +27,7 @@ else
 	elif ! [ -x "$(command -v lolcat)" ]; then
 		echo "Error: lolcat is not installed." >&2
 		echo "Installing lolcat"
-		suo apt-get install lolcat
+		sudo apt-get install lolcat
 	else
 		:
 	fi

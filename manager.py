@@ -9,7 +9,7 @@ import datetime
 import hashlib
 from cryptography.fernet import Fernet
 from rich.console import Console
-# from rich.table import Table
+from rich.table import Table
 from rich.prompt import Prompt
 from string import *
 from shutil import copyfile
@@ -90,14 +90,71 @@ class Main:
             else:
                 pass
 
+    def main(self):
+        menu()
+        option = int(input("Choose one option from menu: "))
+        if option == 1:
+            app = str(Prompt.ask("\nEnter the name of the application")).strip()
+            log_txt(app, x, __file__)
+            self.fetch(app)
+            self.log(app, x, __file__)
+        elif option == 2:
+            email = Prompt.ask("Enter the email/phone you want to search")
+            self.email_search(email)
+        elif option == 3:
+            app = str(Prompt.ask("Enter the name of the application")).strip()
+            username = str(Prompt.ask("Enter username of the application")).strip()
+            email = str(Prompt.ask("Enter email address")).strip()
+            pas = Prompt.ask("Do you want to generate new password", choices=["y", "n"], default="y")
+            if pas == "y":
+                password = generate_password()
+            else:
+                password = str(Prompt.ask("Enter password", password=True)).strip()
+            self.add(app, username, email, encrypt(config["ENCRYPTION_KEY"], password))
+        elif option == 4:
+            pass
+        else:
+            console.print("Please choose valid option\n")
+            self.main()
+
     def fetch(self, app):
         self.cur.execute(f"SELECT * FROM PASSWORDS WHERE APPLICATION LIKE '%{app}%'")
         credentials = self.cur.fetchall()
+        table = Table(
+            title="Credentials"
+        )
+        table.add_column("Application", style="cyan", no_wrap=True)
+        table.add_column("Username", style="cyan", no_wrap=True)
+        table.add_column("Email/Phone", style="cyan", no_wrap=True)
+        table.add_column("Password", style="cyan", no_wrap=True)
         for credential in credentials:
-            console.print(credential[0])
-            console.print(credential[1])
-            console.print(credential[2])
-            console.print(decrypt(b'DpbGWV6vb2pbkupmC80ZyLn3MAD7HCsyOdABPkidm-E=', credential[3]), "\n")
+            password = decrypt(config["ENCRYPTION_KEY"], credential[3])
+            table.add_row(credential[0], credential[1], credential[2], password)
+            if len(credentials) == 1:
+                copy(password)
+            else:
+                pass
+        console.print(table, justify="left")
+
+    def add(self, app, username, email, password):
+        inserter = f"""INSERT INTO PASSWORDS VALUES (?, ?, ?, ?)"""
+        self.cur.execute(inserter, (app.title(), username, email, password))
+        self.conn.commit()
+        self.conn.close()
+
+    def email_search(self, email):
+        self.cur.execute(f'SELECT APPLICATION FROM PASSWORDS WHERE EMAIL LIKE "%{email}%"')
+        emails = self.cur.fetchall()
+        console.print(f"\nFound {len(emails)} apps connected to this email\n")
+        for email in emails:
+            email = "".join(email)
+            console.print(f"Application:  [bold]{email}[/bold]")
+
+    def log(self, app, current_time, script):
+        inserter = f"""INSERT INTO LOG VALUES (?, ?, ?)"""
+        self.cur.execute(inserter, (str(app).capitalize(), current_time, script))
+        self.conn.commit()
+        self.conn.close()
 
     def security(self):
         inp = str(Prompt.ask("Enter password to unlock file", password=True)).strip()
@@ -113,8 +170,12 @@ class Main:
                 enc = md5_encoder(inp)
         else:
             print("Access Granted!")
-            self.fetch("o")
+            self.main()
 
 
 if __name__ == "__main__":
     Main()
+end = time.time()
+console.print(f"Execution time: {end-start}")
+time.sleep(3)
+os.system("clear")
