@@ -9,7 +9,7 @@ import datetime
 import hashlib
 from cryptography.fernet import Fernet
 from rich.console import Console
-from rich.table import Table
+# from rich.table import Table
 from rich.prompt import Prompt
 from string import *
 from shutil import copyfile
@@ -65,7 +65,7 @@ def encrypt(key, password: str):
 
 def decrypt(key, password: bytes):
     dec = Fernet(key)
-    out = dec.decrypt(password)
+    out = dec.decrypt(password).decode("utf-8")
     return out
 
 
@@ -78,10 +78,10 @@ class Main:
         super(Main, self).__init__()
         self.home = os.path.expanduser("~")
         try:
-            if sys.argv == "reset":
+            if sys.argv[1] == "reset":
                 pass
             else:
-                self.security()
+                pass
         except IndexError:
             self.conn = sqlite3.connect(f"{self.home}/.config/manager/db.sqlite3")
             self.cur = self.conn.cursor()
@@ -90,8 +90,14 @@ class Main:
             else:
                 pass
 
-    def main(self):
-        pass
+    def fetch(self, app):
+        self.cur.execute(f"SELECT * FROM PASSWORDS WHERE APPLICATION LIKE '%{app}%'")
+        credentials = self.cur.fetchall()
+        for credential in credentials:
+            console.print(credential[0])
+            console.print(credential[1])
+            console.print(credential[2])
+            console.print(decrypt(b'DpbGWV6vb2pbkupmC80ZyLn3MAD7HCsyOdABPkidm-E=', credential[3]), "\n")
 
     def security(self):
         inp = str(Prompt.ask("Enter password to unlock file", password=True)).strip()
@@ -107,7 +113,7 @@ class Main:
                 enc = md5_encoder(inp)
         else:
             print("Access Granted!")
-            self.main()
+            self.fetch("o")
 
 
 if __name__ == "__main__":
