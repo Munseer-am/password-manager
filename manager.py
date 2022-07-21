@@ -77,34 +77,64 @@ class Main:
     def __init__(self):
         super(Main, self).__init__()
         self.home = os.path.expanduser("~")
-        print(self.home)
+        self.conn = sqlite3.connect(f"{self.home}/.config/manager/db.sqlite3")
+        self.cur = self.conn.cursor()
         try:
             if sys.argv[1] == "reset":
-                pass
+                self.reset()
             else:
                 pass
         except IndexError:
-            self.conn = sqlite3.connect(f"{self.home}/.config/manager/db.sqlite3")
-            self.cur = self.conn.cursor()
             if is_configured() != "NO":
                 self.security()
             else:
-                pass
+                self.set_details()
+
+    def reset(self):
+        email = Prompt.ask("Enter your email address")
+        if "@" not in email:
+            console.print("Enter a valid email address")
+            self.reset()
+        else:
+            enc = md5_encoder(email)
+            if enc != config["EMAIL"]:
+                console.print("Email does not match")
+            else:
+                master = Prompt.ask("Set a master password to use", password=True)
+                val = Prompt.ask("Enter password again", password=True)
+                if master != val:
+                    console.print("Password does not match")
+                    self.reset()
+                else:
+                    key = md5_encoder(master)
+                    with open(f"{self.home}/.config/manager/config.py", "w") as f:
+                        conf = f"""config = {{
+    'KEY': '{key}',
+    'ENCRYPTION_KEY': {config["ENCRYPTION_KEY"]},
+    'EMAIL': '{config["EMAIL"]}',
+    'PATH_TO_DATABASE': '{self.home}/.config/manager/db.sqlite3',
+    'PATH_TO_BACKUP': '{self.home}/.config/manager/backup/',
+    'PATH_TO_LOG': '{self.home}/.config/manager/log/'
+}}"""
+                        f.write(conf)
+                        f.close()
+                    console.print("Password changes successfully")
+                    quit(0)
 
     def set_details(self):
-        createTable = """CREATE TABLE IF NOT EXISTS Passwords (
+        tables = """CREATE TABLE IF NOT EXISTS Passwords (
             Application VARCHAR(100),
             Username VARCHAR(100),
             Email VARCHAR(100),
             Password VARCHAR(100)
         );"""
-        createLog = """CREATE TABLE IF NOT EXISTS Log (
+        log = """CREATE TABLE IF NOT EXISTS Log (
             App VARCHAR(100),
             Time VARCHAR(100),
-            Script VARCHAR(100),
+            Script VARCHAR(100)
         );"""
-        self.cur.execute(createTable)
-        self.cur.execute(createLog)
+        self.cur.execute(tables)
+        self.cur.execute(log)
         self.conn.commit()
         self.conn.close()
         master = Prompt.ask("Set a master password to use", password=True).strip()
@@ -138,7 +168,7 @@ class Main:
         menu()
         option = int(input("Choose one option from menu: "))
         if option == 1:
-            app = str(Prompt.ask("\nEnter the name of the application")).strip()
+            app = Prompt.ask("\nEnter the name of the application").strip()
             log_txt(app, x, __file__)
             self.fetch(app)
             self.log(app, x, __file__)
@@ -151,14 +181,14 @@ class Main:
             email = Prompt.ask("Enter the email/phone you want to search")
             self.email_search(email)
         elif option == 3:
-            app = str(Prompt.ask("Enter the name of the application")).strip()
-            username = str(Prompt.ask("Enter username of the application")).strip()
-            email = str(Prompt.ask("Enter email address")).strip()
+            app = Prompt.ask("Enter the name of the application").strip()
+            username = Prompt.ask("Enter username of the application").strip()
+            email = Prompt.ask("Enter email address").strip()
             pas = Prompt.ask("Do you want to generate new password", choices=["y", "n"], default="y")
             if pas == "y":
                 password = generate_password()
             else:
-                password = str(Prompt.ask("Enter password", password=True)).strip()
+                password = Prompt.ask("Enter password", password=True).strip()
             self.add(app, username, email, encrypt(config["ENCRYPTION_KEY"], password))
             backup("backup.db", config["PATH_TO_DATABASE"], config["PATH_TO_BACKUP"])
         elif option == 4:
@@ -207,7 +237,7 @@ class Main:
         self.conn.close()
 
     def security(self):
-        inp = str(Prompt.ask("Enter password to unlock file", password=True)).strip()
+        inp = Prompt.ask("Enter password to unlock file", password=True).strip()
         enc = md5_encoder(inp)
         i = 0
         while enc != config["KEY"]:
@@ -216,7 +246,7 @@ class Main:
             if i >= 3:
                 break
             else:
-                inp = str(Prompt.ask("\nTry again", password=True)).strip()
+                inp = Prompt.ask("\nTry again", password=True).strip()
                 enc = md5_encoder(inp)
         else:
             print("Access Granted!")

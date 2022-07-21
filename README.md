@@ -6,3 +6,5 @@
 ### Run install.sh as root
 ### Type "manager" to run script
 ### Enter the details 
+
+>>NOTE: If you lost your encryption key your passwords cannot be recovered
