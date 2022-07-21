@@ -1,10 +1,10 @@
-# Password Manager Using Python And Sqlite3
+# _Password Manager Using Python And Sqlite3_
 
-## Todo
+## _**Todo**_
 
-### First git clone this repository
-### Run install.sh as root
-### Type "manager" to run script
-### Enter the details 
+#### _1. First git clone this repository_
+#### _2. Run install.sh script as root_
+#### _3. Type `manager` to run the script_
+#### _4. Enter the asked details_
 
->>NOTE: If you lost your encryption key your passwords cannot be recovered
+>_NOTE: If you lost your encryption key your passwords cannot be recovered_
