@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 import os
 import sqlite3
+import argparse
 import random
 import sys
 import pyperclip
@@ -17,6 +18,10 @@ from shutil import copyfile
 sys.path.insert(0, f"{os.path.expanduser('~')}/.config/manager/")
 from config import config
 from menu import menu
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-r", "--reset", help="Reset password of script", action="store_true")
+args = parser.parse_args()
 
 start = time.time()
 console = Console()
@@ -79,16 +84,13 @@ class Main:
         self.home = os.path.expanduser("~")
         self.conn = sqlite3.connect(f"{self.home}/.config/manager/db.sqlite3")
         self.cur = self.conn.cursor()
-        try:
-            if sys.argv[1] == "reset":
+        if is_configured() != "OK":
+            self.set_details()
+        else:
+            if args.reset:
                 self.reset()
             else:
-                pass
-        except IndexError:
-            if is_configured() != "NO":
                 self.security()
-            else:
-                self.set_details()
 
     def reset(self):
         email = Prompt.ask("Enter your email address")
