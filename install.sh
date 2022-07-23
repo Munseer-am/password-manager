@@ -7,6 +7,17 @@ else
 	:
 fi
 
+function install () {
+    echo "Installing Script"
+    sleep 1;
+    echo "Moving Files"
+    cp manager.py /usr/local/bin/manager
+    # cp config.py menu.py ~/.config/manager
+    echo "Changing Permission"
+    chmod +x /usr/local/bin/manager
+    echo "To run the script type manager"
+}
+
 if [ $(grep '^ID_LIKE' /etc/os-release) == "ID_LIKE=arch" ]; then
 	if ! [ -x "$(command -v figlet)" ]; then
 		echo "Error: figlet is not installed." >&2
@@ -43,14 +54,22 @@ if [[ -f $FILE ]]; then
 	echo "Script Already Installed"
 	exit
 else
-	echo "Installing Script"
-	sleep 1;
-	echo "Moving Files"
-	cp manager.py /usr/local/bin/manager
-	mkdir -p ~/.config/manager/backup
-	mkdir ~/.config/manager/log
-	cp config.py menu.py ~/.config/manager
-	echo "Changing Permission"
-	chmod +x /usr/local/bin/manager
-	echo "To run the script type manager"
+  if [ -d ~/.config/manager/ ]; then
+    if [ -d ~/.config/manager/log/ ]; then
+      :
+    else
+      mkdir ~/.config/manager/log/
+    fi
+    if [ -d ~/.config/manager/backup/ ]; then
+      :
+    else
+      mkdir ~/.config/manager/backup/
+    fi
+    install
+  else
+    mkdir ~/.config/manager/
+    mkdir ~/.config/manager/log
+    mkdir ~/.config/manager/backup/
+    install
+  fi
 fi	
