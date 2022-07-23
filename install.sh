@@ -45,6 +45,9 @@ else
 	  echo "Error: lolcat is not installed." >&2
 	  echo "Installing lolcat"
 	  sudo apt-get install lolcat
+	else
+	  :
+	fi
 fi
 
 clear
