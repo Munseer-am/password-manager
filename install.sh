@@ -19,21 +19,32 @@ function install () {
 }
 
 if [ $(grep '^ID_LIKE' /etc/os-release) == "ID_LIKE=arch" ]; then
-	if ! [ -x "$(command -v figlet)" ]; then
+	if ! [ -x "$(`command -v figlet`)" ]; then
 		echo "Error: figlet is not installed." >&2
 		echo "Install figlet"
-		sudo pacman -S figlet lolcat
+		sudo pacman -S figlet
 	else
 		:
+	fi
+	if ! [ -x "$(`command -v lolcat`)" ]; then
+	  echo "Error: lolcat is not installed." >&2
+	  echo "Installing lolcat"
+	  sudo pacman -S lolcat
+	else
+	  :
 	fi
 else
-	if ! [ -x "$(command -v figlet)" ]; then
+	if ! [ -x "$(`command -v figlet`)" ]; then
 		echo "Error: figlet is not installed." >&2
 		echo "Installing figlet"
-		sudo apt-get install figlet lolcat
+		sudo apt-get install figlet
 	else
 		:
 	fi
+	if ! [ -x "$(`command -v lolcat`)" ];then
+	  echo "Error: lolcat is not installed." >&2
+	  echo "Installing lolcat"
+	  sudo apt-get install lolcat
 fi
 
 clear
