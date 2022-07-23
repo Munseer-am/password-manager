@@ -22,11 +22,7 @@ if [ $(grep '^ID_LIKE' /etc/os-release) == "ID_LIKE=arch" ]; then
 	if ! [ -x "$(command -v figlet)" ]; then
 		echo "Error: figlet is not installed." >&2
 		echo "Install figlet"
-		sudo pacman -S figlet
-	elif ! [ -x "$(command -v lolcat)" ]; then
-		echo "Error: lolcat is not installed." >&2
-		echo "Installing lolcat"
-		sudo pacman -S lolcat
+		sudo pacman -S figlet lolcat
 	else
 		:
 	fi
@@ -34,11 +30,7 @@ else
 	if ! [ -x "$(command -v figlet)" ]; then
 		echo "Error: figlet is not installed." >&2
 		echo "Installing figlet"
-		sudo apt-get install figlet
-	elif ! [ -x "$(command -v lolcat)" ]; then
-		echo "Error: lolcat is not installed." >&2
-		echo "Installing lolcat"
-		sudo apt-get install lolcat
+		sudo apt-get install figlet lolcat
 	else
 		:
 	fi
