@@ -171,14 +171,18 @@ class Main:
         option = int(input("Choose one option from menu: "))
         if option == 1:
             app = Prompt.ask("\nEnter the name of the application").strip()
-            log_txt(app, x, __file__)
-            self.fetch(app)
-            self.log(app, x, __file__)
-            pas = Prompt.ask("Do you need a new password", choices=["y", "n"], default="y")
-            if pas == "y":
-                password = generate_password()
-                console.print(f"Your password is ready: [bold]{password}[/bold]")
-                copy(password)
+            if app == "":
+                console.print("Invalid Input")
+                pass
+            else:
+                log_txt(app, x, __file__)
+                self.fetch(app)
+                self.log(app, x, __file__)
+                pas = Prompt.ask("Do you need a new password", choices=["y", "n"], default="y")
+                if pas == "y":
+                    password = generate_password()
+                    console.print(f"Your password is ready: [bold]{password}[/bold]")
+                    copy(password)
         elif option == 2:
             email = Prompt.ask("Enter the email/phone you want to search")
             self.email_search(email)
