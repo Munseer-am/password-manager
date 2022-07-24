@@ -39,17 +39,17 @@ def generate_password():
     return password
 
 
-def md5_encoder(word):
+def md5_encoder(word: str):
     enc = hashlib.md5(word.encode("utf-8")).hexdigest()
     return enc
 
 
-def copy(text):
+def copy(text: str):
     pyperclip.copy(text)
     pyperclip.paste()
 
 
-def log_txt(app, current_time, script):
+def log_txt(app: str, current_time: str, script: str):
     with open(f"{config['PATH_TO_LOG']}/logs.log", "a") as f:
         f.write(f"\nTime: {current_time} Script: {script} Application: {app}")
         f.close()
@@ -62,19 +62,19 @@ def is_configured():
         return "NO"
 
 
-def encrypt(key, password: str):
+def encrypt(key: bytes, password: str):
     enc = Fernet(key)
     out = enc.encrypt(password.encode("utf-8"))
     return out
 
 
-def decrypt(key, password: bytes):
+def decrypt(key: bytes, password: bytes):
     dec = Fernet(key)
     out = dec.decrypt(password).decode("utf-8")
     return out
 
 
-def backup(db, path, dst):
+def backup(db: str, path: str, dst: str):
     copyfile(path, f"{dst}/{db}")
 
 
@@ -182,7 +182,7 @@ class Main:
                 if pas == "y":
                     password = generate_password()
                     console.print(f"Your password is ready: [bold]{password}[/bold]")
-                    copy(password)
+                    # copy(password)
         elif option == 2:
             email = Prompt.ask("Enter the email/phone you want to search")
             self.email_search(email)
@@ -203,7 +203,7 @@ class Main:
             console.print("Please choose valid option\n")
             self.main()
 
-    def fetch(self, app):
+    def fetch(self, app: str):
         self.cur.execute(f"SELECT * FROM PASSWORDS WHERE APPLICATION LIKE '%{app}%'")
         credentials = self.cur.fetchall()
         table = Table(
