@@ -1,19 +1,20 @@
 #! /usr/bin/env python
-import os
-import sqlite3
 import argparse
-import random
-import sys
-import pyperclip
-import time
 import datetime
 import hashlib
+import os
+import random
+import sqlite3
+import sys
+import time
+from shutil import copyfile
+from string import *
+
+import pyperclip
 from cryptography.fernet import Fernet
 from rich.console import Console
-from rich.table import Table
 from rich.prompt import Prompt
-from string import *
-from shutil import copyfile
+from rich.table import Table
 
 sys.path.insert(0, f"{os.path.expanduser('~')}/.config/manager/")
 from config import config
@@ -228,7 +229,7 @@ class Main:
         self.conn.commit()
         self.conn.close()
 
-    def email_search(self, email):
+    def email_search(self, email: str):
         self.cur.execute(f'SELECT APPLICATION FROM PASSWORDS WHERE EMAIL LIKE "%{email}%"')
         emails = self.cur.fetchall()
         console.print(f"\nFound [blink]{len(emails)}[/blink] apps connected to this email\n")
