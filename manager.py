@@ -145,7 +145,14 @@ class Main:
                 os.system("sudo pacman -S lolcat")
             else:
                 os.system("sudo apt install lolcat")
-        # os.system("clear")
+        os.system("clear")
+        try:
+            os.mkdir(f"{self.home}/.config/manager")
+            os.mkdir(f"{self.home}/.config/manager/backup")
+            os.mkdir(f"{self.home}/.config/manager/log")
+        except FileExistsError:
+            pass
+        os.system(f'echo "config = None" > {self.home}/.config/manager/config.py')
         tables = """CREATE TABLE IF NOT EXISTS Passwords (
             Application VARCHAR(100),
             Username VARCHAR(100),
