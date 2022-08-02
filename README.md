@@ -9,7 +9,8 @@
 
 ## _**How to reset password**_
 #### _If you lost or forgot your password you can reset password using command line arguments_
-#### _Just type `manager --reset` and enter the email address that you gave during the first setup_
+
+#### _Just type `manager --reset` or `manager -r` and enter the email address that you gave during the first setup_
 >_**Warning:** This will not work correctly everytime. Do backup your password_ 
 
 ## _**Warnings**_
