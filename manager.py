@@ -3,6 +3,7 @@ import argparse
 import datetime
 import hashlib
 import os
+import platform
 import random
 import sqlite3
 import sys
@@ -11,6 +12,7 @@ from shutil import copyfile
 from string import *
 
 import pyperclip
+from shutil import which
 from cryptography.fernet import Fernet
 from rich.console import Console
 from rich.prompt import Prompt
@@ -79,6 +81,13 @@ def backup(db: str, path: str, dst: str):
     copyfile(path, f"{dst}/{db}")
 
 
+def tool(tools: str):
+    if which(tools) is None:
+        return None
+    else:
+        return "INSTALLED"
+
+
 class Main:
     def __init__(self):
         super(Main, self).__init__()
@@ -121,10 +130,22 @@ class Main:
 }}"""
                         f.write(conf)
                         f.close()
-                    console.print("Password changes successfully")
+                    console.print("Password changed successfully")
                     quit(0)
 
     def set_details(self):
+        system = platform.freedesktop_os_release()
+        if tool("figlet") is None:
+            if system["ID_LIKE"] == "arch":
+                os.system("sudo pacman -S figlet")
+            else:
+                os.system("sudo apt install figlet")
+        if tool("lolcat") is None:
+            if system["ID_LIKE"] == "arch":
+                os.system("sudo pacman -S lolcat")
+            else:
+                os.system("sudo apt install lolcat")
+        # os.system("clear")
         tables = """CREATE TABLE IF NOT EXISTS Passwords (
             Application VARCHAR(100),
             Username VARCHAR(100),
@@ -239,7 +260,7 @@ class Main:
 
     def log(self, app, current_time, script):
         inserter = f"""INSERT INTO LOG VALUES (?, ?, ?)"""
-        self.cur.execute(inserter, (str(app).capitalize(), current_time, script))
+        self.cur.execute(inserter, (str(app).title(), current_time, script))
         self.conn.commit()
         self.conn.close()
 
