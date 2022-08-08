@@ -4,14 +4,13 @@ import datetime
 import hashlib
 import os
 import platform
+import pyperclip
 import random
 import sqlite3
 import sys
 import time
 from shutil import copyfile
 from string import *
-
-import pyperclip
 from shutil import which
 from cryptography.fernet import Fernet
 from rich.console import Console
