@@ -5,11 +5,15 @@ if [ $(grep '^ID_LIKE' /etc/os-release) == "ID_LIKE=arch" ]; then
         echo "Error: figlet is not installed"
         echo "Installing figlet..."
         sudo pacman -Sy figlet
+    else
+	echo "Figlet is installed"
     fi
     if ! [ -x "$(`command -v lolcat`)" ]; then
         echo "Error: lolcat is not installed"
-        echo "Installing figlet..."
-        sudo pacman -Sy lolcat
+        echo "Installing lolcat..."
+      	sudo pacman -Sy lolcat
+    else
+        :
     fi
 else
     if ! [ -x "$(`command -v figlet`)" ]; then
@@ -36,7 +40,7 @@ function install () {
     echo "To run the script type manager"
 }
 
-cp Bloody.flf /usr/share/figlet/fonts/
+sudo cp Bloody.flf /usr/share/figlet/fonts/
 
 figlet -c -f Bloody "Munseer" | lolcat
 
