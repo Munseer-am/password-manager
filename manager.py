@@ -42,8 +42,8 @@ def generate_password():
     return password
 
 
-def md5_encoder(word: str):
-    enc = hashlib.md5(word.encode("utf-8")).hexdigest()
+def sha256_encoder(word: str):
+    enc = hashlib.sha256(word.encode("utf-8")).hexdigest()
     return enc
 
 
@@ -108,7 +108,7 @@ class Main:
             console.print("Enter a valid email address")
             self.reset()
         else:
-            enc = md5_encoder(email)
+            enc = sha256_encoder(email)
             if enc != config["EMAIL"]:
                 console.print("Email does not match")
             else:
@@ -118,7 +118,7 @@ class Main:
                     console.print("Password does not match")
                     self.reset()
                 else:
-                    key = md5_encoder(master)
+                    key = sha256_encoder(master)
                     with open(f"{self.home}/.config/manager/config.py", "w") as f:
                         conf = f"""config = {{
     'KEY': '{key}',
@@ -159,9 +159,9 @@ class Main:
             console.print("Please enter a valid email address")
             self.set_details()
         else:
-            email = md5_encoder(email)
+            email = sha256_encoder(email)
         key = Fernet.generate_key()
-        enc = md5_encoder(master)
+        enc = sha256_encoder(master)
         with open(f"{self.home}/.config/manager/config.py", "w") as f:
             conf = f"""config = {{
     'KEY': '{enc}',
@@ -216,21 +216,24 @@ class Main:
     def fetch(self, app: str):
         self.cur.execute(f"SELECT * FROM PASSWORDS WHERE APPLICATION LIKE '%{app}%'")
         credentials = self.cur.fetchall()
-        table = Table(
-            title="Credentials"
-        )
-        table.add_column("Application", style="cyan", no_wrap=True)
-        table.add_column("Username", style="cyan", no_wrap=True)
-        table.add_column("Email/Phone", style="cyan", no_wrap=True)
-        table.add_column("Password", style="cyan", no_wrap=True)
-        for credential in credentials:
-            password = decrypt(config["ENCRYPTION_KEY"], credential[3])
-            table.add_row(credential[0], credential[1], credential[2], password)
-            if len(credentials) == 1:
-                copy(password)
-            else:
-                pass
-        console.print(table, justify="left")
+        if len(credentials) != 0:
+            table = Table(
+                title="Credentials"
+            )
+            table.add_column("Application", style="cyan", no_wrap=True)
+            table.add_column("Username", style="cyan", no_wrap=True)
+            table.add_column("Email/Phone", style="cyan", no_wrap=True)
+            table.add_column("Password", style="cyan", no_wrap=True)
+            for credential in credentials:
+                password = decrypt(config["ENCRYPTION_KEY"], credential[3])
+                table.add_row(credential[0], credential[1], credential[2], password)
+                if len(credentials) == 1:
+                    copy(password)
+                else:
+                    pass
+            console.print(table, justify="left")
+        else:
+            console.print("[bold]Oops! looks there's no result for you[/bold]")
 
     def add(self, app, username, email, password):
         inserter = f"""INSERT INTO PASSWORDS VALUES (?, ?, ?, ?)"""
@@ -254,7 +257,7 @@ class Main:
 
     def security(self):
         inp = Prompt.ask("Enter password to unlock file", password=True).strip()
-        enc = md5_encoder(inp)
+        enc = sha256_encoder(inp)
         i = 0
         while enc != config["KEY"]:
             print("Access Denied!")
@@ -263,7 +266,7 @@ class Main:
                 break
             else:
                 inp = Prompt.ask("\nTry again", password=True).strip()
-                enc = md5_encoder(inp)
+                enc = sha256_encoder(inp)
         else:
             print("Access Granted!")
             self.main()
