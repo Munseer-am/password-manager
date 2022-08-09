@@ -1,32 +1,34 @@
 #! /bin/bash
 
-if [ $(grep '^ID_LIKE' /etc/os-release) == "ID_LIKE=arch" ]; then
-    if ! [ -x "$(`command -v figlet`)" ]; then
-        echo "Error: figlet is not installed"
-        echo "Installing figlet..."
-        sudo pacman -Sy figlet
+function tool() {
+    if [ $(grep '^ID_LIKE' /etc/os-release) == "ID_LIKE=arch" ]; then
+        if ! [ -x "$(`command -v figlet`)" ]; then
+            echo "Error: figlet is not installed"
+            echo "Installing figlet..."
+            sudo pacman -Sy figlet
+        else
+        echo "Figlet is installed"
+        fi
+        if ! [ -x "$(`command -v lolcat`)" ]; then
+            echo "Error: lolcat is not installed"
+            echo "Installing lolcat..."
+            sudo pacman -Sy lolcat
+        else
+            :
+        fi
     else
-	echo "Figlet is installed"
+        if ! [ -x "$(`command -v figlet`)" ]; then
+            echo "Error: figlet is not installed"
+            echo "Installing figlet..."
+            sudo apt install figlet
+        fi
+        if ! [ -x "$(`command -v lolcat`)" ]; then
+            echo "Error: lolcat is not installed"
+            echo "Installing figlet..."
+            sudo apt install lolcat
+        fi
     fi
-    if ! [ -x "$(`command -v lolcat`)" ]; then
-        echo "Error: lolcat is not installed"
-        echo "Installing lolcat..."
-      	sudo pacman -Sy lolcat
-    else
-        :
-    fi
-else
-    if ! [ -x "$(`command -v figlet`)" ]; then
-        echo "Error: figlet is not installed"
-        echo "Installing figlet..."
-        sudo apt install figlet
-    fi
-    if ! [ -x "$(`command -v lolcat`)" ]; then
-        echo "Error: lolcat is not installed"
-        echo "Installing figlet..."
-        sudo apt install lolcat
-    fi
-fi
+}
 
 function install () {
     echo "Installing Script"
@@ -53,5 +55,6 @@ else
     mkdir ~/.config/manager/log
     mkdir ~/.config/manager/backup/
     install
+    tool
 fi
 
