@@ -23,6 +23,7 @@ from menu import menu
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-r", "--reset", help="Reset password of script", action="store_true")
+parser.add_argument("-U", "--uninstall", help="Uninstall script from your machine", action="store_true")
 args = parser.parse_args()
 
 start = time.time()
@@ -56,6 +57,8 @@ def log_txt(app: str, current_time: str, script: str):
         f.write(f"\nTime: {current_time} Script: {script} Application: {app}")
         f.close()
 
+def uninstall():
+    os.system("sudo rm /usr/local/bin/manager")
 
 def is_configured():
     if config is not None:
@@ -98,6 +101,8 @@ class Main:
         else:
             if args.reset:
                 self.reset()
+            elif args.uninstall:
+                uninstall()
             else:
                 self.security()
 
