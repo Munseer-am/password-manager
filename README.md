@@ -24,3 +24,5 @@
 
 #### _**4. Sometimes when running `install.sh` the script will stuck in some process. If it is stuck for 1 to 2 min force shut the script. There will be no problem with the installation. This happens while the script checks if the necessary tools are installed.**_
 >_**Notes:** If the script fails install the following tools `figlet` and `lolcat` using `apt install figlet lolcat` or `pacman -Sy figlet lolcat`_
+
+#### _**5. If you installed it and deleted the manager. When you run the `install.sh` script it will override the existing database and config file. So backup your config.py file somewhere in your system. Copy it to the location `~/.config/manager/`.**_
