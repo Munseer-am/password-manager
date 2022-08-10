@@ -22,4 +22,5 @@
 #### _**2. For the first you run the script it will create required directory and files. If you delete the manager script from the location `/usr/local/bin/` the config files will remain.**_
 #### _**3. ~~Due to the remaining of the config files and directories. When you try to install the script second time the `install.sh` script will give error that the directories already exists. But it will not affect the installation~~**_
 
-#### _**4. Sometimes when running `install.sh` script the will stuck in some process. If it is stuck for 1 to 2 min force shut the script. There will be no problem with the installation**_
+#### _**4. Sometimes when running `install.sh` the script will stuck in some process. If it is stuck for 1 to 2 min force shut the script. There will be no problem with the installation. This happens while the script checks if the necessary tools are installed.**_
+>_**Notes:** If the script fails install the following tools `figlet` and `lolcat` using `apt install figlet lolcat` or `pacman -Sy figlet lolcat`_
