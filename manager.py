@@ -1,10 +1,10 @@
 #! /usr/bin/env python
 import argparse
+import clipboard
 import datetime
 import hashlib
 import os
 import platform
-import pyperclip
 import random
 import sqlite3
 import sys
@@ -48,8 +48,8 @@ def sha256_encoder(word: str):
 
 
 def copy(text: str):
-    pyperclip.copy(text)
-    pyperclip.paste()
+    clipboard.copy(text)
+    clipboard.paste()
 
 
 def log_txt(app: str, current_time: str, script: str):
