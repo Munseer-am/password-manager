@@ -60,14 +60,16 @@ function tool() {
 }
 
 tool
-figlet -c -f "Munseer" | lolcat
+figlet -c -f Bloody "Munseer" | lolcat
 
 function install () {
     echo "Installing Script"
     sleep 1;
     echo "Moving Files"
-    sudo cp Bloody.flf /usr/share/figlet/fonts
+    sudo cp Bloody.flf /usr/share/figlet/
     sudo cp manager.py /usr/local/bin/manager
+    cp menu.py ~/.config/manager/
+
     echo "To run the script type manager"
 }
 
