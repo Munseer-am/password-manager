@@ -1,4 +1,6 @@
 #! /usr/bin/env python
+from menu import menu
+from config import config
 import argparse
 import clipboard
 import datetime
@@ -18,12 +20,12 @@ from rich.prompt import Prompt
 from rich.table import Table
 
 sys.path.insert(0, f"{os.path.expanduser('~')}/.config/manager/")
-from config import config
-from menu import menu
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-r", "--reset", help="Reset password of script", action="store_true")
-parser.add_argument("-U", "--uninstall", help="Uninstall script from your machine", action="store_true")
+parser.add_argument(
+    "-r", "--reset", help="Reset password of script", action="store_true")
+parser.add_argument("-U", "--uninstall",
+                    help="Uninstall script from your machine", action="store_true")
 args = parser.parse_args()
 
 start = time.time()
@@ -57,8 +59,10 @@ def log_txt(app: str, current_time: str, script: str):
         f.write(f"\nTime: {current_time} Script: {script} Application: {app}")
         f.close()
 
+
 def uninstall():
     os.system("sudo rm /usr/local/bin/manager")
+
 
 def is_configured():
     if config is not None:
@@ -116,7 +120,8 @@ class Main:
             if enc != config["EMAIL"]:
                 console.print("Email does not match")
             else:
-                master = Prompt.ask("Set a master password to use", password=True)
+                master = Prompt.ask(
+                    "Set a master password to use", password=True)
                 val = Prompt.ask("Enter password again", password=True)
                 if master != val:
                     console.print("Password does not match")
@@ -134,6 +139,7 @@ class Main:
 }}"""
                         f.write(conf)
                         f.close()
+                    backup("config.bak", f"{self.home}/.config/manager/config.py", f"{self.home}/.config/manager/backup/")
                     console.print("Password changed successfully")
                     quit(0)
 
@@ -153,7 +159,8 @@ class Main:
         self.cur.execute(log)
         self.conn.commit()
         self.conn.close()
-        master = Prompt.ask("Set a master password to use", password=True).strip()
+        master = Prompt.ask("Set a master password to use",
+                            password=True).strip()
         val = Prompt.ask("Enter password again", password=True)
         if master != val:
             console.print("Password does not match")
@@ -193,7 +200,8 @@ class Main:
                 log_txt(app, x, __file__)
                 self.fetch(app)
                 self.log(app, x, __file__)
-                pas = Prompt.ask("Do you need a new password", choices=["y", "n"], default="y")
+                pas = Prompt.ask("Do you need a new password",
+                                 choices=["y", "n"], default="y")
                 if pas == "y":
                     password = generate_password()
                     console.print(f"Your password is ready: [bold]{password}[/bold]")
@@ -205,13 +213,16 @@ class Main:
             app = Prompt.ask("Enter the name of the application").strip()
             username = Prompt.ask("Enter username of the application").strip()
             email = Prompt.ask("Enter email address").strip()
-            pas = Prompt.ask("Do you want to generate new password", choices=["y", "n"], default="y")
+            pas = Prompt.ask("Do you want to generate new password", choices=[
+                             "y", "n"], default="y")
             if pas == "y":
                 password = generate_password()
             else:
                 password = Prompt.ask("Enter password", password=True).strip()
-            self.add(app, username, email, encrypt(config["ENCRYPTION_KEY"], password))
-            backup("backup.db", config["PATH_TO_DATABASE"], config["PATH_TO_BACKUP"])
+            self.add(app, username, email, encrypt(
+                config["ENCRYPTION_KEY"], password))
+            backup("backup.db",
+                   config["PATH_TO_DATABASE"], config["PATH_TO_BACKUP"])
         elif option == 4:
             pass
         else:
@@ -231,7 +242,8 @@ class Main:
             table.add_column("Password", style="cyan", no_wrap=True)
             for credential in credentials:
                 password = decrypt(config["ENCRYPTION_KEY"], credential[3])
-                table.add_row(credential[0], credential[1], credential[2], password)
+                table.add_row(
+                    credential[0], credential[1], credential[2], password)
                 if len(credentials) == 1:
                     copy(password)
                 else:
@@ -261,7 +273,8 @@ class Main:
         self.conn.close()
 
     def security(self):
-        inp = Prompt.ask("Enter password to unlock file", password=True).strip()
+        inp = Prompt.ask("Enter password to unlock file",
+                         password=True).strip()
         enc = sha256_encoder(inp)
         i = 0
         while enc != config["KEY"]:
