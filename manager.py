@@ -177,6 +177,7 @@ class Main:
 }}"""
             f.write(conf)
             f.close()
+            backup("config.bak", f"{self.home}/.config/manager/config.py", f"{self.home}/.config/manager/backup/")
             console.print("Please run the script again")
             quit()
 
