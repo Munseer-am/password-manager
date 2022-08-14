@@ -66,7 +66,11 @@ function install () {
     echo "Installing Script"
     sleep 1;
     echo "Moving Files"
-    sudo cp Bloody.flf /usr/share/figlet/
+    if [ -d /usr/share/figlet/fonts ];then
+        sudo cp Bloody.flf /usr/share/figlet/fonts
+    else
+        sudo cp Bloody.flf /usr/share/figlet/
+    fi
     sudo cp manager.py /usr/local/bin/manager
     cp menu.py ~/.config/manager/
 
