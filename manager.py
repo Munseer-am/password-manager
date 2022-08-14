@@ -1,6 +1,4 @@
 #! /usr/bin/env python
-from menu import menu
-from config import config
 import argparse
 import clipboard
 import datetime
@@ -20,6 +18,8 @@ from rich.prompt import Prompt
 from rich.table import Table
 
 sys.path.insert(0, f"{os.path.expanduser('~')}/.config/manager/")
+from menu import menu
+from config import config
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
