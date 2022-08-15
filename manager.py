@@ -188,7 +188,9 @@ class Main:
             quit()
 
     def remove(self, app):
-        self.cur.execute("DELETE FROM PASSWORDS WHERE APPLICATION='{app}'")
+        self.cur.execute(f'DELETE FROM PASSWORDS WHERE APPLICATION LIKE "%{app}%"')
+        self.conn.commit()
+        self.conn.close()
 
     def main(self):
         menu()
@@ -226,6 +228,9 @@ class Main:
             backup("backup.db",
                    config["PATH_TO_DATABASE"], config["PATH_TO_BACKUP"])
         elif option == 4:
+            app = Prompt.ask("Enter the name of the app that you want to delete")
+            self.remove(app)
+        elif option == 5:
             pass
         else:
             console.print("Please choose valid option\n")
