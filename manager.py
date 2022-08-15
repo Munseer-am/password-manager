@@ -83,8 +83,8 @@ def decrypt(key: bytes, password: bytes):
     return out
 
 
-def backup(path_to_db:str , dst: str):
-    copyfile(path, path_to_db)
+def backup(path_to_db:str , source: str):
+    copyfile(source, path_to_db)
 
 
 def tool(tools: str):
@@ -187,6 +187,9 @@ class Main:
             backup(f"{self.home}/.config/manager/config.py", f"{self.home}/.config/manager/backup/config.bak")
             console.print("Please run the script again")
             quit()
+
+    def remove(self, app):
+        self.cur.execute("DELETE FROM PASSWORDS WHERE APPLICATION='{app}'")
 
     def main(self):
         menu()
