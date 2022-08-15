@@ -83,8 +83,8 @@ def decrypt(key: bytes, password: bytes):
     return out
 
 
-def backup(db: str, path: str, dst: str):
-    copyfile(path, f"{dst}/{db}")
+def backup(path_to_db:str , dst: str):
+    copyfile(path, path_to_db)
 
 
 def tool(tools: str):
@@ -134,12 +134,12 @@ class Main:
     'ENCRYPTION_KEY': {config["ENCRYPTION_KEY"]},
     'EMAIL': '{config["EMAIL"]}',
     'PATH_TO_DATABASE': '{self.home}/.config/manager/db.sqlite3',
-    'PATH_TO_BACKUP': '{self.home}/.config/manager/backup/',
+    'PATH_TO_BACKUP': '{self.home}/.config/manager/backup/backup.db',
     'PATH_TO_LOG': '{self.home}/.config/manager/log/'
 }}"""
                         f.write(conf)
                         f.close()
-                    backup("config.bak", f"{self.home}/.config/manager/config.py", f"{self.home}/.config/manager/backup/")
+                    backup(f"{self.home}/.config/manager/config.py", f"{self.home}/.config/manager/backup/config.bak")
                     console.print("Password changed successfully")
                     quit(0)
 
@@ -179,12 +179,12 @@ class Main:
     'ENCRYPTION_KEY': {key},
     'EMAIL': '{email}',
     'PATH_TO_DATABASE': '{self.home}/.config/manager/db.sqlite3',
-    'PATH_TO_BACKUP': '{self.home}/.config/manager/backup/',
+    'PATH_TO_BACKUP': '{self.home}/.config/manager/backup/backup.db',
     'PATH_TO_LOG': '{self.home}/.config/manager/log/'
 }}"""
             f.write(conf)
             f.close()
-            backup("config.bak", f"{self.home}/.config/manager/config.py", f"{self.home}/.config/manager/backup/")
+            backup(f"{self.home}/.config/manager/config.py", f"{self.home}/.config/manager/backup/config.bak")
             console.print("Please run the script again")
             quit()
 
@@ -221,8 +221,7 @@ class Main:
                 password = Prompt.ask("Enter password", password=True).strip()
             self.add(app, username, email, encrypt(
                 config["ENCRYPTION_KEY"], password))
-            backup("backup.db",
-                   config["PATH_TO_DATABASE"], config["PATH_TO_BACKUP"])
+            backup(config["PATH_TO_DATABASE"], config["PATH_TO_BACKUP"])
         elif option == 4:
             pass
         else:
