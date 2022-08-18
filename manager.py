@@ -11,7 +11,6 @@ import sys
 import time
 from shutil import copyfile
 from string import *
-from shutil import which
 from cryptography.fernet import Fernet
 from rich.console import Console
 from rich.prompt import Prompt
@@ -84,14 +83,6 @@ def decrypt(key: bytes, password: bytes):
 
 def backup(db: str, path: str, dst: str):
     copyfile(path, f"{dst}/{db}")
-
-
-def tool(tools: str):
-    if which(tools) is None:
-        return None
-    else:
-        return "INSTALLED"
-
 
 class Main:
     def __init__(self):
