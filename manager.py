@@ -60,7 +60,12 @@ def log_txt(app: str, current_time: str, script: str):
 
 
 def uninstall():
-    os.system("sudo rm /usr/local/bin/manager")
+    pas = Prompt.ask("Enter password", password=True)
+    hashed = sha256_encoder(pas)
+    if hashed != config["KEY"]:
+        console.print("Incorrect Password")
+    else:
+        os.system("sudo rm /usr/local/bin/manager")
 
 
 def is_configured():
