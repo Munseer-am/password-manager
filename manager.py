@@ -54,12 +54,6 @@ def copy(text: str):
     clipboard.paste()
 
 
-def log_txt(app: str, current_time: str, script: str):
-    with open(f"{config['PATH_TO_LOG']}/logs.log", "a") as f:
-        f.write(f"\nTime: {current_time} Script: {script} Application: {app}")
-        f.close()
-
-
 def uninstall():
     os.system("sudo rm /usr/local/bin/manager")
 
@@ -274,6 +268,9 @@ class Main:
             console.print(f"Application:  [bold]{email}[/bold]")
 
     def log(self, app, current_time, script):
+        with open(f"{config['PATH_TO_LOG']}/logs.log", "a") as f:
+            f.write(f"\nTime: {current_time} Script: {script} Application: {app}")
+            f.close()
         inserter = f"""INSERT INTO LOG VALUES (?, ?, ?)"""
         self.cur.execute(inserter, (str(app).title(), current_time, script))
         self.conn.commit()
