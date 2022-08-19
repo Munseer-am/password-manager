@@ -59,7 +59,7 @@ def log_txt(app: str, current_time: str, script: str):
         f.close()
 
 
-def uninstall():
+def uninstall_script():
     pas = Prompt.ask("Enter password", password=True)
     hashed = sha256_encoder(pas)
     if hashed != config["KEY"]:
@@ -101,7 +101,7 @@ class Main:
             if args.reset:
                 self.reset()
             elif args.uninstall:
-                uninstall()
+                uninstall_script()
             else:
                 self.security()
 
