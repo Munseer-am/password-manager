@@ -53,12 +53,6 @@ def copy(text: str):
     clipboard.paste()
 
 
-def log_txt(app: str, current_time: str, script: str):
-    with open(f"{config['PATH_TO_LOG']}/logs.log", "a") as f:
-        f.write(f"\nTime: {current_time} Script: {script} Application: {app}")
-        f.close()
-
-
 def uninstall_script():
     pas = Prompt.ask("Enter password", password=True)
     hashed = sha256_encoder(pas)
@@ -197,7 +191,6 @@ class Main:
                 console.print("Invalid Input")
                 pass
             else:
-                log_txt(app, x, __file__)
                 self.fetch(app)
                 self.log(app, x, __file__)
                 pas = Prompt.ask("Do you need a new password",
@@ -270,6 +263,9 @@ class Main:
             console.print(f"Application:  [bold]{email}[/bold]")
 
     def log(self, app, current_time, script):
+        with open(f"{config['PATH_TO_LOG']}/logs.log", "a") as f:
+            f.write(f"\nTime: {current_time} Script: {script} Application: {app}")
+            f.close()
         inserter = f"""INSERT INTO LOG VALUES (?, ?, ?)"""
         self.cur.execute(inserter, (str(app).title(), current_time, script))
         self.conn.commit()
