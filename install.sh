@@ -60,6 +60,7 @@ function tool() {
 }
 
 tool
+clear
 figlet -c -f Bloody "Munseer" | lolcat
 
 function install () {
