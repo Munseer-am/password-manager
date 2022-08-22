@@ -246,7 +246,7 @@ class Main:
                     pass
             console.print(table, justify="left")
         else:
-            console.print("[bold]Oops! looks there's no result for you[/bold]")
+            console.print("[bold]Oops! looks like there's no result for you[/bold]")
 
     def add(self, app, username, email, password):
         inserter = f"""INSERT INTO PASSWORDS VALUES (?, ?, ?, ?)"""
