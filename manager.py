@@ -154,7 +154,7 @@ class Main:
         if master != val:
             console.print("Password does not match")
             self.set_details()
-        email = Prompt.ask("Enter your email address (It will be)")
+        email = Prompt.ask("Enter your email address (It will be used to reset the script)")
         if "@" not in email:
             console.print("Please enter a valid email address")
             self.set_details()
