@@ -178,7 +178,7 @@ class Main:
             quit()
 
     def remove(self, app):
-        self.cur.execute(f'DELETE FROM PASSWORDS WHERE APPLICATION LIKE "%{app}%"')
+        self.cur.execute(f'DELETE FROM Passwords WHERE Application LIKE "%{app}%"')
         self.conn.commit()
         self.conn.close()
 
@@ -226,7 +226,7 @@ class Main:
             self.main()
 
     def fetch(self, app: str):
-        self.cur.execute(f"SELECT * FROM PASSWORDS WHERE APPLICATION LIKE '%{app}%'")
+        self.cur.execute(f"SELECT * FROM Passwords WHERE Application LIKE '%{app}%'")
         credentials = self.cur.fetchall()
         if len(credentials) != 0:
             table = Table(
@@ -249,15 +249,15 @@ class Main:
             console.print("[bold]Oops! looks like there's no result for you[/bold]")
 
     def add(self, app, username, email, password):
-        inserter = f"""INSERT INTO PASSWORDS VALUES (?, ?, ?, ?)"""
+        inserter = f"""INSERT INTO Passwords VALUES (?, ?, ?, ?)"""
         self.cur.execute(inserter, (app.title(), username, email, password))
         self.conn.commit()
         self.conn.close()
 
     def email_search(self, email: str):
-        self.cur.execute(f'SELECT APPLICATION FROM PASSWORDS WHERE EMAIL LIKE "%{email}%"')
+        self.cur.execute(f'SELECT Application FROM Passwords WHERE Email LIKE "%{email}%"')
         emails = self.cur.fetchall()
-        console.print(f"\nFound [blink]{len(emails)}[/blink] apps connected to this email\n")
+        console.print(f"\nFound [bold][blink]{len(emails)}[/blink][/bold] apps connected to this email\n")
         for email in emails:
             email = "".join(email)
             console.print(f"Application:  [bold]{email}[/bold]")
@@ -266,7 +266,7 @@ class Main:
         with open(f"{config['PATH_TO_LOG']}/logs.log", "a") as f:
             f.write(f"\nTime: {current_time} Script: {script} Application: {app}")
             f.close()
-        inserter = f"""INSERT INTO LOG VALUES (?, ?, ?)"""
+        inserter = f"""INSERT INTO Log VALUES (?, ?, ?)"""
         self.cur.execute(inserter, (str(app).title(), current_time, script))
         self.conn.commit()
         self.conn.close()
