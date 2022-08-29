@@ -10,3 +10,5 @@ dist/
 *.suedo
 test.py
 app.py
+demo.*
+a.out
