@@ -12,6 +12,7 @@ import time
 from shutil import copyfile
 from string import *
 from cryptography.fernet import Fernet
+from cryptography.exceptions import InvalidKey
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.table import Table
@@ -76,9 +77,12 @@ def encrypt(key: bytes, password: str):
 
 
 def decrypt(key: bytes, password: bytes):
-    dec = Fernet(key)
-    out = dec.decrypt(password).decode("utf-8")
-    return out
+    try:
+        dec = Fernet(key)
+        out = dec.decrypt(password).decode("utf-8")
+        return out
+    except InvalidKey:
+        console.print("Invalid Fernet Key (If you changed it from config file put it back)")
 
 def backup(db: str, path: str, dst: str):
     copyfile(path, f"{dst}/{db}")
