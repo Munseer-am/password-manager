@@ -4,7 +4,6 @@ import clipboard
 import datetime
 import hashlib
 import os
-import platform
 import random
 import sqlite3
 import sys
