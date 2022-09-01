@@ -12,6 +12,7 @@ from shutil import copyfile
 from string import *
 from cryptography.fernet import Fernet
 from cryptography.exceptions import InvalidKey
+from functools import cache
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.table import Table
@@ -35,6 +36,7 @@ x = str(datetime.datetime.now().strftime("%H:%M:%S %b %d %Y"))
 console.print(x.replace(":", "[blink]:[/blink]"))
 
 
+@cache
 def generate_password():
     sym = ":;!@#$%^&*(){}[]~|"
     full = ascii_uppercase + ascii_lowercase + digits + sym
@@ -43,16 +45,19 @@ def generate_password():
     return password
 
 
+@cache
 def sha256_encoder(word: str):
     enc = hashlib.sha256(word.encode("utf-8")).hexdigest()
     return enc
 
 
+@cache
 def copy(text: str):
     clipboard.copy(text)
     clipboard.paste()
 
 
+@cache
 def uninstall_script():
     pas = Prompt.ask("Enter password", password=True)
     hashed = sha256_encoder(pas)
@@ -62,6 +67,7 @@ def uninstall_script():
         os.system("sudo rm /usr/local/bin/manager")
 
 
+@cache
 def is_configured():
     if config is not None:
         return "OK"
@@ -69,12 +75,14 @@ def is_configured():
         return "NO"
 
 
+@cache
 def encrypt(key: bytes, password: str):
     enc = Fernet(key)
     out = enc.encrypt(password.encode("utf-8"))
     return out
 
 
+@cache
 def decrypt(key: bytes, password: bytes):
     try:
         dec = Fernet(key)
@@ -83,6 +91,7 @@ def decrypt(key: bytes, password: bytes):
     except InvalidKey:
         console.print("Invalid Encryption Key (If you changed it from config file put it back)")
 
+@cache
 def backup(db: str, path: str, dst: str):
     copyfile(path, f"{dst}/{db}")
 
