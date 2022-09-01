@@ -81,7 +81,7 @@ def decrypt(key: bytes, password: bytes):
         out = dec.decrypt(password).decode("utf-8")
         return out
     except InvalidKey:
-        console.print("Invalid Fernet Key (If you changed it from config file put it back)")
+        console.print("Invalid Encryption Key (If you changed it from config file put it back)")
 
 def backup(db: str, path: str, dst: str):
     copyfile(path, f"{dst}/{db}")
@@ -192,7 +192,6 @@ class Main:
             app = Prompt.ask("\nEnter the name of the application").strip()
             if app == "":
                 console.print("Invalid Input")
-                pass
             else:
                 self.fetch(app)
                 self.log(app, x, __file__)
