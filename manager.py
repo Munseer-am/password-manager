@@ -255,7 +255,7 @@ class Main:
                     copy(password)
                 else:
                     pass
-            console.print(table, justify="left")
+            console.print(table, justify="center")
         else:
             console.print("[bold]Oops! looks like there's no result for you[/bold]")
 
