@@ -35,6 +35,7 @@ os.system("figlet -c -f Bloody 'Munseer' | lolcat")
 x = str(datetime.datetime.now().strftime("%H:%M:%S %b %d %Y"))
 console.print(x.replace(":", "[blink]:[/blink]"))
 
+# TODO: add function to update the credentials in the database
 
 @cache
 def generate_password():
