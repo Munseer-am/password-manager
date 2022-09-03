@@ -35,6 +35,7 @@ os.system("figlet -c -f Bloody 'Munseer' | lolcat")
 x = str(datetime.datetime.now().strftime("%H:%M:%S %b %d %Y"))
 console.print(x.replace(":", "[blink]:[/blink]"))
 
+
 # TODO: add function to update the credentials in the database
 
 @cache
@@ -92,9 +93,11 @@ def decrypt(key: bytes, password: bytes):
     except InvalidKey:
         console.print("Invalid Encryption Key (If you changed it from config file put it back)")
 
+
 @cache
 def backup(db: str, path: str, dst: str):
     copyfile(path, f"{dst}/{db}")
+
 
 class Main:
     def __init__(self):
@@ -141,7 +144,8 @@ class Main:
 }}"""
                         f.write(conf)
                         f.close()
-                    backup("config.bak", f"{self.home}/.config/manager/config.py", f"{self.home}/.config/manager/backup/")
+                    backup("config.bak", f"{self.home}/.config/manager/config.py",
+                           f"{self.home}/.config/manager/backup/")
                     console.print("Password changed successfully")
                     quit(0)
 
@@ -197,7 +201,11 @@ class Main:
 
     def main(self):
         menu()
-        option = int(input("Choose one option from menu: "))
+        try:
+            option = int(input("Choose one option from menu: "))
+        except ValueError:
+            console.print("Enter a number")
+            self.main()
         if option == 1:
             app = Prompt.ask("\nEnter the name of the application").strip()
             if app == "":
@@ -219,7 +227,7 @@ class Main:
             username = Prompt.ask("Enter username of the application").strip()
             email = Prompt.ask("Enter email address").strip()
             pas = Prompt.ask("Do you want to generate new password", choices=[
-                             "y", "n"], default="y")
+                "y", "n"], default="y")
             if pas == "y":
                 password = generate_password()
             else:
