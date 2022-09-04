@@ -11,6 +11,7 @@ from hashlib import sha256
 from random import sample
 from rich.console import Console
 from rich.prompt import Prompt
+from rich.table import Table
 from shutil import copyfile
 from string import ascii_lowercase, ascii_uppercase, digits
 
@@ -89,6 +90,13 @@ class Main:
         self.cur = self.conn.cursor()
         if is_not_configured():
             self.set_details()
+        else:
+            if args.reset:
+                self.reset()
+            elif args.uninstall():
+                uninstall_script()
+            else:
+                pass
 
     def set_details(self):
         tables = """CREATE TABLE IF NOT EXISTS Passwords (
@@ -126,11 +134,82 @@ class Main:
     'PATH_TO_BACKUP': '{os.path.join(self.home + "/.config/manager/backup/")}',
     'PATH_TO_LOG': '{os.path.join(self.home + "/.config/manager/log/")}'            
 }}"""
-        with open(os.path.join(self.home + "/.config/manager/config.py") , "w") as f:
+        with open(os.path.join(self.home + "/.config/manager/config.py"), "w") as f:
             f.write(conf)
             f.close()
-        backup(config.bak, os.path.join(self.home + "/.config/manager/config.py"), os.path.join(self.home + "/.config/manager/backup"))
+        backup(config.bak, os.path.join(self.home + "/.config/manager/config.py"),
+               os.path.join(self.home + "/.config/manager/backup"))
         console.print("Please run the script again")
         quit(0)
 
+    def reset(self):
+        email = Prompt.ask("Enter email address")
+        if "@" not in email:
+            console.print("Please Enter a valid email")
+            self.reset()
+        hashed = sha256_encoder(email)
+        if hashed != config["EMAIL"]:
+            console.print("Email does not match")
+        else:
+            master = Prompt.ask("Set a master password to use", password=True)
+            val = Prompt.ask("Enter password again", password=True)
+            if master != val:
+                console.print("Password does not match")
+            else:
+                key = sha256_encoder(master)
+                conf = f"""config = {{
+    'KEY': '{key}',
+    'ENCRYPTION_KEY': '{config["ENCRYPTION_KEY"]}',
+    'EMAIL': '{config["EMAIL"]}',
+    'PATH_TO_DATABASE: '{config["PATH_TO_DATABASE"]}',
+    'PATH_TO_BACKUP': '{config["PATH_TO_BACKUP"]}',
+    'PATH_TO_LOG': '{config["PATH_TO_LOG"]}'
+}}"""
+                with open(os.path.join(self.home + "/.config/manager/config.py"), "w") as f:
+                    f.write(conf)
+                    f.close()
+                backup(config.bak, os.path.join(self.home + "/.config/manager/config.py"),
+                       os.path.join(self.home + "/.config/manager/backup"))
+                console.print("Password Changed Successfully")
+                quit(0)
 
+    def security(self):
+        inp = Prompt.ask("Enter password to unlock file", password=True)
+        enc = sha256_encoder(inp)
+        i = 0
+        while enc != config["KEY"]:
+            console.print("Access Denied!")
+            i += 1
+            if i >= 3:
+                break
+            else:
+                inp = Prompt.ask("\nTry again", password=True)
+                enc = sha256_encoder(inp)
+
+    def fetch(self, app: str):
+        self.cur.execute(f"SELECT * FROM Passwords WHERE Application LIKE '%{app}%'")
+        credentials = self.cur.fetchall()
+        if len(credentials) != 0:
+            table = Table(
+                title="Credentials"
+            )
+            table.add_column("Application", style="cyan", no_wrap=True)
+            table.add_column("Username", style="cyan", no_wrap=True)
+            table.add_column("Email/Phone", style="cyan", no_wrap=True)
+            table.add_column("Password", style="cyan", no_wrap=True)
+            for credential in credentials:
+                password = decrypt(config["ENCRYPTION_KEY"], credential[3])
+                table.add_row(credential[0], credential[1], credential[2], password)
+            if len(credentials) == 1:
+                copy(password)
+            console.print(table, justify="center")
+        else:
+            console.print("[bold]Oops! looks like there are no results for you[/bold]")
+
+    def email_search(self, email: str):
+        self.cur.execute(f'SELECT APPLICATION FROM Passwords WHERE Email LIKE "%{email}%"')
+        emails = self.cur.fetchall()
+        console.print(f"\nFound [bold][blink]{len(emails)}[/blink][/bold] apps connected to this email\n")
+        for email in emails:
+            email = "".join(email)
+            console.print(f"Application: [bold]{email}[/bold]")
