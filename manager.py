@@ -3,7 +3,6 @@ import argparse
 import datetime
 import clipboard
 import os
-# import re
 import sqlite3
 import sys
 from cryptography.fernet import Fernet
