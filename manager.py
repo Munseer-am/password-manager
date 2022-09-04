@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 import argparse
+import datetime
 import clipboard
 import os
 # import re
@@ -14,17 +15,23 @@ from rich.prompt import Prompt
 from rich.table import Table
 from shutil import copyfile
 from string import ascii_lowercase, ascii_uppercase, digits
+from time import time, sleep
 
 sys.path.insert(0, os.path.join(os.path.expanduser("~") + "/.config/manager/"))
 from config import config
 from menu import menu
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-r", "--reset", help="reset the password of script")
-parser.add_argument("-U", "--uninstall", help="Delete script file from /usr/local/bin/")
+parser.add_argument("-r", "--reset", help="reset the password of script", action="store_true")
+parser.add_argument("-U", "--uninstall", help="Delete script file from /usr/local/bin/", action="store_true")
 args = parser.parse_args()
 
+start = time()
 console = Console()
+os.system("clear")
+os.system("figlet -c -f Bloody 'Munseer' | lolcat")
+x = str(datetime.datetime.now().strftime("%H:%M:%S %b %d %Y"))
+console.print(x.replace(":", "[blink]:[/blink]"))
 
 
 @cache
@@ -93,10 +100,10 @@ class Main:
         else:
             if args.reset:
                 self.reset()
-            elif args.uninstall():
+            elif args.uninstall:
                 uninstall_script()
             else:
-                pass
+                self.security()
 
     def set_details(self):
         tables = """CREATE TABLE IF NOT EXISTS Passwords (
@@ -185,6 +192,18 @@ class Main:
             else:
                 inp = Prompt.ask("\nTry again", password=True)
                 enc = sha256_encoder(inp)
+        else:
+            console.print("Access Granted!")
+            self.main()
+
+    def log(self, app: str, current_time: str, script: str):
+        with open(os.path.join(config["PATH_TO_LOG"] + "/logs.log"), "a") as f:
+            f.write(f"\nTime: {current_time} Script: {script} Application: {app}")
+            f.close()
+        insertquery = f"""INSERT INTO Log VALUES (?, ?, ?)"""
+        self.cur.execute(insertquery, (app.title(), current_time, script))
+        self.conn.commit()
+        self.conn.close()
 
     def fetch(self, app: str):
         self.cur.execute(f"SELECT * FROM Passwords WHERE Application LIKE '%{app}%'")
@@ -213,3 +232,65 @@ class Main:
         for email in emails:
             email = "".join(email)
             console.print(f"Application: [bold]{email}[/bold]")
+
+    def add(self, app: str, username: str, email, password: str):
+        inserter = f"""INSERT INTO Passwords VALUES(?, ?, ?, ?)"""
+        self.cur.execute(inserter, (app.title(), username, email, password))
+        self.conn.commit()
+        self.conn.close()
+
+    def remove(self, app: str):
+        self.cur.execute(f'DELETE FROM Passwords WHERE Application LIKE "%{app}%"')
+        console.print(f"Successfully Deleted {app.title()} From Database")
+        self.conn.commit()
+        self.conn.close()
+
+    def main(self):
+        menu()
+        try:
+            option = int(input("Choose one option from menu: "))
+        except ValueError:
+            console.print("Enter a number")
+            self.main()
+        if option == 1:
+            app = Prompt.ask("\nEnter the name of the application").strip()
+            if app == "":
+                console.print("Invalid Input")
+            else:
+                self.fetch(app)
+                self.log(app, x, __file__)
+                pas = Prompt.ask("Do you need a new password", choices=["y", "n"], default="y")
+                if pas == "y":
+                    password = generate_password()
+                    console.print(f"Your password is ready: [bold]{password}[/bold]")
+        elif option == 2:
+            email = Prompt.ask("Enter the email/phone that you want to search").strip()
+            self.email_search(email)
+        elif option == 3:
+            app = Prompt.ask("Enter the name of the application").strip()
+            username = Prompt.ask("Enter username of the application").strip()
+            email = Prompt.ask("Enter your email address").strip()
+            pas = Prompt.ask("Do you want to generate new password", choices=["y", "n"], default="y").strip()
+            if pas == "y":
+                password = generate_password()
+            else:
+                password = Prompt.ask("Enter password", password=True).strip()
+            self.add(app, username, email, encrypt(config['ENCRYPTION_KEY'], password))
+            backup("backup.db", config["PATH_TO_DATABASE"], config["PATH_TO_BACKUP"])
+        elif option == 4:
+            app = Prompt.ask("Enter the name of the app that you want to delete")
+            self.remove(app)
+        elif option == 5:
+            pass
+        else:
+            console.print("Please choose a valid option\n")
+            self.main()
+
+
+if __name__ == "__main__":
+    Main()
+
+end = time()
+console.print(f"Execution time: {end - start}")
+sleep(4)
+os.system("clear")
