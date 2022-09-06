@@ -119,7 +119,6 @@ class Main:
         self.cur.execute(tables)
         self.cur.execute(log)
         self.conn.commit()
-        self.conn.close()
         master = Prompt.ask("Set a master password to use", password=True)
         val = Prompt.ask("Enter password again", password=True)
         if master != val:
@@ -132,9 +131,9 @@ class Main:
         email = sha256_encoder(email)
         key = Fernet.generate_key()
         enc = sha256_encoder(master)
-        conf = f"""{{
-    'KEY': '{enc},
-    'ENCRYPTION_KEY': '{key}',
+        conf = f"""config = {{
+    'KEY': '{enc}',
+    'ENCRYPTION_KEY': {key},
     'EMAIL': '{email}',
     'PATH_TO_DATABASE': '{os.path.join(self.home + "/.config/manager/db.sqlite3")}',
     'PATH_TO_BACKUP': '{os.path.join(self.home + "/.config/manager/backup/")}',
@@ -143,9 +142,10 @@ class Main:
         with open(os.path.join(self.home + "/.config/manager/config.py"), "w") as f:
             f.write(conf)
             f.close()
-        backup(config.bak, os.path.join(self.home + "/.config/manager/config.py"),
+        backup("config.bak", os.path.join(self.home + "/.config/manager/config.py"),
                os.path.join(self.home + "/.config/manager/backup"))
         console.print("Please run the script again")
+        self.conn.close()
         quit(0)
 
     def reset(self):
@@ -165,16 +165,16 @@ class Main:
                 key = sha256_encoder(master)
                 conf = f"""config = {{
     'KEY': '{key}',
-    'ENCRYPTION_KEY': '{config["ENCRYPTION_KEY"]}',
+    'ENCRYPTION_KEY': {config["ENCRYPTION_KEY"]},
     'EMAIL': '{config["EMAIL"]}',
-    'PATH_TO_DATABASE: '{config["PATH_TO_DATABASE"]}',
+    'PATH_TO_DATABASE': '{config["PATH_TO_DATABASE"]}',
     'PATH_TO_BACKUP': '{config["PATH_TO_BACKUP"]}',
     'PATH_TO_LOG': '{config["PATH_TO_LOG"]}'
 }}"""
                 with open(os.path.join(self.home + "/.config/manager/config.py"), "w") as f:
                     f.write(conf)
                     f.close()
-                backup(config.bak, os.path.join(self.home + "/.config/manager/config.py"),
+                backup("config.bak", os.path.join(self.home + "/.config/manager/config.py"),
                        os.path.join(self.home + "/.config/manager/backup"))
                 console.print("Password Changed Successfully")
                 quit(0)
@@ -218,8 +218,8 @@ class Main:
             for credential in credentials:
                 password = decrypt(config["ENCRYPTION_KEY"], credential[3])
                 table.add_row(credential[0], credential[1], credential[2], password)
-            if len(credentials) == 1:
-                copy(password)
+                if len(credentials) == 1:
+                    copy(password)
             console.print(table, justify="center")
         else:
             console.print("[bold]Oops! looks like there are no results for you[/bold]")
@@ -249,7 +249,7 @@ class Main:
         try:
             option = int(input("Choose one option from menu: "))
         except ValueError:
-            console.print("Enter a number")
+            console.print("Enter int instead of str")
             self.main()
         if option == 1:
             app = Prompt.ask("\nEnter the name of the application").strip()
