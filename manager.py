@@ -199,8 +199,8 @@ class Main:
         with open(os.path.join(config["PATH_TO_LOG"] + "/logs.log"), "a") as f:
             f.write(f"\nTime: {current_time} Script: {script} Application: {app}")
             f.close()
-        insertquery = f"""INSERT INTO Log VALUES (?, ?, ?)"""
-        self.cur.execute(insertquery, (app.title(), current_time, script))
+        inserter = f"""INSERT INTO Log VALUES (?, ?, ?)"""
+        self.cur.execute(inserter, (app.title(), current_time, script))
         self.conn.commit()
         self.conn.close()
 
