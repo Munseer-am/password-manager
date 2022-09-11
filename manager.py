@@ -258,10 +258,6 @@ class Main:
             else:
                 self.fetch(app)
                 self.log(app, x, __file__)
-                pas = Prompt.ask("Do you need a new password", choices=["y", "n"], default="y")
-                if pas == "y":
-                    password = generate_password()
-                    console.print(f"Your password is ready: [bold]{password}[/bold]")
         elif option == 2:
             email = Prompt.ask("Enter the email/phone that you want to search").strip()
             self.email_search(email)
@@ -280,6 +276,10 @@ class Main:
             app = Prompt.ask("Enter the name of the app that you want to delete")
             self.remove(app)
         elif option == 5:
+            password = generate_password()
+            copy(password)
+            console.print(f"Your password is ready: [bold]{password}[/bold]")
+        elif option == 6:
             pass
         else:
             console.print("Please choose a valid option\n")
