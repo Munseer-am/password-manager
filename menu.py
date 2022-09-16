@@ -1,7 +1,7 @@
 def menu():
     print("\n---------------Menu---------------")
     print("1) Get all creds of specific app")
-    print("2) Get all apps in database")
+    print("2) List apps in database")
     print("3) Find accounts using email/phone")
     print("4) Add new app to database")
     print("5) Delete app from database")
