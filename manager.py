@@ -204,6 +204,18 @@ class Main:
         self.conn.commit()
         self.conn.close()
 
+    def list_apps(self):
+        self.cur.execute("SELECT Application FROM Passwords")
+        _apps = self.cur.fetchall()
+        if len(_apps) == 0:
+            console.print("[bold]No apps found[/bold]")
+        else:
+            _table = Table()
+            _table.add_column("Application", style="cyan", no_wrap=True)
+            for _app in _apps:
+                _table.add_row(_app)
+            console.print(_table, justify="center")
+
     def fetch(self, app: str):
         self.cur.execute(f"SELECT * FROM Passwords WHERE Application LIKE '%{app}%'")
         credentials = self.cur.fetchall()
@@ -259,9 +271,11 @@ class Main:
                 self.fetch(app)
                 self.log(app, x, __file__)
         elif option == 2:
+            self.list_apps()
+        elif option == 3:
             email = Prompt.ask("Enter the email/phone that you want to search").strip()
             self.email_search(email)
-        elif option == 3:
+        elif option == 4:
             app = Prompt.ask("Enter the name of the application").strip()
             username = Prompt.ask("Enter username of the application").strip()
             email = Prompt.ask("Enter your email address").strip()
@@ -272,14 +286,14 @@ class Main:
                 password = Prompt.ask("Enter password", password=True).strip()
             self.add(app, username, email, encrypt(config['ENCRYPTION_KEY'], password))
             backup("backup.db", config["PATH_TO_DATABASE"], config["PATH_TO_BACKUP"])
-        elif option == 4:
+        elif option == 5:
             app = Prompt.ask("Enter the name of the app that you want to delete")
             self.remove(app)
-        elif option == 5:
+        elif option == 6:
             password = generate_password()
             copy(password)
             console.print(f"Your password is ready: [bold]{password}[/bold]")
-        elif option == 6:
+        elif option == 7:
             pass
         else:
             console.print("Please choose a valid option\n")
