@@ -213,8 +213,8 @@ class Main:
             _table = Table()
             _table.add_column("Application", style="cyan", no_wrap=True)
             for _app in _apps:
-                _table.add_row(_app)
-            console.print(_table, justify="center")
+                _table.add_row("".join(_app))
+            console.print(_table, justify="left")
 
     def fetch(self, app: str):
         self.cur.execute(f"SELECT * FROM Passwords WHERE Application LIKE '%{app}%'")
