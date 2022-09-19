@@ -244,6 +244,11 @@ class Main:
             email = "".join(email)
             console.print(f"Application: [bold]{email}[/bold]")
 
+    # def update_date(self, application, app, username, email, password):
+    #     self.cur.execute(f"UPDATE PASSWORDS SET Application='{app}', Username='{username}', Email='{email}', Password={password} WHERE Application='{application}'")
+    #     self.conn.commit()
+    #     self.conn.close()
+
     def add(self, app: str, username: str, email, password: str):
         inserter = f"""INSERT INTO Passwords VALUES(?, ?, ?, ?)"""
         self.cur.execute(inserter, (app.title(), username, email, password))
