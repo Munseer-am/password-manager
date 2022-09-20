@@ -244,10 +244,10 @@ class Main:
             email = "".join(email)
             console.print(f"Application: [bold]{email}[/bold]")
 
-    # def update_date(self, application, app, username, email, password):
-    #     self.cur.execute(f"UPDATE PASSWORDS SET Application='{app}', Username='{username}', Email='{email}', Password={password} WHERE Application='{application}'")
-    #     self.conn.commit()
-    #     self.conn.close()
+    def update_data(self, application, app, username, email, password):
+        self.cur.execute(f"UPDATE Passwords SET Application='{app}', Username='{username}', Email='{email}', Password='{password}' WHERE Application='{application}'")
+        self.conn.commit()
+        self.conn.close()
 
     def add(self, app: str, username: str, email, password: str):
         inserter = f"""INSERT INTO Passwords VALUES(?, ?, ?, ?)"""
@@ -292,13 +292,29 @@ class Main:
             self.add(app, username, email, encrypt(config['ENCRYPTION_KEY'], password))
             backup("backup.db", config["PATH_TO_DATABASE"], config["PATH_TO_BACKUP"])
         elif option == 5:
+            application = Prompt.ask("Enter the application that you want to update").strip().title()
+            self.cur.execute(f"SELECT * FROM Passwords WHERE Application='{application}'")
+            _apps = self.cur.fetchone()
+            app = Prompt.ask(f"Enter name of app (leave blank to use {''.join(_apps[0])})").strip()
+            if app == "" or app == " ":
+                app = "".join(_apps[0])
+            username = Prompt.ask(f"Enter username (leave blank to use {''.join(_apps[1])})").strip()
+            if username == "" or username == " ":
+                username = "".join(_apps[1])
+            email = Prompt.ask(f"Enter email/phone (leave blank to use {''.join(_apps[2])})").strip()
+            if email == "" or email == " ":
+                email = "".join(_apps[2])
+            password = Prompt.ask("Enter password", password=True).strip()
+            self.update_data(application, app, username, email, encrypt(config["ENCRYPTION_KEY"], password).decode())
+            console.print("Data updated successfully")
+        elif option == 6:
             app = Prompt.ask("Enter the name of the app that you want to delete")
             self.remove(app)
-        elif option == 6:
+        elif option == 7:
             password = generate_password()
             copy(password)
             console.print(f"Your password is ready: [bold]{password}[/bold]")
-        elif option == 7:
+        elif option == 8:
             pass
         else:
             console.print("Please choose a valid option\n")
