@@ -1,4 +1,5 @@
 #include <iostream>
+#include <filesystem>
 using namespace std;
 
 int is_installed(string tool) {
@@ -23,10 +24,35 @@ int install(string tool) {
     return 0;
 }
 
-int main() {
-    string tool;
-    cout << "Enter a command: ";
-    getline(cin, tool);
-    is_installed(tool);
+int path_exists(string path) {
+    if (filesystem::is_regular_file(path)) {
+        bool result = filesystem::is_regular_file(path);
+        return result;
+    }
+    else if (filesystem::is_regular_file(path) != 1) {
+        bool result = filesystem::is_directory(path);
+        return result;
+    }
+    else {
+        return false;
+    }
+}
+
+int tool() {
+    if (is_installed("figlet") != 0) {
+        cout << "Error: figlet is not installed\n";
+        cout << "Installing figlet...\n";
+        install("figlet");
+        tool();
+    }
+    else if (is_installed("lolcat") != 0) {
+        cout << "Error: lolcat is not installed\n";
+        cout << "Installing lolcat...\n";
+        install("lolcat");
+    }
     return 0;
+}
+
+int main() {
+    tool();
 }
