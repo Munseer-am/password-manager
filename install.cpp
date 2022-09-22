@@ -24,18 +24,12 @@ int install(string tool) {
     return 0;
 }
 
-int path_exists(string path) {
-    if (filesystem::is_regular_file(path)) {
-        bool result = filesystem::is_regular_file(path);
-        return result;
-    }
-    else if (filesystem::is_regular_file(path) != 1) {
-        bool result = filesystem::is_directory(path);
-        return result;
-    }
-    else {
-        return false;
-    }
+int file_exists(string path) {
+    return filesystem::is_regular_file(path);
+}
+
+int directory_exists(string path) {
+    return filesystem::is_directory(path);
 }
 
 int tool() {
@@ -55,4 +49,22 @@ int tool() {
 
 int main() {
     tool();
+    if (directory_exists("/usr/share/figlet/fonts") == 10) {
+        system("sudo cp Bloody.flf /usr/share/figlet/fonts");
+    }
+    else {
+        system("sudo cp Bloody.flf /usr/share/figlet/");
+    }
+    system("clear");
+    system("figlet -c -f Bloody 'Munseer' | lolcat");
+    if (file_exists("/usr/local/bin/manager") == 1) {
+        cout << "Script Already Installed" << endl;
+        exit(0);
+        // cout << "if executed\n";
+        // cout << file_exists("/usr/local/bin/manager");
+    }
+    else {
+        // cout << "Installing Script" << endl;
+        cout << file_exists("/usr/local/bin/manager");
+    }
 }

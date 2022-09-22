@@ -264,61 +264,64 @@ class Main:
     def main(self):
         menu()
         try:
-            option = int(input("Choose one option from menu: "))
+            option = int(input("Choose one option: "))
+            if option == 1:
+                app = Prompt.ask("\nEnter the name of the application").strip()
+                if app == "":
+                    console.print("Invalid Input")
+                else:
+                    self.fetch(app)
+                    self.log(app, x, __file__)
+            elif option == 2:
+                self.list_apps()
+            elif option == 3:
+                email = Prompt.ask("Enter the email/phone that you want to search").strip()
+                self.email_search(email)
+            elif option == 4:
+                app = Prompt.ask("Enter the name of the application").strip()
+                username = Prompt.ask("Enter username of the application").strip()
+                email = Prompt.ask("Enter your email address").strip()
+                pas = Prompt.ask("Do you want to generate new password", choices=["y", "n"], default="y").strip()
+                if pas == "y":
+                    password = generate_password()
+                else:
+                    password = Prompt.ask("Enter password", password=True).strip()
+                self.add(app, username, email, encrypt(config['ENCRYPTION_KEY'], password))
+                backup("backup.db", config["PATH_TO_DATABASE"], config["PATH_TO_BACKUP"])
+            elif option == 5:
+                application = Prompt.ask("Enter the application that you want to update").strip().title()
+                self.cur.execute(f"SELECT * FROM Passwords WHERE Application='{application}'")
+                _apps = self.cur.fetchone()
+                app = Prompt.ask(f"Enter name of app (leave blank to use {''.join(_apps[0])})").strip()
+                if app == "" or app == " ":
+                    app = "".join(_apps[0])
+                username = Prompt.ask(f"Enter username (leave blank to use {''.join(_apps[1])})").strip()
+                if username == "" or username == " ":
+                    username = "".join(_apps[1])
+                email = Prompt.ask(f"Enter email/phone (leave blank to use {''.join(_apps[2])})").strip()
+                if email == "" or email == " ":
+                    email = "".join(_apps[2])
+                password = Prompt.ask("Enter password", password=True).strip()
+                self.update_data(application, app, username, email, encrypt(config["ENCRYPTION_KEY"], password).decode())
+                console.print("Data updated successfully")
+            elif option == 6:
+                app = Prompt.ask("Enter the name of the app that you want to delete")
+                self.remove(app)
+            elif option == 7:
+                password = generate_password()
+                copy(password)
+                console.print(f"Your password is ready: [bold]{password}[/bold]")
+            elif option == 8:
+                pass
+            else:
+                console.print("Please choose a valid option\n")
+                self.main()
         except ValueError:
             console.print("Enter int instead of str")
             self.main()
-        if option == 1:
-            app = Prompt.ask("\nEnter the name of the application").strip()
-            if app == "":
-                console.print("Invalid Input")
-            else:
-                self.fetch(app)
-                self.log(app, x, __file__)
-        elif option == 2:
-            self.list_apps()
-        elif option == 3:
-            email = Prompt.ask("Enter the email/phone that you want to search").strip()
-            self.email_search(email)
-        elif option == 4:
-            app = Prompt.ask("Enter the name of the application").strip()
-            username = Prompt.ask("Enter username of the application").strip()
-            email = Prompt.ask("Enter your email address").strip()
-            pas = Prompt.ask("Do you want to generate new password", choices=["y", "n"], default="y").strip()
-            if pas == "y":
-                password = generate_password()
-            else:
-                password = Prompt.ask("Enter password", password=True).strip()
-            self.add(app, username, email, encrypt(config['ENCRYPTION_KEY'], password))
-            backup("backup.db", config["PATH_TO_DATABASE"], config["PATH_TO_BACKUP"])
-        elif option == 5:
-            application = Prompt.ask("Enter the application that you want to update").strip().title()
-            self.cur.execute(f"SELECT * FROM Passwords WHERE Application='{application}'")
-            _apps = self.cur.fetchone()
-            app = Prompt.ask(f"Enter name of app (leave blank to use {''.join(_apps[0])})").strip()
-            if app == "" or app == " ":
-                app = "".join(_apps[0])
-            username = Prompt.ask(f"Enter username (leave blank to use {''.join(_apps[1])})").strip()
-            if username == "" or username == " ":
-                username = "".join(_apps[1])
-            email = Prompt.ask(f"Enter email/phone (leave blank to use {''.join(_apps[2])})").strip()
-            if email == "" or email == " ":
-                email = "".join(_apps[2])
-            password = Prompt.ask("Enter password", password=True).strip()
-            self.update_data(application, app, username, email, encrypt(config["ENCRYPTION_KEY"], password).decode())
-            console.print("Data updated successfully")
-        elif option == 6:
-            app = Prompt.ask("Enter the name of the app that you want to delete")
-            self.remove(app)
-        elif option == 7:
-            password = generate_password()
-            copy(password)
-            console.print(f"Your password is ready: [bold]{password}[/bold]")
-        elif option == 8:
-            pass
-        else:
-            console.print("Please choose a valid option\n")
-            self.main()
+        except KeyboardInterrupt:
+            os.system("clear")
+            exit()
 
 
 if __name__ == "__main__":
