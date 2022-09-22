@@ -232,7 +232,7 @@ class Main:
                 table.add_row(credential[0], credential[1], credential[2], password)
                 if len(credentials) == 1:
                     copy(password)
-            console.print(table, justify="center")
+            console.print(table, justify="left")
         else:
             console.print("[bold]Oops! looks like there are no results for you[/bold]")
 
