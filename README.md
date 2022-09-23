@@ -3,7 +3,7 @@
 ## _**Installation**_
 
 #### _1. First git clone this repository_
-#### _2. Run install.sh script as root_
+#### _2. Run install scirpt using `./install`_
 #### _3. Type `manager` to run the script_
 #### _4. Enter the details_
 
