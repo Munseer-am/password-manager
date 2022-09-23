@@ -87,10 +87,7 @@ int main() {
         else {
             cout << "Found Existing Configuration\n";
         }
-        if (file_exists(home+"/.config/manager/db.sqlite3") != 1) {
-            system("touch ~/.config/manager/db.sqlite3");
-        }
-        else {
+        if (file_exists(home+"/.config/manager/db.sqlite3") == 1) {
             cout << "Found Existing Database\n";
         }
         sleep(0.4);
