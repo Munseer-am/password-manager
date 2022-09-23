@@ -319,15 +319,16 @@ class Main:
         except ValueError:
             console.print("Enter int instead of str")
             self.main()
-        except KeyboardInterrupt:
-            os.system("clear")
-            exit()
 
 
-if __name__ == "__main__":
-    Main()
+try:
+    if __name__ == "__main__":
+        Main()
 
-end = time()
-console.print(f"Execution time: {end - start}")
-sleep(4)
-os.system("clear")
+    end = time()
+    console.print(f"Execution time: {end - start}")
+    sleep(4)
+    os.system("clear")
+except KeyboardInterrupt:
+    os.system("clear")
+    exit(0)
