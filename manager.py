@@ -3,6 +3,7 @@ import argparse
 import datetime
 import clipboard
 import os
+import subprocess
 import sqlite3
 import sys
 from cryptography.fernet import Fernet
@@ -16,9 +17,42 @@ from shutil import copyfile
 from string import ascii_lowercase, ascii_uppercase, digits
 from time import time, sleep
 
-sys.path.insert(0, os.path.join(os.path.expanduser("~") + "/.config/manager/"))
-from config import config
-from menu import menu
+try:
+    sys.path.insert(0, os.path.join(os.path.expanduser("~") + "/.config/manager/"))
+    from config import config
+    from menu import menu
+except ImportError:
+    conn = sqlite3.connect(os.path.expanduser("~") + "/.config/manager/backup/db.sqlite3.bak")
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM Config")
+    configs = cur.fetchone()
+    home = os.path.expanduser("~")
+    with open(home + "/.config/manager/config.py", "w") as f:
+        conf = f"""config = {{
+    'KEY': '{"".join(configs[0])}',
+    'ENCRYPTION_KEY': {configs[1]},
+    'EMAIL': '{"".join(configs[2])}',
+    'PATH_TO_DATABASE': '{"".join(configs[3])}',
+    'PATH_TO_BACKUP': '{"".join(configs[4])}',
+    'PATH_TO_LOG': '{"".join(configs[5])}'            
+}}"""
+        # print(conf)
+        f.write(conf)
+        f.close()
+    with open(home + "/.config/manager/menu.py", "w") as d:
+        d.write("".join(configs[6]))
+        d.close()
+    with open(home + "/.config/manager/manager_recovery", "wb") as s:
+        s.write(configs[7])
+        s.close()
+    os.system("chmod +x ~/.config/manager/manager_recovery")
+    os.system("sudo chmod +x /usr/local/bin/manager_recovery")
+    os.system("sudo cp ~/.config/manager/manager_recovery /usr/local/bin/")
+    os.system("sudo rm /usr/local/bin/manager")
+    os.system("manager_recovery")
+    copyfile(home+"/.config/manager/backup/db.sqlite3.bak", home+"/.config/manager/db.sqlite3")
+    quit(0)
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-r", "--reset", help="reset the password of script", action="store_true")
@@ -116,9 +150,24 @@ class Main:
             Time VARCHAR(100),
             Script VARCHAR(100)
         );"""
+        config = """CREATE TABLE IF NOT EXISTS Config (
+            Key VARCHAR(200),
+            Encryption_Key BLOB,
+            Email VARCHAR(200),
+            Path_to_database VARCHAR(200),
+            Path_to_backup VARCHAR(200),
+            Path_to_log VARCHAR(200),
+            menu VARCHAR(500),
+            INSTALL BLOB
+        );"""
         self.cur.execute(tables)
         self.cur.execute(log)
+        self.cur.execute(config)
         self.conn.commit()
+        with open(self.home + "/.config/manager/menu.py", "r") as f:
+            content = f.read()
+            f.read()
+        insertquery = """INSERT INTO Config VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
         master = Prompt.ask("Set a master password to use", password=True)
         val = Prompt.ask("Enter password again", password=True)
         if master != val:
@@ -142,10 +191,16 @@ class Main:
         with open(os.path.join(self.home + "/.config/manager/config.py"), "w") as f:
             f.write(conf)
             f.close()
+        with open("install", "rb") as f:
+            binary = f.read()
+            f.close()
         backup("config.bak", os.path.join(self.home + "/.config/manager/config.py"),
                os.path.join(self.home + "/.config/manager/backup"))
         console.print("Please run the script again")
+        self.cur.execute(insertquery, (enc, key, email, self.home + "/.config/manager/db.sqlite3", self.home + "/.config/manager/backup/", self.home + "/.config/manager/log/", content, binary))
+        self.conn.commit()
         self.conn.close()
+        copyfile(self.home+"/.config/manager/db.sqlite3", self.home+"/.config/manager/backup/db.sqlite3.bak")
         quit(0)
 
     def reset(self):
