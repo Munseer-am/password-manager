@@ -101,6 +101,6 @@ int main() {
     }
     else {
         cout << "Script Already Installed" << endl;
-        exit(1);
+        exit(0);
     }
 }
