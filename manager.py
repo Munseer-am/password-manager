@@ -46,10 +46,8 @@ except ImportError:
         s.write(configs[7])
         s.close()
     os.system("chmod +x ~/.config/manager/manager_recovery")
-    os.system("sudo chmod +x /usr/local/bin/manager_recovery")
-    os.system("sudo cp ~/.config/manager/manager_recovery /usr/local/bin/")
     os.system("sudo rm /usr/local/bin/manager")
-    os.system("manager_recovery")
+    os.system("~/.config/manager/manager_recovery")
     copyfile(home+"/.config/manager/backup/db.sqlite3.bak", home+"/.config/manager/db.sqlite3")
     quit(0)
 
