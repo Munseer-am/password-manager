@@ -22,12 +22,13 @@ try:
     from menu import menu
 except ImportError:
     try:
-        os.system("manager_create >/dev/null/")
         sys.path.insert(0, os.path.join(os.path.expanduser("~") + "/.config/manager/"))
         from config import config
         from menu import menu
     except ImportError:
+        os.system("rm ~/.local/bin/manager")
         os.system("manager_create")
+        exit()
 
 
 parser = argparse.ArgumentParser()
@@ -106,7 +107,11 @@ class Main:
             self.conn = sqlite3.connect(os.path.join(self.home + "/.config/manager/db.sqlite3"))
             self.cur = self.conn.cursor()
         except sqlite3.OperationalError:
-            os.system("manager_create")
+            try:
+                self.conn = sqlite3.connect(os.path.join(self.home + "/.config/manager/backup/db.sqlite3.bak"))
+                self.cur = self.conn.cursor()
+            except sqlite3.OperationalError:
+                os.system("manager_create")
         if is_not_configured():
             self.set_details()
         else:
