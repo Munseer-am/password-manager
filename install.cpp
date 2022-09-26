@@ -22,18 +22,18 @@ int install(string tool) {
         system(("sudo dnf install " + tool).c_str());
     }
     else {
-        cout << "No tool for installation found";
+        cout << "No Installation Tools Found";
         return 1;
     }
     return 0;
 }
 
-int file_exists(string path) {
-    return filesystem::is_regular_file(path);
+int file_exists(string file) {
+    return filesystem::is_regular_file(file);
 }
 
-int directory_exists(string path) {
-    return filesystem::is_directory(path);
+int directory_exists(string dir) {
+    return filesystem::is_directory(dir);
 }
 
 int tool() {
@@ -41,12 +41,20 @@ int tool() {
         cout << "Error: figlet is not installed\n";
         cout << "Installing figlet...\n";
         install("figlet");
-        tool();
     }
-    else if (is_installed("lolcat") != 0) {
+    if (is_installed("lolcat") != 0) {
         cout << "Error: lolcat is not installed\n";
         cout << "Installing lolcat...\n";
-        install("lolcat");
+    }
+    return 0;
+}
+
+int install_font() {
+    if (directory_exists("/usr/share/figlet/fonts/") != 0) {
+        system("sudo cp Bloody.flf /usr/share/figlet/fonts");
+    }
+    else {
+        system("sudo cp Bloody.flf /usr/share/figlet/");
     }
     return 0;
 }
@@ -56,22 +64,16 @@ int main() {
     const char *homedir = pw->pw_dir;
     string home = string(homedir);
     tool();
+    install_font();
     system("clear");
     system("figlet -c -f Bloody 'Munseer' | lolcat");
-    if (file_exists("/usr/local/bin/manager") != 1) {
+    if (file_exists(home+"/.local/bin/manager") != 1) {
         cout << "Installing Script\n";
-        sleep(1);
-        system("sudo cp manager.py /usr/local/bin/manager");
+        system("cp manager.py ~/.local/bin/manager");
+        system("chmod +x ~/.local/bin/manager");
         cout << "Creating Required Directories\n";
-        sleep(0.9);
-        if (directory_exists("/usr/share/figlet/fonts/") != 0) {
-            system("sudo cp Bloody.flf /usr/share/figlet/fonts");
-        }
-        else {
-            system("sudo cp Bloody.flf /usr/share/figlet/");
-        }
         if (directory_exists(home+"/.config/manager/") != 1) {
-            filesystem::create_directory(home+"/.config/manager");
+            filesystem::create_directory(home+"/.config/manager/");
         }
         if (directory_exists(home+"/.config/manager/log/") != 1) {
             filesystem::create_directory(home+"/.config/manager/log/");
@@ -80,7 +82,6 @@ int main() {
             filesystem::create_directory(home+"/.config/manager/backup/");
         }
         cout << "Moving Files\n";
-        sleep(0.5);
         if (file_exists(home+"/.config/manager/config.py") != 1) {
             filesystem::copy("config.py", home+"/.config/manager/");
         }
@@ -90,14 +91,20 @@ int main() {
         if (file_exists(home+"/.config/manager/db.sqlite3") == 1) {
             cout << "Found Existing Database\n";
         }
-        sleep(0.4);
         if (file_exists(home+"/.config/manager/menu.py") != 1) {
             filesystem::copy("menu.py", home+"/.config/manager/");
         }
-        cout << "To run the script type 'manager'" << endl;
+    }
+    else if (directory_exists(home+"/.local/lib/python3.10/site-packages") == 1) {
+        if (file_exists(home+"/.local/lib/python3.10/site-packages/config.py") != 1) {
+            filesystem::copy("config.py", home+"/.local/lib/python3.10/site-packages/");
+        }
+        if (file_exists(home+"/.local/lib/python3.10/site-packages/menu.py") != 1) {
+            filesystem::copy("menu.py", home+"/.local/lib/python3.10/site-packages/");
+        }
     }
     else {
-        cout << "Script Already Installed" << endl;
+        cout << "Script Already Installed";
         exit(0);
     }
 }
