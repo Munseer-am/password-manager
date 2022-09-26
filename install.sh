@@ -67,11 +67,11 @@ function move() {
 }
 
 tool
-if [ -d /usr/share/figlet/fonts ]; then
-    sudo cp Bloody.flf /usr/share/figlet/fonts/
-else
-    sudo cp Bloody.flf /usr/share/figlet/
-fi
+# if [ -d /usr/share/figlet/fonts ]; then
+#     sudo cp Bloody.flf /usr/share/figlet/fonts/
+# else
+#     sudo cp Bloody.flf /usr/share/figlet/
+# fi
 clear
 figlet -c -f Bloody "Munseer" | lolcat
 # move
