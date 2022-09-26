@@ -17,6 +17,8 @@ from shutil import copyfile
 from string import ascii_lowercase, ascii_uppercase, digits
 from time import time, sleep
 
+__author__ = "Munseer-am"
+
 try:
     from config import config
     from menu import menu
@@ -33,7 +35,7 @@ except ImportError:
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-r", "--reset", help="reset the password of script", action="store_true")
-parser.add_argument("-U", "--uninstall", help="Delete script file from /usr/local/bin/", action="store_true")
+parser.add_argument("-U", "--uninstall", help="Delete script file from ~/.local/bin/", action="store_true")
 args = parser.parse_args()
 
 start = time()
