@@ -74,4 +74,5 @@ else
 fi
 clear
 figlet -c -f Bloody "Munseer" | lolcat
-move
+# move
+echo "This Script Is Depricated"
