@@ -94,7 +94,9 @@ int main() {
         if (file_exists(home+"/.config/manager/menu.py") != 1) {
             filesystem::copy("lib/menu.py", home+"/.config/manager/");
         }
-        system("cp install ~/.local/bin/manager_create");
+        if (file_exists(home+"/.local/bin/manager_create") != 1) {
+            system("cp install ~/.local/bin/manager_create");
+        }
         cout << "TO RUN THE SCRIPT TYPE `manager`" << endl;
     }
     else {
