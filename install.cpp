@@ -94,7 +94,7 @@ int main() {
         if (file_exists(home+"/.config/manager/menu.py") != 1) {
             filesystem::copy("menu.py", home+"/.config/manager/");
         }
-        system("cp install ~/.local/bin/manager_create >/dev/null/");
+        system("cp install ~/.local/bin/manager_create");
     }
     else {
         if (directory_exists(home+"/.local/lib/python3.10/site-packages") == 1) {
@@ -125,6 +125,4 @@ int main() {
         }
         cout << "Script Already Installed" << endl;
     }
-    filesystem::remove("config.py");
-    filesystem::remove("menu.py");
 }
