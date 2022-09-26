@@ -18,38 +18,16 @@ from string import ascii_lowercase, ascii_uppercase, digits
 from time import time, sleep
 
 try:
-    sys.path.insert(0, os.path.join(os.path.expanduser("~") + "/.config/manager/"))
     from config import config
     from menu import menu
 except ImportError:
-    conn = sqlite3.connect(os.path.expanduser("~") + "/.config/manager/backup/db.sqlite3.bak")
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM Config")
-    configs = cur.fetchone()
-    home = os.path.expanduser("~")
-    with open(home + "/.config/manager/config.py", "w") as f:
-        conf = f"""config = {{
-    'KEY': '{"".join(configs[0])}',
-    'ENCRYPTION_KEY': {configs[1]},
-    'EMAIL': '{"".join(configs[2])}',
-    'PATH_TO_DATABASE': '{"".join(configs[3])}',
-    'PATH_TO_BACKUP': '{"".join(configs[4])}',
-    'PATH_TO_LOG': '{"".join(configs[5])}'            
-}}"""
-        # print(conf)
-        f.write(conf)
-        f.close()
-    with open(home + "/.config/manager/menu.py", "w") as d:
-        d.write("".join(configs[6]))
-        d.close()
-    with open(home + "/.config/manager/manager_recovery", "wb") as s:
-        s.write(configs[7])
-        s.close()
-    os.system("chmod +x ~/.config/manager/manager_recovery")
-    os.system("sudo rm /usr/local/bin/manager")
-    os.system("~/.config/manager/manager_recovery")
-    copyfile(home+"/.config/manager/backup/db.sqlite3.bak", home+"/.config/manager/db.sqlite3")
-    quit(0)
+    try:
+        os.system("manager_create >/dev/null/")
+        sys.path.insert(0, os.path.join(os.path.expanduser("~") + "/.config/manager/"))
+        from config import config
+        from menu import menu
+    except ImportError:
+        os.system("manager_create")
 
 
 parser = argparse.ArgumentParser()
@@ -100,7 +78,7 @@ def uninstall_script():
     if hashed != config["KEY"]:
         console.print("Invalid Password")
     else:
-        os.system("sudo rm /usr/local/bin/manager")
+        os.system("rm ~/.local/bin/manager")
 
 
 @cache
@@ -124,8 +102,11 @@ class Main:
     def __init__(self):
         super(Main, self).__init__()
         self.home = os.path.expanduser("~")
-        self.conn = sqlite3.connect(os.path.join(self.home + "/.config/manager/db.sqlite3"))
-        self.cur = self.conn.cursor()
+        try:
+            self.conn = sqlite3.connect(os.path.join(self.home + "/.config/manager/db.sqlite3"))
+            self.cur = self.conn.cursor()
+        except sqlite3.OperationalError:
+            os.system("manager_create")
         if is_not_configured():
             self.set_details()
         else:
@@ -189,6 +170,9 @@ class Main:
         with open(os.path.join(self.home + "/.config/manager/config.py"), "w") as f:
             f.write(conf)
             f.close()
+        with open(os.path.join(self.home + "/.local/lib/python3.10/site-packages/config.py"), "w") as f:
+            f.write(conf)
+            f.close()
         with open("install", "rb") as f:
             binary = f.read()
             f.close()
@@ -225,6 +209,9 @@ class Main:
     'PATH_TO_LOG': '{config["PATH_TO_LOG"]}'
 }}"""
                 with open(os.path.join(self.home + "/.config/manager/config.py"), "w") as f:
+                    f.write(conf)
+                    f.close()
+                with open(os.path.join(self.home + "/.local/lib/python3.10/site-packages/config.py"), "w") as f:
                     f.write(conf)
                     f.close()
                 backup("config.bak", os.path.join(self.home + "/.config/manager/config.py"),
