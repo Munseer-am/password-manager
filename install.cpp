@@ -94,23 +94,37 @@ int main() {
         if (file_exists(home+"/.config/manager/menu.py") != 1) {
             filesystem::copy("menu.py", home+"/.config/manager/");
         }
-    }
-    else if (directory_exists(home+"/.local/lib/python3.10/site-packages") == 1) {
-        if (file_exists(home+"/.local/lib/python3.10/site-packages/config.py") != 1 and file_exists(home+"/.config/manager/config.py") == 1){
-            filesystem::copy(home+"/.config/manager/config.py", home+"/.local/lib/python3.10/site-packages/");
-        }
-        else {
-            filesystem::copy("menu.py", home + "/.local/lib/python3.10/site-packages/");
-        }
-        if (file_exists(home+"/.local/lib/python3.10/site-packages/menu.py") != 1 and file_exists(home+"/.config/manager/menu.py") == 1) {
-            filesystem::copy(home+"/.config/manager/menu.py", home+"/.local/lib/python3.10/site-packages/");
-        }
-        else {
-            filesystem::copy("menu.py", home+"/.local/lib/python3.10/site-packages/");
-        }
+        system("cp install ~/.local/bin/manager_create >/dev/null/");
     }
     else {
-        cout << "Script Already Installed";
-        exit(0);
+        if (directory_exists(home+"/.local/lib/python3.10/site-packages") == 1) {
+            if (file_exists(home+"/.local/lib/python3.10/site-packages/config.py") != 1) {
+                if (file_exists(home+"/.local/lib/python3.10/site-packages/config.py") != 1 && file_exists(home+"/.config/manager/config.py") == 1) {
+                    filesystem::copy(home+"/.config/manager/config.py", home+"/.local/lib/python3.10/site-packages/");
+                }
+                else {
+                    filesystem::copy("config.py", home+"/.local/lib/python3.10/site-packages/");
+                }
+            }
+            if (file_exists(home+"/.local/lib/python3.10/site-packages/menu.py") != 1) {
+                if (file_exists(home+"/.local/lib/python3.10/site-packages/menu.py") != 1 && file_exists(home+"/.config/manager/menu.py") == 1) {
+                    filesystem::copy(home+"/.config/manager/menu.py", home+"/.local/lib/python3.10/site-packages/");
+                }
+                else {
+                    filesystem::copy("menu.py", home+"/.local/lib/python3.10/site-packages/");
+                }
+            }
+            if (file_exists(home+"/.config/manager/config.py") != 1) {
+                if (file_exists(home+"/.config/manager/config.py") != 1 && file_exists(home+"/.local/lib/python3.10/site-packages/") == 1) {
+                    filesystem::copy(home+"/.config/manager/config.py", home+"/.config/manager/");
+                }
+                else {
+                    filesystem::copy("config.py", home+"/.config/manager/");
+                }
+            }
+        }
+        cout << "Script Already Installed" << endl;
     }
+    filesystem::remove("config.py");
+    filesystem::remove("menu.py");
 }
