@@ -3,7 +3,6 @@ import argparse
 import datetime
 import clipboard
 import os
-import subprocess
 import sqlite3
 import sys
 from cryptography.fernet import Fernet
@@ -136,7 +135,7 @@ class Main:
             Time VARCHAR(100),
             Script VARCHAR(100)
         );"""
-        config = """CREATE TABLE IF NOT EXISTS Config (
+        configuration_scheme = """CREATE TABLE IF NOT EXISTS Config (
             Key VARCHAR(200),
             Encryption_Key BLOB,
             Email VARCHAR(200),
@@ -148,12 +147,12 @@ class Main:
         );"""
         self.cur.execute(tables)
         self.cur.execute(log)
-        self.cur.execute(config)
+        self.cur.execute(configuration_scheme)
         self.conn.commit()
         with open(self.home + "/.config/manager/menu.py", "r") as f:
             content = f.read()
             f.read()
-        insertquery = """INSERT INTO Config VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
+        inserter = """INSERT INTO Config VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
         master = Prompt.ask("Set a master password to use", password=True)
         val = Prompt.ask("Enter password again", password=True)
         if master != val:
@@ -186,7 +185,7 @@ class Main:
         backup("config.bak", os.path.join(self.home + "/.config/manager/config.py"),
                os.path.join(self.home + "/.config/manager/backup"))
         console.print("Please run the script again")
-        self.cur.execute(insertquery, (enc, key, email, self.home + "/.config/manager/db.sqlite3", self.home + "/.config/manager/backup/", self.home + "/.config/manager/log/", content, binary))
+        self.cur.execute(inserter, (enc, key, email, self.home + "/.config/manager/db.sqlite3", self.home + "/.config/manager/backup/", self.home + "/.config/manager/log/", content, binary))
         self.conn.commit()
         self.conn.close()
         copyfile(self.home+"/.config/manager/db.sqlite3", self.home+"/.config/manager/backup/db.sqlite3.bak")
