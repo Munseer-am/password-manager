@@ -6,7 +6,7 @@
 #### _2. Run install script using `./install`_
 #### _3. Type `manager` to run the script_
 #### _4. Enter the details_
->_**Warning:** Python3.10 must be installed in your machine to run script_
+>_**Warning:** Python3.10 must be installed in your machine to run the script or errors may occur while execution_
 
 ## _**How to reset password**_
 #### _If you lost or forgot your password you can reset password using command line arguments_
