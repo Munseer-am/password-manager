@@ -2,13 +2,14 @@
 import argparse
 import datetime
 import clipboard
+import numpy as np
 import os
 import sqlite3
 import sys
 from cryptography.fernet import Fernet
 from functools import cache
 from hashlib import sha256
-from random import sample
+from random import choice, sample
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.table import Table
@@ -21,11 +22,13 @@ __author__ = "Munseer-am"
 try:
     from config import config
     from menu import menu
+    from insults import insult
 except ImportError:
     try:
         sys.path.insert(0, os.path.join(os.path.expanduser("~") + "/.config/manager/"))
         from config import config
         from menu import menu
+        from insults import insult
     except ImportError:
         os.system("rm ~/.local/bin/manager")
         os.system("manager_create")
@@ -98,7 +101,6 @@ def decrypt(key: bytes, password: bytes):
 @cache
 def backup(db: str, path: str, dst: str):
     copyfile(path, os.path.join(dst + "/" + db))
-
 
 class Main:
     def __init__(self):
@@ -230,11 +232,12 @@ class Main:
         enc = sha256_encoder(inp)
         i = 0
         while enc != config["KEY"]:
-            console.print("Access Denied!")
             i += 1
             if i >= 3:
+                console.print("Access Denied!")
                 break
             else:
+                console.print(insult())
                 inp = Prompt.ask("\nTry again", password=True)
                 enc = sha256_encoder(inp)
         else:
