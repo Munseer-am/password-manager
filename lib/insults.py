@@ -1,6 +1,9 @@
 import numpy as np
 import random
 
+"""Insults are taken from sudo source code on github"""
+"""Offensive insults are not taken"""
+
 insults = np.array([
     "Just what do you think you're doing Dave?",
     "It can only be attributed to human error.",
