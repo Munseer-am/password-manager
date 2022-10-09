@@ -31,7 +31,7 @@ insults = np.array([
     "You can't get the wood, you know.",
     "You'll starve!",
     "... and it used to be so popular...",
-    "My grandmother can type faster than you"
+    "My grandmother can type faster than you",
     "Pauses for audience applause, not a sausage",
     "Hold it up to the light --- not a brain in sight!",
     "Have a gorilla...",
