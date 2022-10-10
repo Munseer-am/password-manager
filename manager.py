@@ -33,7 +33,6 @@ except ImportError:
         os.system("manager_create")
         exit()
 
-
 parser = argparse.ArgumentParser()
 parser.add_argument("-r", "--reset", help="reset the password of script", action="store_true")
 parser.add_argument("-U", "--uninstall", help="Delete script file from ~/.local/bin/", action="store_true")
@@ -100,6 +99,7 @@ def decrypt(key: bytes, password: bytes):
 @cache
 def backup(db: str, path: str, dst: str):
     copyfile(path, os.path.join(dst + "/" + db))
+
 
 class Main:
     def __init__(self):
@@ -186,10 +186,12 @@ class Main:
         backup("config.bak", os.path.join(self.home + "/.config/manager/config.py"),
                os.path.join(self.home + "/.config/manager/backup"))
         console.print("Please run the script again")
-        self.cur.execute(inserter, (enc, key, email, self.home + "/.config/manager/db.sqlite3", self.home + "/.config/manager/backup/", self.home + "/.config/manager/log/", content, binary))
+        self.cur.execute(inserter, (
+            enc, key, email, self.home + "/.config/manager/db.sqlite3", self.home + "/.config/manager/backup/",
+            self.home + "/.config/manager/log/", content, binary))
         self.conn.commit()
         self.conn.close()
-        copyfile(self.home+"/.config/manager/db.sqlite3", self.home+"/.config/manager/backup/db.sqlite3.bak")
+        copyfile(self.home + "/.config/manager/db.sqlite3", self.home + "/.config/manager/backup/db.sqlite3.bak")
         quit(0)
 
     def reset(self):
@@ -293,7 +295,9 @@ class Main:
             console.print(f"Application: [bold]{email}[/bold]")
 
     def update_data(self, application, app, username, email, password):
-        self.cur.execute(f"UPDATE Passwords SET Application='{app}', Username='{username}', Email='{email}', Password='{password}' WHERE Application='{application}'")
+        self.cur.execute(
+            f"UPDATE Passwords SET Application='{app}', Username='{username}', Email='{email}', Password='{password}' "
+            f"WHERE Application='{application}'")
         self.conn.commit()
         self.conn.close()
 
@@ -350,7 +354,8 @@ class Main:
                 if email == "" or email == " ":
                     email = "".join(_apps[2])
                 password = Prompt.ask("Enter password", password=True).strip()
-                self.update_data(application, app, username, email, encrypt(config["ENCRYPTION_KEY"], password).decode())
+                self.update_data(application, app, username, email,
+                                 encrypt(config["ENCRYPTION_KEY"], password).decode())
                 console.print("Data updated successfully")
             elif option == 6:
                 app = Prompt.ask("Enter the name of the app that you want to delete")
