@@ -2,14 +2,13 @@
 import argparse
 import datetime
 import clipboard
-import numpy as np
 import os
 import sqlite3
 import sys
 from cryptography.fernet import Fernet
 from functools import cache
 from hashlib import sha256
-from random import choice, sample
+from random import sample
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.table import Table
