@@ -45,6 +45,7 @@ int tool() {
     if (is_installed("lolcat") != 0) {
         cout << "Error: lolcat is not installed\n";
         cout << "Installing lolcat...\n";
+        install("lolcat");
     }
     return 0;
 }
