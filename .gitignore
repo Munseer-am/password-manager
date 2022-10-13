@@ -13,3 +13,4 @@ app.py
 demo.*
 a.out
 db.sqlite3
+*.mod
