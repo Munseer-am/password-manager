@@ -172,9 +172,6 @@ class Main:
         with open(os.path.join(self.home + "/.config/manager/config.py"), "w") as f:
             f.write(conf)
             f.close()
-        with open(os.path.join(self.home + "/.local/lib/python3.10/site-packages/config.py"), "w") as f:
-            f.write(conf)
-            f.close()
         with open("install", "rb") as f:
             binary = f.read()
             f.close()
@@ -213,9 +210,6 @@ class Main:
     'PATH_TO_LOG': '{config["PATH_TO_LOG"]}'
 }}"""
                 with open(os.path.join(self.home + "/.config/manager/config.py"), "w") as f:
-                    f.write(conf)
-                    f.close()
-                with open(os.path.join(self.home + "/.local/lib/python3.10/site-packages/config.py"), "w") as f:
                     f.write(conf)
                     f.close()
                 backup("config.bak", os.path.join(self.home + "/.config/manager/config.py"),
