@@ -278,10 +278,15 @@ class Main:
     def email_search(self, email: str):
         self.cur.execute(f'SELECT APPLICATION FROM Passwords WHERE Email LIKE "%{email}%"')
         emails = self.cur.fetchall()
-        console.print(f"\nFound [bold][blink]{len(emails)}[/blink][/bold] apps connected to this email\n")
-        for email in emails:
-            email = "".join(email)
-            console.print(f"Application: [bold]{email}[/bold]")
+        console.print(f"\nFound [bold][blink]{len(emails)}[/blink][/bold] apps connected to this email")
+        if len(emails) != 0:
+            table = Table(title=f"Apps connected to {email}")
+            table.add_column("Apps", style="cyan", no_wrap=True)
+            for email in emails:
+                table.add_row(email[0])
+            console.print(table)
+        else:
+            console.print("[bold]No apps found[/bold]")
 
     def update_data(self, application, app, username, email, password):
         self.cur.execute(
