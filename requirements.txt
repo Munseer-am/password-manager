@@ -1,0 +1,4 @@
+clipboard
+cryptography
+rich
+numpy
