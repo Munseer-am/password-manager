@@ -1,4 +1,0 @@
-clipboard
-cryptography
-rich
-numpy
