@@ -338,19 +338,22 @@ class Main:
                 application = Prompt.ask("Enter the application that you want to update").strip().title()
                 self.cur.execute(f"SELECT * FROM Passwords WHERE Application='{application}'")
                 _apps = self.cur.fetchone()
-                app = Prompt.ask(f"Enter name of app (leave blank to use {''.join(_apps[0])})").strip()
-                if app == "" or app == " ":
-                    app = "".join(_apps[0])
-                username = Prompt.ask(f"Enter username (leave blank to use {''.join(_apps[1])})").strip()
-                if username == "" or username == " ":
-                    username = "".join(_apps[1])
-                email = Prompt.ask(f"Enter email/phone (leave blank to use {''.join(_apps[2])})").strip()
-                if email == "" or email == " ":
-                    email = "".join(_apps[2])
-                password = Prompt.ask("Enter password", password=True).strip()
-                self.update_data(application, app, username, email,
-                                 encrypt(config["ENCRYPTION_KEY"], password).decode())
-                console.print("Data updated successfully")
+                if _apps != None:
+                    app = Prompt.ask(f"Enter name of app (leave blank to use {''.join(_apps[0])})").strip()
+                    if app == "" or app == " ":
+                        app = "".join(_apps[0])
+                    username = Prompt.ask(f"Enter username (leave blank to use {''.join(_apps[1])})").strip()
+                    if username == "" or username == " ":
+                        username = "".join(_apps[1])
+                    email = Prompt.ask(f"Enter email/phone (leave blank to use {''.join(_apps[2])})").strip()
+                    if email == "" or email == " ":
+                        email = "".join(_apps[2])
+                    password = Prompt.ask("Enter password", password=True).strip()
+                    self.update_data(application, app, username, email,
+                                    encrypt(config["ENCRYPTION_KEY"], password).decode())
+                    console.print("Data updated successfully")
+                else:
+                    console.print("[bold]No such app to update[/bold]")
             elif option == 6:
                 app = Prompt.ask("Enter the name of the app that you want to delete")
                 self.remove(app)
