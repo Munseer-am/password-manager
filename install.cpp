@@ -68,10 +68,10 @@ int main() {
     install_font();
     system("clear");
     system("figlet -c -f Bloody 'Munseer' | lolcat");
-    if (file_exists(home+"/.local/bin/manager") != 1) {
+    if (file_exists("/usr/local/bin/manager") != 1) {
         cout << "Installing Script\n";
-        system("cp manager.py ~/.local/bin/manager");
-        system("chmod +x ~/.local/bin/manager");
+        system("sudo cp manager.py /usr/local/bin/manager");
+        system("sudo chmod +x /usr/local/bin/manager");
         cout << "Creating Required Directories\n";
         if (directory_exists(home+"/.config/manager/") != 1) {
             filesystem::create_directory(home+"/.config/manager/");
@@ -98,53 +98,29 @@ int main() {
         if (file_exists(home+"/.config/manager/insults.py") != 1) {
             filesystem::copy("lib/insults.py", home+"/.config/manager/");
         }
-        if (file_exists(home+"/.local/bin/manager_create") != 1) {
-            system("cp install ~/.local/bin/manager_create");
+        if (file_exists(home+"/usr/local/bin/manager_create") != 1) {
+            system("sudo cp install /usr/local/bin/manager_create && sudo chmod +x /usr/local/bin/manager_create");
         }
         cout << "TO RUN THE SCRIPT TYPE `manager`" << endl;
     }
     else {
-        if (directory_exists(home+"/.local/lib/python3.10/site-packages") == 1) {
-            if (file_exists(home+"/.local/lib/python3.10/site-packages/config.py") != 1) {
-                if (file_exists(home+"/.local/lib/python3.10/site-packages/config.py") != 1 && file_exists(home+"/.config/manager/config.py") == 1) {
-                    filesystem::copy(home+"/.config/manager/config.py", home+"/.local/lib/python3.10/site-packages/");
-                }
-                else {
-                    filesystem::copy("lib/config.py", home+"/.local/lib/python3.10/site-packages/");
-                }
-            }
-            if (file_exists(home+"/.local/lib/python3.10/site-packages/menu.py") != 1) {
-                if (file_exists(home+"/.local/lib/python3.10/site-packages/menu.py") != 1 && file_exists(home+"/.config/manager/menu.py") == 1) {
-                    filesystem::copy(home+"/.config/manager/menu.py", home+"/.local/lib/python3.10/site-packages/");
-                }
-                else {
-                    filesystem::copy("lib/menu.py", home+"/.local/lib/python3.10/site-packages/");
-                }
-            }
-            if (file_exists(home+"/.local/lib/python3.10/site-packages/insults.py") != 1) {
-                if (file_exists(home+"/.local/lib/python3.10/site-packages/insults.py") != 1 && file_exists(home+"/.config/manager/insults.py") == 1) {
-                    filesystem::copy(home+"/.config/manager/insults.py", home+"/.local/lib/python3.10/site-packages/");
-                }
-                else {
-                    filesystem::copy("lib/insults.py", home+"/.local/lib/python3.10/site-packages/");
-                }
-            }
-            if (file_exists(home+"/.config/manager/config.py") != 1) {
-                if (file_exists(home+"/.config/manager/config.py") != 1 && file_exists(home+"/.local/lib/python3.10/site-packages/") == 1) {
-                    filesystem::copy(home+"/.local/lib/python3.10/site-packages/config.py", home+"/.config/manager/");
-                }
-                else {
-                    filesystem::copy("lib/config.py", home+"/.config/manager/");
-                }
-            }
-            if (file_exists(home+"/.config/manager/insults.py") != 1) {
-                if (file_exists(home+"/.config/manager/config.py") != 1 && file_exists(home+"/.local/lib/python3.10/site-packages/") == 1) {
-                    filesystem::copy(home+"/.local/lib/python3.10/site-packages/insults.py", home+"/.config/manager/");
-                }
-                else {
-                    filesystem::copy("lib/insults.py", home+"/.config/manager/");
-                }
-            }
+        if (file_exists(home+"/.config/manager/config.py") != 1) {
+            filesystem::copy("lib/config.py", home+"/.config/manager/");
+        }
+        else {
+            cout << "Found Existing Configuration\n";
+        }
+        if (file_exists(home+"/.config/manager/db.sqlite3") == 1) {
+            cout << "Found Existing Database\n";
+        }
+        if (file_exists(home+"/.config/manager/menu.py") != 1) {
+            filesystem::copy("lib/menu.py", home+"/.config/manager/");
+        }
+        if (file_exists(home+"/.config/manager/insults.py") != 1) {
+            filesystem::copy("lib/insults.py", home+"/.config/manager/");
+        }
+        if (file_exists(home+"/usr/local/bin/manager_create") != 1) {
+            system("cp install /usr/local/bin/manager_create && sudo chmod +x /usr/local/bin/manager_create");
         }
         cout << "Script Already Installed" << endl;
     }
