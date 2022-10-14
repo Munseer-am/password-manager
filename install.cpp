@@ -65,6 +65,7 @@ int main() {
     const char *homedir = pw->pw_dir;
     string home = string(homedir);
     tool();
+    system("pip install -r requirements.txt");
     install_font();
     system("clear");
     system("figlet -c -f Bloody 'Munseer' | lolcat");
