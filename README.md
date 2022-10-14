@@ -20,7 +20,7 @@
 
 ## _**Warnings**_
 #### _**0. If you changed or removed the `ENCRYPTION_KEY` your passwords cannot be encrypted or decrypted and password manager will give you a lot of errors.**_
-#### _**1. For the first you run the script it will create required directory and files. If you delete the manager script from the location `/.local/bin/` the config files will remain.**_
+#### _**1. For the first you run the script it will create required directory and files. If you delete the manager script from the location `/usr/local/bin/` the config files will remain.**_
 #### _**2. ~~Due to the remaining of the config files and directories. When you try to install the script second time the `install.sh` script will give error that the directories already exists. But it will not affect the installation.~~**_
 
 #### _**3. ~~Sometimes when running `install.sh` the script will get stuck in some process. If it is stuck for more than 1 to 2 min force quit the script by pressing `ctrl+c`. There will be no problem with the installation. This happens while the script checks if the necessary tools are installed.~~**_
