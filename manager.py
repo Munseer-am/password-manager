@@ -19,19 +19,14 @@ from time import time, sleep
 __author__ = "Munseer-am"
 
 try:
+    sys.path.insert(0, os.path.join(os.path.expanduser("~") + "/.config/manager/"))
     from config import config
     from menu import menu
     from insults import insult
 except ImportError:
-    try:
-        sys.path.insert(0, os.path.join(os.path.expanduser("~") + "/.config/manager/"))
-        from config import config
-        from menu import menu
-        from insults import insult
-    except ImportError:
-        os.system("rm ~/.local/bin/manager")
-        os.system("manager_create")
-        exit()
+    os.system("sudo rm /usr/local/bin/manager")
+    os.system("manager_create")
+    exit()
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-r", "--reset", help="reset the password of script", action="store_true")
@@ -81,7 +76,7 @@ def uninstall_script():
     if hashed != config["KEY"]:
         console.print("Invalid Password")
     else:
-        os.system("rm ~/.local/bin/manager")
+        os.system("sudo rm /usr/local/bin/manager")
 
 
 @cache
