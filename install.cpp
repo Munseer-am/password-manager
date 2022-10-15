@@ -108,12 +108,6 @@ int main() {
         if (file_exists(home+"/.config/manager/config.py") != 1) {
             filesystem::copy("lib/config.py", home+"/.config/manager/");
         }
-        else {
-            cout << "Found Existing Configuration\n";
-        }
-        if (file_exists(home+"/.config/manager/db.sqlite3") == 1) {
-            cout << "Found Existing Database\n";
-        }
         if (file_exists(home+"/.config/manager/menu.py") != 1) {
             filesystem::copy("lib/menu.py", home+"/.config/manager/");
         }
