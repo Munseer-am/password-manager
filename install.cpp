@@ -114,7 +114,7 @@ int main() {
         if (file_exists(home+"/.config/manager/insults.py") != 1) {
             filesystem::copy("lib/insults.py", home+"/.config/manager/");
         }
-        if (file_exists("/usr/local/bin/manager_create") == 1) {
+        if (file_exists("/usr/local/bin/manager_create") != 1) {
             system("cp install /usr/local/bin/manager_create && sudo chmod +x /usr/local/bin/manager_create");
         }
         cout << "Script Already Installed" << endl;
