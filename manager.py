@@ -310,10 +310,20 @@ class Main:
 
     @cache
     def remove(self, app: str):
-        self.cur.execute(f'DELETE FROM Passwords WHERE Application LIKE "%{app}%"')
-        console.print(f"Successfully Deleted {app.title()} From Database")
-        self.conn.commit()
-        self.conn.close()
+        if app == " " or app == "":
+            console.print("Invalid Input")
+        else:
+            self.cur.execute(f'SELECT Application FROM Passwords WHERE Application="{app.capitalize()}"')
+            _apps = self.cur.fetchall()
+            if len(_apps) != 0:
+                for _app in _apps:
+                    _app = "".join(_app)
+                    self.cur.execute(f'DELETE FROM Passwords WHERE Application LIKE "%{_app}%"')
+                    console.print(f"Successfully Deleted {_app} From Database")
+                    self.conn.commit()
+                self.conn.close()
+            else:
+                console.print("no such app to delete".capitalize())
 
     @cache
     def main(self):
