@@ -217,6 +217,7 @@ class Main:
                 console.print("Password Changed Successfully")
                 quit(0)
 
+    @cache
     def security(self):
         inp = Prompt.ask("Enter password to unlock file", password=True)
         enc = sha256_encoder(inp)
@@ -234,6 +235,7 @@ class Main:
             console.print("Access Granted!")
             self.main()
 
+    @cache
     def log(self, app: str, current_time: str, script: str):
         with open(os.path.join(config["PATH_TO_LOG"] + "/logs.log"), "a") as f:
             f.write(f"\nTime: {current_time} Script: {script} Application: {app}")
@@ -243,6 +245,7 @@ class Main:
         self.conn.commit()
         self.conn.close()
 
+    @cache
     def list_apps(self):
         self.cur.execute("SELECT Application FROM Passwords")
         _apps = self.cur.fetchall()
@@ -255,6 +258,7 @@ class Main:
                 _table.add_row("".join(_app))
             console.print(_table, justify="left")
 
+    @cache
     def fetch(self, app: str):
         self.cur.execute(f"SELECT * FROM Passwords WHERE Application LIKE '%{app}%'")
         credentials = self.cur.fetchall()
@@ -275,6 +279,7 @@ class Main:
         else:
             console.print("[bold]Oops! looks like there are no results for you[/bold]")
 
+    @cache
     def email_search(self, email: str):
         self.cur.execute(f'SELECT APPLICATION FROM Passwords WHERE Email LIKE "%{email}%"')
         emails = self.cur.fetchall()
@@ -288,6 +293,7 @@ class Main:
         else:
             console.print("[bold]No apps found[/bold]")
 
+    @cache
     def update_data(self, application, app, username, email, password):
         self.cur.execute(
             f"UPDATE Passwords SET Application='{app}', Username='{username}', Email='{email}', Password='{password}' "
@@ -295,18 +301,21 @@ class Main:
         self.conn.commit()
         self.conn.close()
 
+    @cache
     def add(self, app: str, username: str, email, password: str):
         inserter = f"""INSERT INTO Passwords VALUES(?, ?, ?, ?)"""
         self.cur.execute(inserter, (app.title(), username, email, password))
         self.conn.commit()
         self.conn.close()
 
+    @cache
     def remove(self, app: str):
         self.cur.execute(f'DELETE FROM Passwords WHERE Application LIKE "%{app}%"')
         console.print(f"Successfully Deleted {app.title()} From Database")
         self.conn.commit()
         self.conn.close()
 
+    @cache
     def main(self):
         menu()
         try:
