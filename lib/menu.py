@@ -1,11 +1,16 @@
+from rich.console import Console
+
+console = Console()
+
+
 def menu():
-    print("\n---------------Menu---------------")
-    print("[1] Get all creds of specific app")
-    print("[2] List apps in database")
-    print("[3] Find accounts using email/phone")
-    print("[4] Add new app to database")
-    print("[5] Update Data")
-    print("[6] Delete app from database")
-    print("[7] Generate password")
-    print("[8] Exit")
-    print("------------------------------------")
+    console.print("\n---------------Menu---------------")
+    console.print("[bold][1] Get all creds of specific app[/bold]")
+    console.print("[bold][2] List apps in database[/bold]")
+    console.print("[bold][3] Find accounts using email/phone[/bold]")
+    console.print("[bold][4] Add new app to database[/bold]")
+    console.print("[bold][5] Update Data[/bold]")
+    console.print("[bold][6] Delete app from database[/bold]")
+    console.print("[bold][7] Generate password[/bold]")
+    console.print("[bold][8] Exit[/bold]")
+    console.print("------------------------------------")
