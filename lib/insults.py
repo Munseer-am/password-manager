@@ -48,6 +48,6 @@ insults = np.array([
     "I think ... err ... I think ... I think I'll go home",
 ])
 
+
 def insult():
     return "".join(random.choice(insults))
-
