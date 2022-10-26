@@ -294,7 +294,7 @@ class Main:
             console.print("[bold]No apps found[/bold]")
 
     @cache
-    def update_data(self, application, app, username, email, password):
+    def update_data(self, application: str, app: str, username: str, email, password: bytes):
         self.cur.execute(
             f"UPDATE Passwords SET Application='{app}', Username='{username}', Email='{email}', Password='{password}' "
             f"WHERE Application='{application}'")
