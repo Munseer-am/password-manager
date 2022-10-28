@@ -50,6 +50,4 @@ insults = np.array([
 
 
 def insult():
-    return "".join(insults[random.choice(range(len(insults) - 1)) + 1])
-
-print(insult())
+    return "".join(insults[random.choice(range(len(insults) - 1)) // 2 + 4])
