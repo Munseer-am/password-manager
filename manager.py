@@ -15,6 +15,7 @@ from rich.table import Table
 from shutil import copyfile
 from string import ascii_lowercase, ascii_uppercase, digits
 from time import time, sleep
+from threading import Thread
 
 __author__ = "Munseer-am"
 
@@ -238,12 +239,12 @@ class Main:
     @cache
     def log(self, app: str, current_time: str, script: str):
         with open(os.path.join(config["PATH_TO_LOG"] + "/logs.log"), "a") as f:
-            f.write(f"\nTime: {current_time} Script: {script} Application: {app}")
+            f.write(f"\nTime: {current_time} Script: {script} Application: {app.title()}")
             f.close()
         inserter = f"""INSERT INTO Log VALUES (?, ?, ?)"""
         self.cur.execute(inserter, (app.title(), current_time, script))
         self.conn.commit()
-        self.conn.close()
+        # self.conn.close()
 
     @cache
     def list_apps(self):
@@ -335,8 +336,10 @@ class Main:
                 if app == "":
                     console.print("Invalid Input")
                 else:
+                    thread = Thread(target=self.log, args=(app, x, __file__,))
+                    thread.daemon = True
+                    thread.run()
                     self.fetch(app)
-                    self.log(app, x, __file__)
             elif option == 2:
                 self.list_apps()
             elif option == 3:
@@ -357,7 +360,7 @@ class Main:
                 application = Prompt.ask("Enter the application that you want to update").strip().title()
                 self.cur.execute(f"SELECT * FROM Passwords WHERE Application='{application}'")
                 _apps = self.cur.fetchone()
-                if _apps != None:
+                if _apps is not None:
                     app = Prompt.ask(f"Enter name of app (leave blank to use {''.join(_apps[0])})").strip()
                     if app == "" or app == " ":
                         app = "".join(_apps[0])
@@ -369,7 +372,7 @@ class Main:
                         email = "".join(_apps[2])
                     password = Prompt.ask("Enter password", password=True).strip()
                     self.update_data(application, app, username, email,
-                                    encrypt(config["ENCRYPTION_KEY"], password).decode())
+                                     encrypt(config["ENCRYPTION_KEY"], password).decode())
                     console.print("Data updated successfully")
                 else:
                     console.print("[bold]No such app to update[/bold]")
