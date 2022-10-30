@@ -165,7 +165,10 @@ class Main:
         email = sha256_encoder(email)
         key = Fernet.generate_key()
         enc = sha256_encoder(master)
-        conf = f"""config = {{
+        conf = f"""# config file for manager used for many purpose
+# editing it may break the program
+# edit at your own risk\n
+config = {{
     'KEY': '{enc}',
     'ENCRYPTION_KEY': {key},
     'EMAIL': '{email}',
@@ -205,7 +208,10 @@ class Main:
                 console.print("Password does not match")
             else:
                 key = sha256_encoder(master)
-                conf = f"""config = {{
+                conf = f"""# config file for manager used for many purpose
+# editing it may break the program
+# edit at your own risk\n
+config = {{
     'KEY': '{key}',
     'ENCRYPTION_KEY': {config["ENCRYPTION_KEY"]},
     'EMAIL': '{config["EMAIL"]}',
