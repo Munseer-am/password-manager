@@ -102,14 +102,17 @@ class Main:
         super(Main, self).__init__()
         self.home = os.path.expanduser("~")
         try:
-            self.conn = sqlite3.connect(os.path.join(self.home + "/.config/manager/db.sqlite3"))
-            self.cur = self.conn.cursor()
-        except sqlite3.OperationalError:
-            try:
+            if os.path.exists(os.path.join(self.home + "/.config/manager/db.sqlite3")):
+                self.conn = sqlite3.connect(os.path.join(self.home + "/.config/manager/db.sqlite3"))
+                self.cur = self.conn.cursor()
+            elif os.path.exists(os.path.join(self.home + "/.config/manager/backup/db.sqlite3.bak")):
                 self.conn = sqlite3.connect(os.path.join(self.home + "/.config/manager/backup/db.sqlite3.bak"))
                 self.cur = self.conn.cursor()
-            except sqlite3.OperationalError:
-                os.system("manager_create")
+            else:
+                self.conn = sqlite3.connect(os.path.join(self.home + "/.config/manager/db.sqlite3"))
+                self.cur = self.conn.cursor()
+        except sqlite3.OperationalError:
+            os.system("manager_create")
         if is_not_configured():
             self.set_details()
         else:
@@ -332,7 +335,7 @@ class Main:
         try:
             option = int(input("Choose one option: "))
             if option == 1:
-                app = Prompt.ask("\nEnter the name of the application").strip()
+                app = Prompt.ask("Enter the name of the application").strip()
                 if app == "":
                     console.print("Invalid Input")
                 else:
