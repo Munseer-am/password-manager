@@ -13,4 +13,3 @@ demo.*
 a.out
 db.sqlite3
 *.mod
-*.go
