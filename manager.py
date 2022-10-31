@@ -361,6 +361,7 @@ config = {{
                 pas = Prompt.ask("Do you want to generate new password", choices=["y", "n"], default="y").strip()
                 if pas == "y":
                     password = generate_password()
+                    copy(password)
                 else:
                     password = Prompt.ask("Enter password", password=True).strip()
                 self.add(app, username, email, encrypt(config['ENCRYPTION_KEY'], password))
