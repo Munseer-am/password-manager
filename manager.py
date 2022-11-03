@@ -102,16 +102,18 @@ class Main:
         super(Main, self).__init__()
         self.home = os.path.expanduser("~")
         try:
-            if os.path.exists(os.path.join(self.home + "/.config/manager/db.sqlite3")):
-                self.conn = sqlite3.connect(os.path.join(self.home + "/.config/manager/db.sqlite3"))
-                self.cur = self.conn.cursor()
-            elif os.path.exists(os.path.join(self.home + "/.config/manager/backup/db.sqlite3.bak")):
-                self.conn = sqlite3.connect(os.path.join(self.home + "/.config/manager/backup/db.sqlite3.bak"))
+            if os.path.exists(os.path.join(self.home + "/.config/manager/")):
+                if os.path.exists(os.path.join(self.home + "/.config/manager/db.sqlite3")):
+                    self.conn = sqlite3.connect(os.path.join(self.home + "/.config/manager/db.sqlite3"))
+                elif os.path.exists(os.path.join(self.home + "/.config/manager/backup/db.sqlite3.bak")):
+                    self.conn = sqlite3.connect(os.path.join(self.home + "/.config/manager/backup/db.sqlite3.bak"))
+                else:
+                    self.conn = sqlite3.connect(os.path.join(self.home + "/.config/manager/db.sqlite3"))
                 self.cur = self.conn.cursor()
             else:
-                self.conn = sqlite3.connect(os.path.join(self.home + "/.config/manager/db.sqlite3"))
-                self.cur = self.conn.cursor()
-        except sqlite3.OperationalError:
+                raise FileNotFoundError
+        except FileNotFoundError:
+            os.system("sudo rm /usr/local/bin/manager")
             os.system("manager_create")
         if is_not_configured():
             self.set_details()
