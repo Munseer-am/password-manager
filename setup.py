@@ -72,7 +72,7 @@ class Main:
 			if self.exists(self.home+"/.config/manager/backup/") != True:
 				os.mkdir(self.home+"/.config/manager/backup/")
 			print("Moving Files")
-			if self.exists(home+"/.config/manager/config.py"):
+			if self.exists(self.home+"/.config/manager/config.py"):
 				print("Found Existing Configuration")
 			else:
 				shutil.copy("lib/config.py", self.home+"/.config/manager/config.py")
