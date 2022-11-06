@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 import os
+import subprocess
 from distutils.spawn import find_executable
 
 
@@ -8,6 +9,7 @@ class Main:
 		super(Main, self).__init__()
 		self.home = os.path.expanduser("~")
 		self.base_dir = os.getcwd()
+		self.main()
 
 	def is_installed(self, tool: str):
 		return find_executable(tool)
@@ -16,17 +18,17 @@ class Main:
 		return os.path.exists(path)
 
 	def install(self, tool: str):
-		if is_installed("apt") is not None:
+		if self.is_installed("apt") is not None:
 			os.system(f"sudo apt install {tool} -y")
-		elif is_installed("pacman") is not None:
+		elif self.is_installed("pacman") is not None:
 			os.system(f"sudo pacman -Sy {tool}")
-		elif is_installed("dnf") is not None:
+		elif self.is_installed("dnf") is not None:
 			os.system(f"sudo dnf install {tool}")
 		else:
 			print("No installation canditate found")
 
 	def install_tool(self, tool: str):
-		if is_installed(tool) is None:
+		if self.is_installed(tool) is None:
 			print(f"Error: {tool} is not installed...")
 			print(f"Installing {tool}...")
 			self.install(tool)
@@ -39,13 +41,56 @@ class Main:
 				except PermissionError:
 					os.system("sudo cp Bloody.flf /usr/share/figlet/fonts/")
 		else:
-			try:
-				shutil.copy("Bloody.flf", "/usr/share/figlet/fonts/Bloody.flf")
-			except PermissionError:
-				os.system("sudo cp Bloody.flf /usr/share/figlet/")
+			if self.exists("/usr/share/figlet/Bloody.flf") != True:
+				try:
+					shutil.copy("Bloody.flf", "/usr/share/figlet/fonts/Bloody.flf")
+				except PermissionError:
+					os.system("sudo cp Bloody.flf /usr/share/figlet/")
 
 	def main(self):
-		pass
+		self.install_tool("figlet")
+		self.install_tool("lolcat")
+		if self.exists("requirements.txt"):
+			subprocess.call(["pip", "install", "-r", "requirements.txt"])
+		else:
+			print("Requirements File Missing")
+		self.install_font()
+		os.system("clear && figlet -c -f Bloody 'Munseer' | lolcat")
+		if self.exists("/usr/local/bin/manager") != True:
+			print("Installing Script")
+			os.system("sudo cp manager.py /usr/local/bin/manager && sudo chmod +rwx /usr/local/bin/manager")
+			print("Creating required directories")
+			if self.exists(self.home+"/.config/manager") != True:
+				os.mkdir(self.home+"/.config/manager/")
+			if self.exists(self.home+"/.config/manager/log/") != True:
+				os.mkdir(self.home+"/.config/manager/log/")
+			if self.exists(self.home+"/.config/manager/backup/") != True:
+				os.mkdir(self.home+"/.config/manager/backup/")
+			print("Moving Files")
+			if self.exists(home+"/.config/manager/config.py"):
+				print("Found Existing Configuration")
+			else:
+				shutil.copy("lib/config.py", self.home+"/.config/manager/config.py")
+			if self.exists(home+"/.config/manager/db.sqlite3"):
+				print("Found Existing Database")
+			if self.exists(self.home+"/.config/manager/menu.py") != True:
+				shutil.copy("lib/menu.py", self.home+"/.config/manager/menu.py")
+			if self.exists(self.home+"/.config/manager/insults.py") != True:
+				shutil.copy("lib/insults.py", self.home+"/.config/manager/insults.py")
+			if self.exists("/usr/local/bin/manager_repair") != True:
+				os.system("sudo cp setup.py /usr/local/bin/manager_repair && sudo chmod +rwx /usr/local/bin/manager_repair")
+			print("TO RUN THE SCRIPT TYPE `manager`")
+		else:
+			if self.exists(self.home+"/.config/manager/config.py") != 1:
+				shutil.copy("lib/config.py", self.home+"/.config/manager/config.py")
+			if self.exists(self.home+"/.config/manager/menu.py") != True:
+				shutil.copy("lib/menu.py", self.home+"/.config/manager/menu.py")
+			if self.exists(self.home+"/.config/manager/insults.py") != True:
+				shutil.copy("lib/insults.py", self.home+"/.config/manager/insults.py")
+			if self.exists("/usr/local/bin/manager_repair") != True:
+				os.system("sudo cp setup.py /usr/local/bin/manager_repair && sudo chmod +rwx /usr/local/bin/manager_repair")
+			print("Script Already Installed")
+
 
 if __name__ == "__main__":
 	Main().install_font()
