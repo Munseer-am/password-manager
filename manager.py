@@ -137,19 +137,8 @@ class Main:
             Time VARCHAR(100),
             Script VARCHAR(100)
         );"""
-        configuration_scheme = """CREATE TABLE IF NOT EXISTS Config (
-            Key VARCHAR(200),
-            Encryption_Key BLOB,
-            Email VARCHAR(200),
-            Path_to_database VARCHAR(200),
-            Path_to_backup VARCHAR(200),
-            Path_to_log VARCHAR(200),
-            menu VARCHAR(500),
-            INSTALL BLOB
-        );"""
         self.cur.execute(tables)
         self.cur.execute(log)
-        self.cur.execute(configuration_scheme)
         self.conn.commit()
         with open(self.home + "/.config/manager/menu.py", "r") as f:
             content = f.read()
@@ -187,9 +176,6 @@ config = {{
         backup("config.bak", os.path.join(self.home + "/.config/manager/config.py"),
                os.path.join(self.home + "/.config/manager/backup"))
         console.print("Please run the script again")
-        self.cur.execute(inserter, (
-            enc, key, email, self.home + "/.config/manager/db.sqlite3", self.home + "/.config/manager/backup/",
-            self.home + "/.config/manager/log/", content, binary))
         self.conn.commit()
         self.conn.close()
         copyfile(self.home + "/.config/manager/db.sqlite3", self.home + "/.config/manager/backup/db.sqlite3.bak")
