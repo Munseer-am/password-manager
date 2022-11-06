@@ -26,7 +26,7 @@ try:
     from insults import insult
 except ImportError:
     os.system("sudo rm /usr/local/bin/manager")
-    os.system("manager_create")
+    os.system("manager_repair")
     exit()
 
 parser = argparse.ArgumentParser()
@@ -114,7 +114,7 @@ class Main:
                 raise FileNotFoundError
         except FileNotFoundError:
             os.system("sudo rm /usr/local/bin/manager")
-            os.system("manager_create")
+            os.system("manager_repair")
         if is_not_configured():
             self.set_details()
         else:
