@@ -2,12 +2,12 @@
 import os
 from distutils.spawn import find_executable
 
+
 class Main:
 	def __init__(self):
 		super(Main, self).__init__()
 		self.home = os.path.expanduser("~")
 		self.base_dir = os.getcwd()
-		print(self.base_dir)
 
 	def is_installed(self, tool: str):
 		return find_executable(tool)
@@ -31,5 +31,21 @@ class Main:
 			print(f"Installing {tool}...")
 			self.install(tool)
 
+	def install_font(self):
+		if self.exists("/usr/share/figlet/fonts"):
+			if self.exists("/usr/share/figlet/fonts/Bloody.flf") != True:
+				try:
+					shutil.copy("Bloody.flf", "/usr/share/figlet/fonts/Bloody.flf")
+				except PermissionError:
+					os.system("sudo cp Bloody.flf /usr/share/figlet/fonts/")
+		else:
+			try:
+				shutil.copy("Bloody.flf", "/usr/share/figlet/fonts/Bloody.flf")
+			except PermissionError:
+				os.system("sudo cp Bloody.flf /usr/share/figlet/")
+
+	def main(self):
+		pass
+
 if __name__ == "__main__":
-	Main()
+	Main().install_font()
