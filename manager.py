@@ -255,7 +255,6 @@ config = {{
         inserter = f"""INSERT INTO Log VALUES (?, ?, ?)"""
         self.cur.execute(inserter, (app.title(), current_time, script))
         self.conn.commit()
-        # self.conn.close()
 
     @cache
     def list_apps(self):
@@ -351,6 +350,7 @@ config = {{
                     thread.daemon = True
                     thread.run()
                     self.fetch(app)
+                    self.conn.close()
             elif option == 2:
                 self.list_apps()
             elif option == 3:
