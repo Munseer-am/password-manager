@@ -8,8 +8,12 @@ class Main:
 	def __init__(self):
 		super(Main, self).__init__()
 		self.home = os.path.expanduser("~")
-		self.base_dir = os.getcwd()
-		self.main()
+		self.base_dir = os.path.basename(os.getcwd())
+		if self.base_dir != "password-manager":
+			print("""Run in the "password-manager" directory """)
+		else:
+			self.main()
+		
 
 	def is_installed(self, tool: str):
 		return find_executable(tool)
@@ -93,4 +97,4 @@ class Main:
 
 
 if __name__ == "__main__":
-	Main().install_font()
+	Main()
