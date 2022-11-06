@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 import os
+import shutil
 import subprocess
 from distutils.spawn import find_executable
 
@@ -75,7 +76,7 @@ class Main:
 				print("Found Existing Configuration")
 			else:
 				shutil.copy("lib/config.py", self.home+"/.config/manager/config.py")
-			if self.exists(home+"/.config/manager/db.sqlite3"):
+			if self.exists(self.home+"/.config/manager/db.sqlite3"):
 				print("Found Existing Database")
 			if self.exists(self.home+"/.config/manager/menu.py") != True:
 				shutil.copy("lib/menu.py", self.home+"/.config/manager/menu.py")
