@@ -12,7 +12,7 @@ from random import sample
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.table import Table
-from shutil import copyfile
+from shutil import copyfile, rmtree
 from string import ascii_lowercase, ascii_uppercase, digits
 from time import time, sleep
 from threading import Thread
@@ -32,6 +32,7 @@ except ImportError:
 parser = argparse.ArgumentParser()
 parser.add_argument("-r", "--reset", help="reset the password of script", action="store_true")
 parser.add_argument("-U", "--uninstall", help="Delete script file from /usr/local/bin/", action="store_true")
+parser.add_argument("--REMOVE", help="Delete all files and directories related password manager", action="store_true")
 args = parser.parse_args()
 
 start = time()
@@ -122,6 +123,8 @@ class Main:
                 self.reset()
             elif args.uninstall:
                 uninstall_script()
+            elif args.REMOVE:
+                self.delete()
             else:
                 self.security()
 
@@ -169,9 +172,6 @@ config = {{
 }}"""
         with open(os.path.join(self.home + "/.config/manager/config.py"), "w") as f:
             f.write(conf)
-            f.close()
-        with open("install", "rb") as f:
-            binary = f.read()
             f.close()
         backup("config.bak", os.path.join(self.home + "/.config/manager/config.py"),
                os.path.join(self.home + "/.config/manager/backup"))
@@ -293,6 +293,13 @@ config = {{
             else:
                 console.print("[bold]No apps found[/bold] 😓")
 
+    def delete(self):
+        uninstall_script()
+        if os.path.exists(self.home+"/.config/manager/"):
+            rmtree(self.home+"/.config/manager/")
+        if os.path.exists("/usr/local/bin/manager_repair"):
+            os.system("sudo rm /usr/local/bin/manager_repair")
+
     @cache
     def update_data(self, application: str, app: str, username: str, email, password: bytes):
         self.cur.execute(
@@ -347,16 +354,7 @@ config = {{
                 self.email_search(email)
             elif option == 4:
                 app = Prompt.ask("Enter the name of the application").strip()
-                if username = Prompt.ask("Enter username of the application").strip()
-                    email = Prompt.ask("Enter your email address").strip()
-                    pas = Prompt.ask("Do you want to generate new password", choices=["y", "n"], default="y").strip()
-                    if pas == "y":
-                        password = generate_password()
-                        copy(password)
-                    else:
-                        password = Prompt.ask("Enter password", password=True).strip()
-                    self.add(app, username, email, encrypt(config['ENCRYPTION_KEY'], password))
-                    backup("backup.db", config["PATH_TO_DATABASE"], config["PATH_TO_BACKUP"])pp == " " or app == "":
+                if app != "" or app == " ":
                     console.print("Invalid Input")
                 else:
                     username = Prompt.ask("Enter username of the application").strip()
@@ -367,8 +365,8 @@ config = {{
                         copy(password)
                     else:
                         password = Prompt.ask("Enter password", password=True).strip()
-                    self.add(app, username, email, encrypt(config['ENCRYPTION_KEY'], password))
-                    backup("backup.db", config["PATH_TO_DATABASE"], config["PATH_TO_BACKUP"])
+                        self.add(app, username, email, encrypt(config['ENCRYPTION_KEY'], password))
+                        backup("backup.db", config["PATH_TO_DATABASE"], config["PATH_TO_BACKUP"])
             elif option == 5:
                 application = Prompt.ask("Enter the application that you want to update").strip().title()
                 self.cur.execute(f"SELECT * FROM Passwords WHERE Application='{application}'")
