@@ -278,17 +278,20 @@ config = {{
 
     @cache
     def email_search(self, email: str):
-        self.cur.execute(f'SELECT APPLICATION FROM Passwords WHERE Email LIKE "%{email}%"')
-        emails = self.cur.fetchall()
-        console.print(f"\nFound [bold][blink]{len(emails)}[/blink][/bold] apps connected to this email")
-        if len(emails) != 0:
-            table = Table(title=f"Apps connected to {email}")
-            table.add_column("Apps", style="cyan", no_wrap=True)
-            for email in emails:
-                table.add_row(email[0])
-            console.print(table)
+        if email == "" or email == " ":
+            console.print("[bold]Invalid Input[/bold]")
         else:
-            console.print("[bold]No apps found[/bold] 😓")
+            self.cur.execute(f'SELECT APPLICATION FROM Passwords WHERE Email LIKE "%{email}%"')
+            emails = self.cur.fetchall()
+            console.print(f"\nFound [bold][blink]{len(emails)}[/blink][/bold] apps connected to this email")
+            if len(emails) != 0:
+                table = Table(title=f"Apps connected to {email}")
+                table.add_column("Apps", style="cyan", no_wrap=True)
+                for email in emails:
+                    table.add_row(email[0])
+                console.print(table)
+            else:
+                console.print("[bold]No apps found[/bold] 😓")
 
     @cache
     def update_data(self, application: str, app: str, username: str, email, password: bytes):
@@ -344,16 +347,19 @@ config = {{
                 self.email_search(email)
             elif option == 4:
                 app = Prompt.ask("Enter the name of the application").strip()
-                username = Prompt.ask("Enter username of the application").strip()
-                email = Prompt.ask("Enter your email address").strip()
-                pas = Prompt.ask("Do you want to generate new password", choices=["y", "n"], default="y").strip()
-                if pas == "y":
-                    password = generate_password()
-                    copy(password)
+                if app == " " or app == "":
+                    console.print("Invalid Input")
                 else:
-                    password = Prompt.ask("Enter password", password=True).strip()
-                self.add(app, username, email, encrypt(config['ENCRYPTION_KEY'], password))
-                backup("backup.db", config["PATH_TO_DATABASE"], config["PATH_TO_BACKUP"])
+                    username = Prompt.ask("Enter username of the application").strip()
+                    email = Prompt.ask("Enter your email address").strip()
+                    pas = Prompt.ask("Do you want to generate new password", choices=["y", "n"], default="y").strip()
+                    if pas == "y":
+                        password = generate_password()
+                        copy(password)
+                    else:
+                        password = Prompt.ask("Enter password", password=True).strip()
+                    self.add(app, username, email, encrypt(config['ENCRYPTION_KEY'], password))
+                    backup("backup.db", config["PATH_TO_DATABASE"], config["PATH_TO_BACKUP"])
             elif option == 5:
                 application = Prompt.ask("Enter the application that you want to update").strip().title()
                 self.cur.execute(f"SELECT * FROM Passwords WHERE Application='{application}'")
