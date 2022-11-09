@@ -347,7 +347,16 @@ config = {{
                 self.email_search(email)
             elif option == 4:
                 app = Prompt.ask("Enter the name of the application").strip()
-                if app == " " or app == "":
+                if username = Prompt.ask("Enter username of the application").strip()
+                    email = Prompt.ask("Enter your email address").strip()
+                    pas = Prompt.ask("Do you want to generate new password", choices=["y", "n"], default="y").strip()
+                    if pas == "y":
+                        password = generate_password()
+                        copy(password)
+                    else:
+                        password = Prompt.ask("Enter password", password=True).strip()
+                    self.add(app, username, email, encrypt(config['ENCRYPTION_KEY'], password))
+                    backup("backup.db", config["PATH_TO_DATABASE"], config["PATH_TO_BACKUP"])pp == " " or app == "":
                     console.print("Invalid Input")
                 else:
                     username = Prompt.ask("Enter username of the application").strip()
