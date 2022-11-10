@@ -111,6 +111,7 @@ class Main:
                 else:
                     self.conn = sqlite3.connect(os.path.join(self.home + "/.config/manager/db.sqlite3"))
                 self.cur = self.conn.cursor()
+                self.create_tables()
             else:
                 raise FileNotFoundError
         except FileNotFoundError:
@@ -128,7 +129,7 @@ class Main:
             else:
                 self.security()
 
-    def set_details(self):
+    def create_tables(self, status=False):
         tables = """CREATE TABLE IF NOT EXISTS Passwords (
             Application VARCHAR(200),
             Username VARCHAR(200),
@@ -143,6 +144,10 @@ class Main:
         self.cur.execute(tables)
         self.cur.execute(log)
         self.conn.commit()
+        if status == True:
+            self.conn.close()
+
+    def set_details(self):
         master = Prompt.ask("Set a master password to use", password=True)
         val = Prompt.ask("Enter password again", password=True)
         if master != val:
