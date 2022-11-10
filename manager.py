@@ -27,7 +27,7 @@ try:
 except ImportError:
     os.system("sudo rm /usr/local/bin/manager")
     os.system("manager_repair")
-    exit()
+    sys.exit(0)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-r", "--reset", help="reset the password of script", action="store_true")
@@ -143,10 +143,6 @@ class Main:
         self.cur.execute(tables)
         self.cur.execute(log)
         self.conn.commit()
-        with open(self.home + "/.config/manager/menu.py", "r") as f:
-            content = f.read()
-            f.read()
-        inserter = """INSERT INTO Config VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
         master = Prompt.ask("Set a master password to use", password=True)
         val = Prompt.ask("Enter password again", password=True)
         if master != val:
