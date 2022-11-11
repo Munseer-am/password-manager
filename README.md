@@ -17,6 +17,8 @@
 ## _**How to uninstall the script**_
 #### _To delete the script from bin folder use `manager -U` or `manager --uninstall` to remove the script_
 >_**Note:** It will not remove the config files that was created during the installation_
+#### _To delete everything including the config files, database and script itself use `manager --REMOVE`_
+_**Note:** The deleted items are not recoverable._
 
 ## _**Warnings**_
 #### _**0. If you changed or removed the `ENCRYPTION_KEY` your passwords cannot be encrypted or decrypted and password manager will give you a lot of errors.**_
