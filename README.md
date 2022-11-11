@@ -3,7 +3,7 @@
 ## _**Installation**_
 
 #### _1. First git clone this repository_
-#### _2. Run install script using `./install`_
+#### _2. Run install script using `./setup.py` or `python setup.py`_
 #### _3. Type `manager` to run the script_
 #### _4. Enter the details_
 >_**Warning:** Python3.10 must be installed in your machine to run the script or errors may occur while execution_
