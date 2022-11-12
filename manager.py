@@ -317,6 +317,20 @@ config = {{
         self.conn.close()
 
     @cache
+    def view_log(self):
+        self.cur.execute("SELECT * FROM LOG")
+        logs = self.cur.fetchall()
+        if len(logs) != 0:
+            _table = Table(title="Logs")
+            _table.add_column("Received Input", style="cyan", no_wrap=True)
+            _table.add_column("Date and Time", style="cyan", no_wrap=True)
+            _table.add_column("Script Location", style="cyan", no_wrap=True)
+            for _log in logs:
+                _table.add_row(_log[0], _log[1], _log[2])
+            console.print(_table)
+            self.conn.close()
+
+    @cache
     def remove(self, app: str):
         if app == " " or app == "":
             console.print("Invalid Input 😑")
@@ -396,7 +410,7 @@ config = {{
                 copy(password)
                 console.print(f"Your password is ready: [bold]{password}[/bold]")
             elif option == 8:
-                pass
+                self.view_log()
             else:
                 console.print("Please choose a valid option 🧐\n")
                 self.main()
