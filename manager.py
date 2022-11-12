@@ -322,9 +322,9 @@ config = {{
         logs = self.cur.fetchall()
         if len(logs) != 0:
             _table = Table(title="Logs")
-            _table.add_column("Received Input", style="cyan", no_wrap=True)
-            _table.add_column("Date and Time", style="cyan", no_wrap=True)
-            _table.add_column("Script Location", style="cyan", no_wrap=True)
+            _table.add_column("Received Input", style="cyan", no_wrap=False)
+            _table.add_column("Date and Time", style="cyan", no_wrap=False)
+            _table.add_column("Script Location", style="cyan", no_wrap=False)
             for _log in logs:
                 _table.add_row(_log[0], _log[1], _log[2])
             console.print(_table)
