@@ -12,5 +12,6 @@ def menu():
     console.print("[bold][5] Update Data[/bold]")
     console.print("[bold][6] Delete app from database[/bold]")
     console.print("[bold][7] Generate password[/bold]")
-    console.print("[bold][8] Exit[/bold]")
+    console.print("[bold][8] View Log[/bold]")
+    console.print("[bold][9] Exit[/bold]")
     console.print("------------------------------------")
