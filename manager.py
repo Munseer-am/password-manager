@@ -103,13 +103,13 @@ class Main:
         super(Main, self).__init__()
         self.home = os.path.expanduser("~")
         try:
-            if os.path.exists(os.path.join(self.home + "/.config/manager/")):
-                if os.path.exists(os.path.join(self.home + "/.config/manager/db.sqlite3")):
-                    self.conn = sqlite3.connect(os.path.join(self.home + "/.config/manager/db.sqlite3"))
-                elif os.path.exists(os.path.join(self.home + "/.config/manager/backup/db.sqlite3.bak")):
-                    self.conn = sqlite3.connect(os.path.join(self.home + "/.config/manager/backup/db.sqlite3.bak"))
+            if os.path.exists(f"{self.home}/.config/manager/"):
+                if os.path.exists(f"{self.home}/.config/manager/db.sqlite3"):
+                    self.conn = sqlite3.connect(f"{self.home}/.config/manager/db.sqlite3")
+                elif os.path.exists(f"{self.home}/.config/manager/backup/db.sqlite3.bak"):
+                    self.conn = sqlite3.connect(f"{self.home}/.config/manager/backup/db.sqlite3.bak")
                 else:
-                    self.conn = sqlite3.connect(os.path.join(self.home + "/.config/manager/db.sqlite3"))
+                    self.conn = sqlite3.connect(f"{self.home}/.config/manager/db.sqlite3")
                 self.cur = self.conn.cursor()
                 self.create_tables()
             else:
@@ -167,19 +167,19 @@ config = {{
     'KEY': '{enc}',
     'ENCRYPTION_KEY': {key},
     'EMAIL': '{email}',
-    'PATH_TO_DATABASE': '{os.path.join(self.home + "/.config/manager/db.sqlite3")}',
-    'PATH_TO_BACKUP': '{os.path.join(self.home + "/.config/manager/backup/")}',
-    'PATH_TO_LOG': '{os.path.join(self.home + "/.config/manager/log/")}'            
+    'PATH_TO_DATABASE': '{self.home}/.config/manager/db.sqlite3',
+    'PATH_TO_BACKUP': '{self.home}/.config/manager/backup/',
+    'PATH_TO_LOG': '{self.home}/.config/manager/log/'            
 }}"""
-        with open(os.path.join(self.home + "/.config/manager/config.py"), "w") as f:
+        with open(f"{self.home}/.config/manager/config.py", "w") as f:
             f.write(conf)
             f.close()
-        backup("config.bak", os.path.join(self.home + "/.config/manager/config.py"),
-               os.path.join(self.home + "/.config/manager/backup"))
+        backup("config.bak", f"{self.home}/.config/manager/config.py",
+               f"{self.home}/.config/manager/backup")
         console.print("Please run the script again")
         self.conn.commit()
         self.conn.close()
-        copyfile(self.home + "/.config/manager/db.sqlite3", self.home + "/.config/manager/backup/db.sqlite3.bak")
+        copyfile(f"{self.home}/.config/manager/db.sqlite3", f"{self.home}/.config/manager/backup/db.sqlite3.bak")
         quit(0)
 
     def reset(self):
@@ -208,11 +208,11 @@ config = {{
     'PATH_TO_BACKUP': '{config["PATH_TO_BACKUP"]}',
     'PATH_TO_LOG': '{config["PATH_TO_LOG"]}'
 }}"""
-                with open(os.path.join(self.home + "/.config/manager/config.py"), "w") as f:
+                with open(os.path.join(f"{self.home}/.config/manager/config.py"), "w") as f:
                     f.write(conf)
                     f.close()
-                backup("config.bak", os.path.join(self.home + "/.config/manager/config.py"),
-                       os.path.join(self.home + "/.config/manager/backup"))
+                backup("config.bak", f"{self.home}/.config/manager/config.py",
+               f"{self.home}/.config/manager/backup")
                 console.print("Password Changed Successfully")
                 quit(0)
 
@@ -296,8 +296,8 @@ config = {{
 
     def delete(self):
         uninstall_script()
-        if os.path.exists(self.home+"/.config/manager/"):
-            rmtree(self.home+"/.config/manager/")
+        if os.path.exists(f"{self.home}/.config/manager/"):
+            rmtree(f"{self.home}/.config/manager/")
         if os.path.exists("/usr/local/bin/manager_repair"):
             os.system("sudo rm /usr/local/bin/manager_repair")
 
