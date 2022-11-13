@@ -14,10 +14,13 @@ console = Console()
 try:
     sys.path.insert(0, f"{os.path.expanduser('~')}/.config/manager/")
     from config import config
+    from insults import insult
 except ImportError:
     os.system("sudo rm /usr/local/bin/manager")
     os.system("manager_repair")
     sys.exit(0)
+
+home = os.path.expanduser("~")
 
 
 def generate_password():
@@ -64,3 +67,20 @@ def decrypt(key: bytes, password: bytes):
 
 def backup(db: str, path: str, dst: str):
     copyfile(path, f"{dst}/{db}")
+
+
+def security():
+    inp = Prompt.ask("Enter password to unlock", password=True)
+    enc = sha256_encoder(inp)
+    i = 0
+    while enc != config["KEY"]:
+        i += 1
+        if i >= 3:
+            console.print("Access Denied!")
+            break
+        else:
+            console.print(insult())
+            inp = Prompt.ask("\nTry again", password=True)
+            enc = sha256_encoder(inp)
+    else:
+        console.print("Access Granted!")
