@@ -369,7 +369,7 @@ config = {{
                 self.email_search(email)
             elif option == 4:
                 app = Prompt.ask("Enter the name of the application").strip()
-                if app != "" or app == " ":
+                if app == "" or app == " ":
                     console.print("Invalid Input")
                 else:
                     username = Prompt.ask("Enter username of the application").strip()
