@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 import os
+import platform
 import shutil
 import subprocess
 from distutils.spawn import find_executable
@@ -10,10 +11,13 @@ class Main:
 		super(Main, self).__init__()
 		self.home = os.path.expanduser("~")
 		self.base_dir = os.path.basename(os.getcwd())
-		if self.base_dir != "password-manager":
-			print("""Run in the "password-manager" directory """)
+		if platform.system() == "Linux":
+			if self.base_dir != "password-manager":
+				print("""Run in the "password-manager" directory """)
+			else:
+				self.main()
 		else:
-			self.main()
+			print("Only Linux Is Supported")
 		
 
 	def is_installed(self, tool: str):
