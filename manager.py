@@ -32,7 +32,8 @@ except ImportError:
 parser = argparse.ArgumentParser()
 parser.add_argument("-r", "--reset", help="reset the password of script", action="store_true")
 parser.add_argument("-U", "--uninstall", help="Delete script file from /usr/local/bin/", action="store_true")
-parser.add_argument("--REMOVE", help="Delete all files and directories related to password manager", action="store_true")
+parser.add_argument("--REMOVE", help="Delete all files and directories related to password manager",
+                    action="store_true")
 args = parser.parse_args()
 
 start = time()
@@ -134,7 +135,7 @@ class Main:
             Application VARCHAR(200),
             Username VARCHAR(200),
             Email VARCHAR(200),
-            Password VARCHAR(200)
+            Password BLOB
         );"""
         log = """CREATE TABLE IF NOT EXISTS Log (
             App VARCHAR(100),
@@ -212,7 +213,7 @@ config = {{
                     f.write(conf)
                     f.close()
                 backup("config.bak", f"{self.home}/.config/manager/config.py",
-               f"{self.home}/.config/manager/backup")
+                       f"{self.home}/.config/manager/backup")
                 console.print("Password Changed Successfully")
                 quit(0)
 
@@ -303,9 +304,7 @@ config = {{
 
     @cache
     def update_data(self, application: str, app: str, username: str, email, password: bytes):
-        self.cur.execute(
-            f"UPDATE Passwords SET Application='{app}', Username='{username}', Email='{email}', Password='{password}' "
-            f"WHERE Application='{application}'")
+        self.cur.execute(f"""UPDATE Passwords SET Application='{app}', Username='{username}', Password='{password}', Email='{email}' WHERE Application='{application}'""")
         self.conn.commit()
         self.conn.close()
 
