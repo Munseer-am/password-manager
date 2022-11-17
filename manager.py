@@ -304,9 +304,8 @@ config = {{
 
     @cache
     def update_data(self, application: str, app: str, username: str, email, password: bytes):
-        self.cur.execute(f"""UPDATE Passwords SET Application='{app}', Username='{username}', Password='{password}', Email='{email}' WHERE Application='{application}'""")
-        self.conn.commit()
-        self.conn.close()
+        self.remove(application)
+        self.add(app, username, email, password)
 
     @cache
     def add(self, app: str, username: str, email, password: str):
@@ -340,9 +339,9 @@ config = {{
                 for _app in _apps:
                     _app = "".join(_app)
                     self.cur.execute(f'DELETE FROM Passwords WHERE Application LIKE "%{_app}%"')
-                    console.print(f"Successfully Deleted {_app} From Database")
+                    # console.print(f"Successfully Deleted {_app} From Database")
                     self.conn.commit()
-                self.conn.close()
+                return True
             else:
                 console.print("no such app to delete 🙁".capitalize())
 
@@ -397,13 +396,14 @@ config = {{
                         email = "".join(_apps[2])
                     password = Prompt.ask("Enter password", password=True).strip()
                     self.update_data(application, app, username, email,
-                                     encrypt(config["ENCRYPTION_KEY"], password).decode())
+                                     encrypt(config["ENCRYPTION_KEY"], password))
                     console.print("Data updated successfully🎉")
                 else:
                     console.print("[bold]No such app to update[/bold]🥲")
             elif option == 6:
                 app = Prompt.ask("Enter the name of the app that you want to delete")
-                self.remove(app)
+                if self.remove(app):
+                    console.print(f"[bold]Deletd {app} successfully🎉[/bold]")
             elif option == 7:
                 password = generate_password()
                 copy(password)
