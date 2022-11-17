@@ -15,3 +15,4 @@ db.sqlite3
 *.mod
 tests/
 .pytest_cache/
+migrate.py
