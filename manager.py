@@ -7,6 +7,7 @@ import sys
 try:
     sys.path.insert(0, f"{os.path.expanduser('~')}/.config/manager/")
     import essentials
+    from config import config
 except ImportError:
     os.system("sudo rm /usr/local/bin/manager")
     os.system("manager_repair")
@@ -24,14 +25,17 @@ start = time.time()
 class Main(essentials.Main):
     def __init__(self):
         super(Main, self).__init__()
-        if args.reset:
-            self.reset()
-        elif args.REMOVE:
-            self.delete()
-        elif args.uninstall:
-            essentials.uninstall_script()
+        if essentials.is_not_configured():
+            self.set_details()
         else:
-            self.security()
+            if args.reset:
+                self.reset()
+            elif args.REMOVE:
+                self.delete()
+            elif args.uninstall:
+                essentials.uninstall_script()
+            else:
+                self.security()
 
 
 try:
