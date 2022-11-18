@@ -86,6 +86,13 @@ class Main:
 				shutil.copy("lib/menu.py", f"{self.home}/.config/manager/menu.py")
 			if self.exists(f"{self.home}/.config/manager/insults.py") != True:
 				shutil.copy("lib/insults.py", f"{self.home}/.config/manager/insults.py")
+			if self.exists(f"{self.home}/.config/manager/essentials.py") != True:
+				shutil.copy("lib/essentials.py", f"{self.home}/.config/manager/essentials.py")
+			else:
+				mv = input("Do You Want Replace script[y/n] (y): ").lower().strip()
+				if mv == "y":
+					os.remove(f"{self.home}/.config/manager/essentials.py")
+					shutil.copy("lib/essentials.py", f"{self.home}/.config/manager/essentials.py")
 			if self.exists("/usr/local/bin/manager_repair") != True:
 				os.system("sudo cp setup.py /usr/local/bin/manager_repair && sudo chmod +rwx /usr/local/bin/manager_repair")
 			print("TO RUN THE SCRIPT TYPE `manager`")
@@ -94,6 +101,8 @@ class Main:
 				shutil.copy("lib/config.py", f"{self.home}/.config/manager/config.py")
 			if self.exists(f"{self.home}/.config/manager/menu.py") != True:
 				shutil.copy("lib/menu.py", f"{self.home}/.config/manager/menu.py")
+			if self.exists(f"{self.home}/.config/manager/essentials.py") != True:
+				shutil.copy("lib/essentials.py", f"{self.home}/.config/manager/essentials.py")
 			if self.exists(f"{self.home}/.config/manager/insults.py") != True:
 				shutil.copy("lib/insults.py", f"{self.home}/.config/manager/insults.py")
 			if self.exists("/usr/local/bin/manager_repair") != True:
