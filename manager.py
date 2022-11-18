@@ -145,7 +145,7 @@ class Main:
         self.cur.execute(tables)
         self.cur.execute(log)
         self.conn.commit()
-        if status == True:
+        if status:
             self.conn.close()
 
     def set_details(self):
@@ -403,7 +403,7 @@ config = {{
             elif option == 6:
                 app = Prompt.ask("Enter the name of the app that you want to delete")
                 if self.remove(app):
-                    console.print(f"[bold]Deletd {app} successfully🎉[/bold]")
+                    console.print(f"[bold]Deleted {app.title()} successfully🎉[/bold]")
             elif option == 7:
                 password = generate_password()
                 copy(password)
