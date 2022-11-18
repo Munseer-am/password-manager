@@ -14,13 +14,13 @@ from rich.prompt import Prompt
 from rich.table import Table
 from shutil import copyfile, rmtree
 from string import ascii_lowercase, ascii_uppercase, digits
-from time import time, sleep
+from time import time
 from threading import Thread
 
 __author__ = "Munseer-am"
 
 try:
-    sys.path.insert(0, os.path.join(os.path.expanduser("~") + "/.config/manager/"))
+    sys.path.insert(0, f"{os.path.expanduser('~')}/.config/manager")
     from config import config
     from menu import menu
     from insults import insult
@@ -29,14 +29,7 @@ except ImportError:
     os.system("manager_repair")
     sys.exit(0)
 
-parser = argparse.ArgumentParser()
-parser.add_argument("-r", "--reset", help="reset the password of script", action="store_true")
-parser.add_argument("-U", "--uninstall", help="Delete script file from /usr/local/bin/", action="store_true")
-parser.add_argument("--REMOVE", help="Delete all files and directories related to password manager",
-                    action="store_true")
-args = parser.parse_args()
 
-start = time()
 console = Console()
 os.system("clear")
 os.system("figlet -c -f Bloody 'Munseer' | lolcat")
@@ -118,17 +111,6 @@ class Main:
         except FileNotFoundError:
             os.system("sudo rm /usr/local/bin/manager")
             os.system("manager_repair")
-        if is_not_configured():
-            self.set_details()
-        else:
-            if args.reset:
-                self.reset()
-            elif args.uninstall:
-                uninstall_script()
-            elif args.REMOVE:
-                self.delete()
-            else:
-                self.security()
 
     def create_tables(self, status=False):
         tables = """CREATE TABLE IF NOT EXISTS Passwords (
@@ -418,14 +400,3 @@ config = {{
             self.main()
 
 
-try:
-    if __name__ == "__main__":
-        Main()
-
-    end = time()
-    console.print(f"Execution time: {end - start}")
-    sleep(4)
-    os.system("clear")
-except KeyboardInterrupt:
-    os.system("clear")
-    exit(0)
