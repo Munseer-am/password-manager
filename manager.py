@@ -25,9 +25,7 @@ start = time.time()
 class Main(essentials.Main):
     def __init__(self):
         super(Main, self).__init__()
-        if essentials.is_not_configured():
-            self.set_details()
-        else:
+        if not essentials.is_not_configured():
             if args.reset:
                 self.reset()
             elif args.REMOVE:
@@ -36,6 +34,8 @@ class Main(essentials.Main):
                 essentials.uninstall_script()
             else:
                 self.security()
+        else:
+            self.set_details()
 
 
 try:
