@@ -16,3 +16,4 @@ db.sqlite3
 tests/
 .pytest_cache/
 migrate.py
+.fleet/
