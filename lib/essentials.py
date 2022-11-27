@@ -1,5 +1,4 @@
 #! /usr/bin/env python3
-import argparse
 import datetime
 import clipboard
 import os
@@ -14,7 +13,6 @@ from rich.prompt import Prompt
 from rich.table import Table
 from shutil import copyfile, rmtree
 from string import ascii_lowercase, ascii_uppercase, digits
-from time import time
 from threading import Thread
 
 __author__ = "Munseer-am"
@@ -133,6 +131,9 @@ class Main:
     def set_details(self):
         master = Prompt.ask("Set a master password to use", password=True)
         val = Prompt.ask("Enter password again", password=True)
+        if len(master) != 6:
+            console.print("[bold]Password Must Be Minimum 6 Characters Long[/bold]")
+            self.set_details()
         if master != val:
             console.print("[bold]Password does not match[/bold]")
             self.set_details()
@@ -176,6 +177,9 @@ config = {{
         else:
             master = Prompt.ask("Set a master password to use", password=True)
             val = Prompt.ask("Enter password again", password=True)
+            if len(master) <= 0:
+                console.print("Invalid Input")
+                self.reset()
             if master != val:
                 console.print("Password does not match")
             else:
@@ -398,5 +402,3 @@ config = {{
         except ValueError:
             console.print("Enter int instead of str 🥱")
             self.main()
-
-
