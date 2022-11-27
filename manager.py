@@ -11,6 +11,7 @@ try:
 except ImportError:
     os.system("sudo rm /usr/local/bin/manager")
     os.system("manager_repair")
+    exit()
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-r", "--reset", help="reset the password of script", action="store_true")
