@@ -89,4 +89,35 @@ def main():
         if not if_exists("/usr/local/bin/manager_repair"):
             os.system("sudo cp setup.py /usr/local/bin/manager_repair && sudo chmod +rwx /usr/local/bin/manager_repair")
         print("to run the script type `manager`".title())
-    
+    else:
+        if not if_exists(f"{home}/.config/manager/"):
+            os.mkdir(f"{home}/.config/manager/")
+        if not if_exists(f"{home}/.config/manager/log/"):
+            os.mkdir(f"{home}/.config/manager/log/")
+        if not if_exists(f"{home}/.config/manager/backup/"):
+            os.mkdir(f"{home}/.config/manager/backup/")
+        if not if_exists(f"{home}/.config/manager/config.py"):
+            shutil.copyfile("lib/config.py", f"{home}/.config/manager/config.py")
+        if not if_exists(f"{home}/.config/manager/menu.py"):
+            shutil.copyfile("lib/menu.py", f"{home}/.config/manager/menu.py")
+        if not if_exists(f"{home}/.config/manager/essentials.py"):
+            shutil.copyfile("lib/essentials.py", f"{home}/.config/manager/essentials.py")
+        if not if_exists(f"{home}/.config/manager/insults.py"):
+            shutil.copyfile("lib/insults.py", f"{home}/.config/manager/insults.py")
+        print("script already installed".title())
+
+try:
+    base_dir = os.path.basename(os.getcwd())
+    if platform.system() != "Linux":
+        print("only linux is supported".title())
+    else:
+        if base_dir != "password-manager":
+            print("""Run script in the "password-manager" directory""")
+        else:
+            main()
+except Exception as e:
+    with open("error.log", "a") as f:
+        f.write(f"\n{str(e)}")
+        f.close()
+    print(e)
+    quit()
