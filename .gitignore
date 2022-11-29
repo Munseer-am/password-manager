@@ -17,3 +17,4 @@ tests/
 .pytest_cache/
 migrate.py
 .fleet/
+error.log
