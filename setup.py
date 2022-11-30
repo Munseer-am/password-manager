@@ -91,12 +91,6 @@ def main():
         print("to run the script type `manager`".title())
     else:
         try:
-        #     if not if_exists(f"{home}/.config/manager/"):
-        #         os.mkdir(f"{home}/.config/manager/")
-        #     if not if_exists(f"{home}/.config/manager/log/"):
-        #         os.mkdir(f"{home}/.config/manager/log/")
-        #     if not if_exists(f"{home}/.config/manager/backup/"):
-        #         os.mkdir(f"{home}/.config/manager/backup/")
             if not if_exists(f"{home}/.config/manager/config.py"):
                 shutil.copyfile("lib/config.py", f"{home}/.config/manager/config.py")
             if not if_exists(f"{home}/.config/manager/menu.py"):
