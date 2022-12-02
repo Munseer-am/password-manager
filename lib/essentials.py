@@ -325,7 +325,6 @@ config = {{
                 for _app in _apps:
                     _app = "".join(_app)
                     self.cur.execute(f'DELETE FROM Passwords WHERE Application LIKE "%{_app}%"')
-                    # console.print(f"Successfully Deleted {_app} From Database")
                     self.conn.commit()
                 return True
             else:
