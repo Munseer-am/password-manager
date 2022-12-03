@@ -211,14 +211,14 @@ config = {{
         while enc != config["KEY"]:
             i += 1
             if i >= 3:
-                console.print("Access Denied!😡")
+                console.print("Access Denied!")
                 break
             else:
                 console.print(insult())
                 inp = Prompt.ask("\nTry again", password=True)
                 enc = sha256_encoder(inp)
         else:
-            console.print("Access Granted!🎉")
+            console.print("Access Granted!")
             self.main()
 
     @cache
@@ -235,7 +235,7 @@ config = {{
         self.cur.execute("SELECT Application FROM Passwords")
         _apps = self.cur.fetchall()
         if len(_apps) == 0:
-            console.print("[bold]No apps found[/bold] 🥲")
+            console.print("[bold]No apps found[/bold]")
         else:
             _table = Table()
             _table.add_column("Application", style="cyan", no_wrap=True)
@@ -262,7 +262,7 @@ config = {{
                     copy(password)
             console.print(table, justify="left")
         else:
-            console.print("[bold]Oops! looks like there are no results for you[/bold] 😢")
+            console.print("[bold]Oops! looks like there are no results for you[/bold]")
 
     @cache
     def email_search(self, email: str):
@@ -279,7 +279,7 @@ config = {{
                     table.add_row(email[0])
                 console.print(table)
             else:
-                console.print("[bold]No apps found[/bold] 😓")
+                console.print("[bold]No apps found[/bold]")
 
     def delete(self):
         uninstall_script()
@@ -317,7 +317,7 @@ config = {{
     @cache
     def remove(self, app: str):
         if app == " " or app == "":
-            console.print("Invalid Input 😑")
+            console.print("Invalid Input")
         else:
             self.cur.execute(f'SELECT Application FROM Passwords WHERE Application="{app.capitalize()}"')
             _apps = self.cur.fetchall()
@@ -328,7 +328,7 @@ config = {{
                     self.conn.commit()
                 return True
             else:
-                console.print("no such app to delete 🙁".capitalize())
+                console.print("no such app to delete".capitalize())
 
     @cache
     def main(self):
@@ -338,7 +338,7 @@ config = {{
             if option == 1:
                 app = Prompt.ask("Enter the name of the application").strip()
                 if app == "":
-                    console.print("Invalid Input 😑")
+                    console.print("Invalid Input")
                 else:
                     thread = Thread(target=self.log, args=(app, x, __file__,))
                     thread.daemon = True
@@ -382,13 +382,13 @@ config = {{
                     password = Prompt.ask("Enter password", password=True).strip()
                     self.update_data(application, app, username, email,
                                      encrypt(config["ENCRYPTION_KEY"], password))
-                    console.print("Data updated successfully🎉")
+                    console.print("Data updated successfully")
                 else:
-                    console.print("[bold]No such app to update[/bold]🥲")
+                    console.print("[bold]No such app to update[/bold]")
             elif option == 6:
                 app = Prompt.ask("Enter the name of the app that you want to delete")
                 if self.remove(app):
-                    console.print(f"[bold]Deleted {app.title()} successfully🎉[/bold]")
+                    console.print(f"[bold]Deleted {app.title()} successfully[/bold]")
             elif option == 7:
                 password = generate_password()
                 copy(password)
@@ -396,8 +396,8 @@ config = {{
             elif option == 8:
                 self.view_log()
             else:
-                console.print("Please choose a valid option 🧐\n")
+                console.print("Please choose a valid option \n")
                 self.main()
         except ValueError:
-            console.print("Enter int instead of str 🥱")
+            console.print("Enter int instead of str ")
             self.main()
