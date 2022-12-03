@@ -43,13 +43,11 @@ def generate_password():
     return "".join(r)
 
 
-@cache
 def sha256_encoder(word: str):
     enc = sha256(word.encode("utf-8")).hexdigest()
     return enc
 
 
-@cache
 def copy(word: str):
     clipboard.copy(word)
     clipboard.paste()
@@ -63,7 +61,6 @@ def is_not_configured():
         return True
 
 
-@cache
 def uninstall_script():
     pas = Prompt.ask("Enter password to delete", password=True)
     hashed = sha256_encoder(pas)
@@ -73,19 +70,16 @@ def uninstall_script():
         os.system("sudo rm /usr/local/bin/manager")
 
 
-@cache
 def encrypt(key: bytes, password: str):
     enc = Fernet(key)
     return enc.encrypt(password.encode("utf-8"))
 
 
-@cache
 def decrypt(key: bytes, password: bytes):
     dec = Fernet(key)
     return dec.decrypt(password).decode("utf-8")
 
 
-@cache
 def backup(db: str, path: str, dst: str):
     copyfile(path, os.path.join(dst + "/" + db))
 
@@ -221,7 +215,6 @@ config = {{
             console.print("Access Granted!")
             self.main()
 
-    @cache
     def log(self, app: str, current_time: str, script: str):
         with open(os.path.join(config["PATH_TO_LOG"] + "/logs.log"), "a") as f:
             f.write(f"\nTime: {current_time} Script: {script} Application: {app.title()}")
@@ -243,7 +236,6 @@ config = {{
                 _table.add_row("".join(_app))
             console.print(_table, justify="left")
 
-    @cache
     def fetch(self, app: str):
         self.cur.execute(f"SELECT * FROM Passwords WHERE Application LIKE '%{app}%'")
         credentials = self.cur.fetchall()
@@ -264,7 +256,6 @@ config = {{
         else:
             console.print("[bold]Oops! looks like there are no results for you[/bold]")
 
-    @cache
     def email_search(self, email: str):
         if email == "" or email == " ":
             console.print("[bold]Invalid Input[/bold]")
@@ -288,12 +279,10 @@ config = {{
         if os.path.exists("/usr/local/bin/manager_repair"):
             os.system("sudo rm /usr/local/bin/manager_repair")
 
-    @cache
     def update_data(self, application: str, app: str, username: str, email, password: bytes):
         self.remove(application)
         self.add(app, username, email, password)
 
-    @cache
     def add(self, app: str, username: str, email, password: str):
         inserter = f"""INSERT INTO Passwords VALUES(?, ?, ?, ?)"""
         self.cur.execute(inserter, (app.title(), username, email, password))
@@ -314,7 +303,6 @@ config = {{
             console.print(_table)
             self.conn.close()
 
-    @cache
     def remove(self, app: str):
         if app == " " or app == "":
             console.print("Invalid Input")
