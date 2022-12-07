@@ -26,7 +26,7 @@ try:
 except ImportError:
     os.system("sudo rm /usr/local/bin/manager")
     os.system("manager_repair")
-    sys.exit(0)
+    sys.exit()
 
 console = Console()
 x = str(datetime.datetime.now().strftime("%H:%M:%S %b %d %Y"))
