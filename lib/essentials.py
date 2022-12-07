@@ -16,7 +16,7 @@ from string import ascii_lowercase, ascii_uppercase, digits
 from threading import Thread
 
 __author__ = "Munseer-am"
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 try:
     sys.path.insert(0, f"{os.path.expanduser('~')}/.config/manager")
@@ -28,13 +28,8 @@ except ImportError:
     os.system("manager_repair")
     sys.exit(0)
 
-
 console = Console()
-os.system("clear")
-os.system("figlet -c -f Bloody 'Munseer' | lolcat")
 x = str(datetime.datetime.now().strftime("%H:%M:%S %b %d %Y"))
-console.print(x.replace(":", "[blink]:[/blink]"))
-
 
 @cache
 def generate_password():

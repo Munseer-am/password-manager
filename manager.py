@@ -1,8 +1,10 @@
 #! /usr/bin/env python
 import argparse
 import os
+import datetime
 import time
 import sys
+from rich.console import Console
 
 try:
     sys.path.insert(0, f"{os.path.expanduser('~')}/.config/manager/")
@@ -12,6 +14,12 @@ except ImportError:
     os.system("sudo rm /usr/local/bin/manager")
     os.system("manager_repair")
     exit()
+
+console = Console()
+os.system("clear")
+os.system("figlet -c -f Bloody 'Munseer' | lolcat")
+x = str(datetime.datetime.now().strftime("%H:%M:%S %b %d %Y"))
+console.print(x.replace(":", "[blink]:[/blink]"))
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-r", "--reset", help="reset the password of script", action="store_true")
