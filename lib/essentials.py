@@ -16,6 +16,7 @@ from string import ascii_lowercase, ascii_uppercase, digits
 from threading import Thread
 
 __author__ = "Munseer-am"
+__version__ = "1.0.0"
 
 try:
     sys.path.insert(0, f"{os.path.expanduser('~')}/.config/manager")
