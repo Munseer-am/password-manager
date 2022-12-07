@@ -114,6 +114,8 @@ def update():
         update = input("[Update Available] Do you want you update[y/n]: ").strip().lower()
         if update == "y" or update == " ":
             os.system("git pull")
+            os.system("sudo rm /usr/local/bin/manager")
+            main()
 
 try:
     base_dir = os.path.basename(os.getcwd())
