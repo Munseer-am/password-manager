@@ -107,7 +107,7 @@ def main():
             main()
 
 def update():
-    r = requests.get("https://munseer.pythonanywhere.com/version").text
+    r = requests.get("https://munseer.pythonanywhere.com/version", timeout=5).text
     sys.path.insert(0, f"{home}/.config/manager/")
     import essentials
     if essentials.__version__ < r:
@@ -126,7 +126,10 @@ try:
             print("""Run script in the "password-manager" directory""")
         else:
             main()
-            update()
+            try:
+                update()
+            except (requests.ConnectionError, requests.Timeout) as e:
+                pass
 except Exception as e:
     with open("error.log", "a") as f:
         f.write(f"\n{str(e)}")
