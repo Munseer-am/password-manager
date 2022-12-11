@@ -348,7 +348,7 @@ config = {{
                     else:
                         password = Prompt.ask("Enter password", password=True).strip()
                     self.add(app, username, email, encrypt(config['ENCRYPTION_KEY'], password))
-                    backup("backup.db", config["PATH_TO_DATABASE"], config["PATH_TO_BACKUP"])
+                    backup("db.sqlite3.bak", config["PATH_TO_DATABASE"], config["PATH_TO_BACKUP"])
             elif option == 5:
                 application = Prompt.ask("Enter the application that you want to update").strip().title()
                 self.cur.execute(f"SELECT * FROM Passwords WHERE Application='{application}'")
