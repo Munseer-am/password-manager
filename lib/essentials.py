@@ -193,7 +193,6 @@ config = {{
                 console.print("Password Changed Successfully")
                 quit(0)
 
-    @cache
     def security(self):
         inp = Prompt.ask("Enter password to unlock file", password=True)
         enc = sha256_encoder(inp)
