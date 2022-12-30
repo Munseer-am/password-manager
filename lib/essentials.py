@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 import datetime
 import clipboard
+import logging
 import os
 import re
 import sqlite3
@@ -219,9 +220,15 @@ config = {{
             self.main()
 
     def log(self, app: str, current_time: str, script: str):
-        with open(os.path.join(config["PATH_TO_LOG"] + "/logs.log"), "a") as f:
-            f.write(f"\nTime: {current_time} Script: {script} Application: {app.title()}")
-            f.close()
+        logger = logging.getLogger(__name__)
+        logger.setLevel(logging.INFO)
+        log_file = os.path.join(config["PATH_TO_LOG"] + "/logs.log")
+        handler = logging.FileHandler(log_file)
+        handler.setLevel(logging.INFO)
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+        logger.info(f"Time: {current_time} Script: {script} Application: {app.title()}")
         inserter = f"""INSERT INTO Log VALUES (?, ?, ?)"""
         self.cur.execute(inserter, (app.title(), current_time, script))
         self.conn.commit()
