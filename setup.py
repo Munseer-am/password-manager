@@ -3,7 +3,6 @@ import os
 import sys
 import platform
 import shutil
-import requests
 import subprocess
 from distutils.spawn import find_executable
 
@@ -106,17 +105,6 @@ def main():
             os.system("sudo rm /usr/local/bin/manager")
             main()
 
-def update():
-    r = requests.get("https://munseer.pythonanywhere.com/version", timeout=5).text
-    sys.path.insert(0, f"{home}/.config/manager/")
-    import essentials
-    if essentials.__version__ < r:
-        update = input("[Update Available] Do you want you update[y/n]: ").strip().lower()
-        if update == "y" or update == " ":
-            os.system("git pull")
-            os.system("sudo rm /usr/local/bin/manager")
-            main()
-
 try:
     base_dir = os.path.basename(os.getcwd())
     if platform.system() != "Linux":
@@ -126,10 +114,6 @@ try:
             print("""Run script in the "password-manager" directory""")
         else:
             main()
-            try:
-                update()
-            except (requests.ConnectionError, requests.Timeout) as e:
-                pass
 except Exception as e:
     with open("error.log", "a") as f:
         f.write(f"\n{str(e)}")
