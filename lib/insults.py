@@ -11,6 +11,7 @@ insults = np.array([
     "Sorry about this, I know it's a bit silly.",
     "Take a stress pill and think things over.",
     "This mission is too important for me to allow you to jeopardize it.",
+    "You're the reason God created the middle finger!",
     "I feel much better now.",
     "Wrong!  You cheating scum!",
     "And you call yourself a Rocket Scientist!",
