@@ -274,7 +274,7 @@ config = {{
 
 
     def email_search(self, email: str):
-        if email == "" or email == " ":
+        if not email.strip():
             console.print("[bold]Invalid Input[/bold]")
         else:
             self.cur.execute(f'SELECT APPLICATION FROM Passwords WHERE Email LIKE "%{email}%"')
@@ -328,7 +328,7 @@ config = {{
             self.conn.close()
 
     def remove(self, app: str):
-        if app == " " or app == "":
+        if not app.strip():
             console.print("Invalid Input")
         else:
             self.cur.execute(f'SELECT Application FROM Passwords WHERE Application="{app.capitalize()}"')
@@ -349,7 +349,7 @@ config = {{
             option = int(input("Choose one option: "))
             if option == 1:
                 app = Prompt.ask("Enter the name of the application").strip()
-                if app == "":
+                if not app.strip():
                     console.print("Invalid Input")
                 else:
                     thread = Thread(target=self.log, args=(app, x, __file__,))
@@ -364,7 +364,7 @@ config = {{
                 self.email_search(email)
             elif option == 4:
                 app = Prompt.ask("Enter the name of the application").strip()
-                if app == "" or app == " ":
+                if not app.strip():
                     console.print("Invalid Input")
                 else:
                     username = Prompt.ask("Enter username of the application").strip()
@@ -383,13 +383,13 @@ config = {{
                 _apps = self.cur.fetchone()
                 if _apps is not None:
                     app = Prompt.ask(f"Enter name of app (leave blank to use {''.join(_apps[0])})").strip()
-                    if app == "" or app == " ":
+                    if not app.strip():
                         app = "".join(_apps[0])
                     username = Prompt.ask(f"Enter username (leave blank to use {''.join(_apps[1])})").strip()
-                    if username == "" or username == " ":
+                    if not username.strip():
                         username = "".join(_apps[1])
                     email = Prompt.ask(f"Enter email/phone (leave blank to use {''.join(_apps[2])})").strip()
-                    if email == "" or email == " ":
+                    if not email.strip():
                         email = "".join(_apps[2])
                     password = Prompt.ask("Enter password", password=True).strip()
                     self.update_data(application, app, username, email,
