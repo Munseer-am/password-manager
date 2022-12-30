@@ -16,7 +16,7 @@ except ImportError:
     exit()
 
 console = Console()
-os.system("clear")
+console.clear()
 os.system("figlet -c -f Bloody 'Munseer' | lolcat")
 x = str(datetime.datetime.now().strftime("%H:%M:%S %b %d %Y"))
 console.print(x.replace(":", "[blink]:[/blink]"))
@@ -53,7 +53,7 @@ try:
     end = time.time()
     print(f"Execution Time: {end-start}")
     time.sleep(4)
-    os.system("clear")
+    console.clear()
 except KeyboardInterrupt:
-    os.system("clear")
+    console.clear()
     exit(0)
