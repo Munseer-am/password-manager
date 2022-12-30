@@ -63,7 +63,10 @@ def uninstall_script():
     if hashed != config["KEY"]:
         console.print("Invalid Password")
     else:
-        os.system("sudo rm /usr/local/bin/manager")
+        if os.path.exists("/usr/local/bin/manager"):
+            os.system("sudo rm /usr/local/bin/manager")
+        else:
+            console.print("File does not exist")
 
 
 def encrypt(key: bytes, password: str):
