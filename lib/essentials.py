@@ -35,8 +35,8 @@ x = str(datetime.datetime.now().strftime("%H:%M:%S %b %d %Y"))
 def generate_password():
     sym = "!@#$%^&*()[]{}:;"
     all_chars = ascii_uppercase + ascii_lowercase + sym + digits
-    r = sample(all_chars, 20)
-    return "".join(r)
+    password = "".join(random.sample(all_chars, 20))
+    return password
 
 
 def sha256_encoder(word: str):
