@@ -2,6 +2,7 @@
 import datetime
 import clipboard
 import os
+import re
 import sqlite3
 import sys
 from cryptography.fernet import Fernet
@@ -35,7 +36,7 @@ x = str(datetime.datetime.now().strftime("%H:%M:%S %b %d %Y"))
 def generate_password():
     sym = "!@#$%^&*()[]{}:;"
     all_chars = ascii_uppercase + ascii_lowercase + sym + digits
-    password = "".join(random.sample(all_chars, 20))
+    password = "".join(sample(all_chars, 20))
     return password
 
 
@@ -82,6 +83,13 @@ def decrypt(key: bytes, password: bytes):
 def backup(db: str, path: str, dst: str):
     copyfile(path, os.path.join(dst + "/" + db))
 
+def is_valid_email(email):
+    regex = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
+    if re.match(regex, email):
+        return True
+    else:
+        return False
+
 
 class Main:
     def __init__(self):
@@ -95,8 +103,8 @@ class Main:
             if os.path.exists(path):
                 self.conn = sqlite3.connect(path)
                 break
-            else:
-                self.conn = sqlite3.connect(self.db_paths[0])
+        else:
+            self.conn = sqlite3.connect(self.db_paths[0])
         self.cur = self.conn.cursor()
         self.create_tables()
 
@@ -129,7 +137,7 @@ class Main:
             console.print("[bold]Password does not match[/bold]")
             self.set_details()
         email = Prompt.ask("Enter your email address(It will be used to reset password)")
-        if "@" not in email:
+        if not is_valid_email(email):
             console.print("Enter a valid email address")
             self.set_details()
         email = sha256_encoder(email)
@@ -159,7 +167,7 @@ config = {{
 
     def reset(self):
         email = Prompt.ask("Enter email address")
-        if "@" not in email:
+        if not is_valid_email(email):
             console.print("Please Enter a valid email")
             self.reset()
         hashed = sha256_encoder(email)
@@ -276,8 +284,10 @@ config = {{
             os.system("sudo rm /usr/local/bin/manager_repair")
 
     def update_data(self, application: str, app: str, username: str, email, password: bytes):
-        self.remove(application)
-        self.add(app, username, email, password)
+        sql = "UPDATE Passwords SET Application=?, Username=?, Email=?, Password=? WHERE Application=?"
+        self.cur.execute(sql, (app, username, email, password, application))
+        self.conn.commit()
+        self.conn.close()
 
     def add(self, app: str, username: str, email, password: str):
         inserter = f"""INSERT INTO Passwords VALUES(?, ?, ?, ?)"""
