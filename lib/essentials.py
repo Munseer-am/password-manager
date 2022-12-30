@@ -230,51 +230,63 @@ config = {{
     @cache
     def list_apps(self):
         self.cur.execute("SELECT Application FROM Passwords")
-        _apps = self.cur.fetchall()
-        if len(_apps) == 0:
+        apps = self.cur.fetchall()
+        if not apps:
             console.print("[bold]No apps found[/bold]")
         else:
-            _table = Table()
-            _table.add_column("Application", style="cyan", no_wrap=True)
-            for _app in _apps:
-                _table.add_row("".join(_app))
-            console.print(_table, justify="left")
+            table = Table()
+            table.add_column("Application", style="cyan", no_wrap=True)
+            for app in apps:
+                table.add_row(app[0])
+            console.print(table, justify="left")
 
     def fetch(self, app: str):
-        self.cur.execute(f"SELECT * FROM Passwords WHERE Application LIKE '%{app}%'")
-        credentials = self.cur.fetchall()
-        if len(credentials) != 0:
-            table = Table(
-                title="Credentials"
-            )
-            table.add_column("Application", style="cyan", no_wrap=True)
-            table.add_column("Username", style="cyan", no_wrap=True)
-            table.add_column("Email/Phone", style="cyan", no_wrap=True)
-            table.add_column("Password", style="cyan", no_wrap=True)
-            for credential in credentials:
-                password = decrypt(config["ENCRYPTION_KEY"], credential[3])
-                table.add_row(credential[0], credential[1], credential[2], password)
-                if len(credentials) == 1:
-                    copy(password)
-            console.print(table, justify="left")
-        else:
-            console.print("[bold]Oops! looks like there are no results for you[/bold]")
+        try:
+            self.cur.execute("SELECT * FROM Passwords WHERE Application LIKE ?", ('%' + app + '%',))
+            credentials = self.cur.fetchall()
+            if len(credentials) != 0:
+                table = Table(
+                    title="Credentials"
+                )
+                table.add_column("Application", style="cyan", no_wrap=True)
+                table.add_column("Username", style="cyan", no_wrap=True)
+                table.add_column("Email/Phone", style="cyan", no_wrap=True)
+                table.add_column("Password", style="cyan", no_wrap=True)
+                for credential in credentials:
+                    password = decrypt(config["ENCRYPTION_KEY"], credential[3])
+                    table.add_row(credential[0], credential[1], credential[2], password)
+                    if len(credentials) == 1:
+                        copy(password)
+                console.print(table, justify="left")
+            else:
+                console.print("[bold]Oops! looks like there are no results for you[/bold]")
+        except sqlite3.Error as e:
+            console.print(f"An error occurred: {e}")
+        finally:
+            self.cur.close()
+            self.conn.close()
+
 
     def email_search(self, email: str):
         if email == "" or email == " ":
             console.print("[bold]Invalid Input[/bold]")
         else:
             self.cur.execute(f'SELECT APPLICATION FROM Passwords WHERE Email LIKE "%{email}%"')
-            emails = self.cur.fetchall()
-            console.print(f"\nFound [bold][blink]{len(emails)}[/blink][/bold] apps connected to this email")
-            if len(emails) != 0:
-                table = Table(title=f"Apps connected to {email}")
-                table.add_column("Apps", style="cyan", no_wrap=True)
-                for email in emails:
-                    table.add_row(email[0])
+            emails = self.cur.fetchone()
+            count = 0
+            table = Table(title=f"Apps connected to {email}")
+            table.add_column("No", style="cyan", no_wrap=True)
+            table.add_column("Apps", style="cyan", no_wrap=True)
+            while emails:
+                count += 1
+                table.add_row(str(count), emails[0])
+                emails = self.cur.fetchone()
+            console.print(f"\nFound [bold][blink]{count}[/blink][/bold] apps connected to this email")
+            if count != 0:
                 console.print(table)
             else:
                 console.print("[bold]No apps found[/bold]")
+
 
     def delete(self):
         uninstall_script()
