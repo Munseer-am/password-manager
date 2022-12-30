@@ -87,21 +87,19 @@ class Main:
     def __init__(self):
         super(Main, self).__init__()
         self.home = os.path.expanduser("~")
-        try:
-            if os.path.exists(f"{self.home}/.config/manager/"):
-                if os.path.exists(f"{self.home}/.config/manager/db.sqlite3"):
-                    self.conn = sqlite3.connect(f"{self.home}/.config/manager/db.sqlite3")
-                elif os.path.exists(f"{self.home}/.config/manager/backup/db.sqlite3.bak"):
-                    self.conn = sqlite3.connect(f"{self.home}/.config/manager/backup/db.sqlite3.bak")
-                else:
-                    self.conn = sqlite3.connect(f"{self.home}/.config/manager/db.sqlite3")
-                self.cur = self.conn.cursor()
-                self.create_tables()
+        self.db_paths = [
+            f"{self.home}/.config/manager/db.sqlite3",
+            f"{self.home}/.config/manager/backup/db.sqlite3.bak"
+        ]
+        for path in self.db_paths:
+            if os.path.exists(path):
+                self.conn = sqlite3.connect(path)
+                break
             else:
-                raise FileNotFoundError
-        except FileNotFoundError:
-            os.system("sudo rm /usr/local/bin/manager")
-            os.system("manager_repair")
+                self.conn = sqlite3.connect(self.db_paths[0])
+        self.cur = self.conn.cursor()
+        self.create_tables()
+
 
     def create_tables(self, status=False):
         tables = """CREATE TABLE IF NOT EXISTS Passwords (
