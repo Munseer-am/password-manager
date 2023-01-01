@@ -17,7 +17,7 @@ except ImportError:
 
 console = Console()
 console.clear()
-os.system("figlet -c -f Bloody 'Munseer' | lolcat")
+os.system("figlet -c -f Bloody 'Manager' | lolcat")
 x = str(datetime.datetime.now().strftime("%H:%M:%S %b %d %Y"))
 console.print(x.replace(":", "[blink]:[/blink]"))
 
