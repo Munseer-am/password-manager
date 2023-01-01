@@ -342,7 +342,6 @@ config = {{
             else:
                 console.print("no such app to delete".capitalize())
 
-    @cache
     def main(self):
         menu()
         try:
