@@ -99,14 +99,17 @@ class Main:
             f"{self.home}/.config/manager/db.sqlite3",
             f"{self.home}/.config/manager/backup/db.sqlite3.bak"
         ]
-        for path in self.db_paths:
-            if os.path.exists(path):
-                self.conn = sqlite3.connect(path)
-                break
-        else:
-            self.conn = sqlite3.connect(self.db_paths[0])
-        self.cur = self.conn.cursor()
-        self.create_tables()
+        try:
+            for path in self.db_paths:
+                if os.path.exists(path):
+                    self.conn = sqlite3.connect(path)
+                    break
+            else:
+                self.conn = sqlite3.connect(self.db_paths[0])
+            self.cur = self.conn.cursor()
+            self.create_tables()
+        except FileNotFoundError:
+            os.system("manager_repair")
 
 
     def create_tables(self, status=False):
