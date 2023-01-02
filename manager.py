@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 import argparse
+import pyfiglet
 import os
 import datetime
 import time
@@ -9,7 +10,6 @@ from rich.console import Console
 try:
     sys.path.insert(0, f"{os.path.expanduser('~')}/.config/manager/")
     import essentials
-    from config import config
 except ImportError:
     os.system("sudo rm /usr/local/bin/manager")
     os.system("manager_repair")
