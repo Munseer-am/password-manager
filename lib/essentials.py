@@ -112,7 +112,7 @@ class Main:
             os.system("manager_repair")
 
 
-    def create_tables(self, status=False):
+    def create_tables(self):
         tables = """CREATE TABLE IF NOT EXISTS Passwords (
             Application VARCHAR(200),
             Username VARCHAR(200),
@@ -127,8 +127,6 @@ class Main:
         self.cur.execute(tables)
         self.cur.execute(log)
         self.conn.commit()
-        if status:
-            self.conn.close()
 
     def set_details(self):
         master = Prompt.ask("Set a master password to use", password=True)
