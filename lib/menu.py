@@ -4,7 +4,7 @@ console = Console()
 
 
 def menu():
-    console.print("\n---------------Menu---------------")
+    console.print("\n---------------Menu--------------------")
     console.print("[bold][1] Get all credentials of specific app[/bold]")
     console.print("[bold][2] List apps in database[/bold]")
     console.print("[bold][3] Find accounts using email/phone[/bold]")
@@ -14,4 +14,4 @@ def menu():
     console.print("[bold][7] Generate password[/bold]")
     console.print("[bold][8] View Log[/bold]")
     console.print("[bold][9] Exit[/bold]")
-    console.print("------------------------------------")
+    console.print("----------------------------------------")
