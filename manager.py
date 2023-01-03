@@ -9,7 +9,7 @@ from rich.console import Console
 
 try:
     sys.path.insert(0, f"{os.path.expanduser('~')}/.config/manager/")
-    import essentials
+    from essentials import Main, is_not_configured, uninstall_script
 except ImportError:
     os.system("sudo rm /usr/local/bin/manager")
     os.system("manager_repair")
@@ -31,20 +31,25 @@ args = parser.parse_args()
 start = time.time()
 
 
-class Main(essentials.Main):
+class Main(Main):
     def __init__(self):
         super(Main, self).__init__()
-        if not essentials.is_not_configured():
-            if args.reset:
-                self.reset()
-            elif args.REMOVE:
-                self.delete()
-            elif args.uninstall:
-                essentials.uninstall_script()
+        configured = not is_not_configured()
+        if configured:
+            options = {
+                "reset": self.reset,
+                "REMOVE": self.delete,
+                "uninstall": uninstall_script,
+            }
+            for key, value in options.items():
+                if getattr(args, key):
+                    value()
+                    break
             else:
                 self.security()
         else:
             self.set_details()
+
 
 
 try:
