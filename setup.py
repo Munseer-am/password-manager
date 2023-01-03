@@ -17,14 +17,20 @@ def is_installed(tool: str):
 
 
 def install(tool: str):
-    if is_installed("apt") is not None:
-        os.system(f"sudo apt install {tool} -y")
-    elif is_installed("pacman") is not None:
-        os.system(f"sudo pacman -Sy {tool}")
-    elif is_installed("dnf") is not None:
-        os.system("sudo dnf install {tool}")
+    package_managers = {
+        "apt": f"sudo apt install {tool} -y",
+        "pacman": f"sudo pacman -Sy {tool}",
+        "dnf": f"sudo dnf install {tool}"
+    }
+    for key, value in package_managers.items():
+        installed_package_manager = is_installed(key)
+        if installed_package_manager is not None:
+            command = package_managers[key].format(tool=tool)
+            subprocess.run(command, shell=True, check=True)
+            break
     else:
         print("No Installation Candidate Found")
+
 
 
 def install_tool(tool: str):
