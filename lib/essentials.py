@@ -407,6 +407,8 @@ config = {{
                 console.print(f"Your password is ready: [bold]{password}[/bold]")
             elif option == 8:
                 self.view_log()
+            elif option == 9:
+                exit()
             else:
                 console.print("Please choose a valid option \n")
                 self.main()
