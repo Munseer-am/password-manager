@@ -43,15 +43,15 @@ class Main(Main):
                 "reset": self.reset,
                 "REMOVE": self.delete,
                 "uninstall": uninstall_script,
-                "dump_credentials": self.security
+                "dump_credentials": self.dump
             }
             for key, value in options.items():
                 if getattr(args, key):
-                    try:
-                        value(self.dump)
-                        break
-                    except TypeError:
+                    if key == "reset":
                         value()
+                        break
+                    else:
+                        self.security(value)
                         break
             else:
                 self.security(self.main)

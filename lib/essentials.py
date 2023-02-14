@@ -59,15 +59,10 @@ def is_not_configured():
 
 
 def uninstall_script():
-    pas = Prompt.ask("Enter password to delete", password=True)
-    hashed = sha256_encoder(pas)
-    if hashed != config["KEY"]:
-        console.print("Invalid Password")
+    if os.path.exists("/usr/local/bin/manager"):
+        os.system("sudo rm /usr/local/bin/manager")
     else:
-        if os.path.exists("/usr/local/bin/manager"):
-            os.system("sudo rm /usr/local/bin/manager")
-        else:
-            console.print("File does not exist")
+        console.print("File does not exist")
 
 
 def encrypt(key: bytes, password: str):
