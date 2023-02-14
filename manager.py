@@ -22,13 +22,14 @@ os.system("figlet -c -f Bloody 'Manager' | lolcat")
 x = str(datetime.datetime.now().strftime("%H:%M:%S %b %d %Y"))
 console.print(x.replace(":", "[blink]:[/blink]"))
 
-parser = argparse.ArgumentParser()
+parse = argparse.ArgumentParser()
+parser = parse.add_mutually_exclusive_group()
 parser.add_argument("-r", "--reset", help="reset the password of script", action="store_true")
 parser.add_argument("-U", "--uninstall", help="Delete script file from /usr/local/bin/", action="store_true")
 parser.add_argument("--REMOVE", help="Delete all files and directories related to password manager",
                     action="store_true")
 parser.add_argument("--dump-credentials", help="Dump all credentials into a json file", action="store_true")
-args = parser.parse_args()
+args = parse.parse_args()
 
 start = time.time()
 
@@ -42,12 +43,16 @@ class Main(Main):
                 "reset": self.reset,
                 "REMOVE": self.delete,
                 "uninstall": uninstall_script,
-                "dump_credentials": self.dump
+                "dump_credentials": self.security
             }
             for key, value in options.items():
                 if getattr(args, key):
-                    value()
-                    break
+                    try:
+                        value(self.dump)
+                        break
+                    except TypeError:
+                        value()
+                        break
             else:
                 self.security(self.main)
         else:
