@@ -203,7 +203,7 @@ config = {{
                 console.print("Password Changed Successfully")
                 quit(0)
 
-    def security(self):
+    def security(self, func):
         inp = Prompt.ask("Enter password to unlock file", password=True)
         enc = sha256_encoder(inp)
         i = 0
@@ -218,7 +218,7 @@ config = {{
                 enc = sha256_encoder(inp)
         else:
             console.print("Access Granted!")
-            self.main()
+            func()
 
     def log(self, app: str, current_time: str, script: str):
         logger = logging.getLogger(__name__)
@@ -414,4 +414,4 @@ config = {{
                 self.main()
         except ValueError:
             console.print("Enter int instead of str ")
-            self.main()
+            self.main() 
