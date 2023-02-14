@@ -28,7 +28,7 @@ parser.add_argument("-r", "--reset", help="reset the password of script", action
 parser.add_argument("-U", "--uninstall", help="Delete script file from /usr/local/bin/", action="store_true")
 parser.add_argument("--REMOVE", help="Delete all files and directories related to password manager",
                     action="store_true")
-parser.add_argument("--dump-credentials", help="Dump all credentials into a json file", action="store_true")
+parser.add_argument("--dump_credentials", help="Dump all credentials into a json file", action="store_true")
 args = parse.parse_args()
 
 start = time.time()
@@ -64,15 +64,10 @@ class Main(Main):
         creds = self.cur.fetchall()
         creds.sort()
         for cred in creds:
-            credentials[cred[0]] = {}
-            credentials[cred[0]]["Application"] = cred[0]
-            credentials[cred[0]]["Username"] = cred[1]
-            credentials[cred[0]]["Email/Phone"] = cred[2]
-            credentials[cred[0]]["Password"] = decrypt(config["ENCRYPTION_KEY"], cred[3])
-
+            app, username, email, password = cred
+            credentials[app] = {"Application": app, "Username": username, "Email/Phone": email, "Password": decrypt(config["ENCRYPTION_KEY"], password)}
         with open("dump.json", "w") as f:
-            f.write(json.dumps(credentials, indent=4))
-            f.close()
+            json.dump(credentials, f, indent=4)
         print(f"Data saved to file: dump.json")
 
 try:
