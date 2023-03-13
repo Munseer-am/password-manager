@@ -19,3 +19,4 @@ migrate.py
 .fleet/
 error.log
 dump.json
+backup.txt
