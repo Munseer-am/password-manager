@@ -79,4 +79,9 @@ try:
     console.clear()
 except KeyboardInterrupt:
     console.clear()
+except Exception as e:
+    with open(f"{os.path.expanduser('~')}/.config/manager/error.log") as f:
+        f.write(e)
+        f.close()
+finally:
     exit(0)
