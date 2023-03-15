@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 import argparse
+import logging
 import pyfiglet
 import os
 import json
@@ -76,12 +77,10 @@ try:
     end = time.time()
     print(f"Execution Time: {end-start}")
     time.sleep(4)
-    console.clear()
-except KeyboardInterrupt:
-    console.clear()
 except Exception as e:
-    with open(f"{os.path.expanduser('~')}/.config/manager/error.log") as f:
-        f.write(e)
-        f.close()
+    logging.basicConfig(filename=f"{os.path.expanduser('~')}/.config/manager/log/error.log", level=logging.DEBUG, format='%(asctime)s %(levelname)s %(name)s %(message)s')
+    logger = logging.getLogger(__name__)
+    logger.error(e)
 finally:
+    console.clear()
     exit(0)
