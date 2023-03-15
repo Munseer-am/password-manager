@@ -67,7 +67,7 @@ class Main(Main):
         for cred in creds:
             app, username, email, password = cred
             credentials[app] = {"Application": app, "Username": username, "Email/Phone": email, "Password": decrypt(config["ENCRYPTION_KEY"], password)}
-        with open("dump.json", "w") as f:
+        with open("credentials.json", "w") as f:
             json.dump(credentials, f, indent=4)
         print(f"Data saved to file: dump.json")
 
