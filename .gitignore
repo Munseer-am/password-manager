@@ -18,5 +18,5 @@ tests/
 migrate.py
 .fleet/
 error.log
-dump.json
+credentials.json
 backup.txt
