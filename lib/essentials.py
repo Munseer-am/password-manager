@@ -292,10 +292,12 @@ config = {{
 
     def delete(self):
         uninstall_script()
-        if os.path.exists(f"{self.home}/.config/manager/"):
-            rmtree(f"{self.home}/.config/manager/")
-        if os.path.exists("/usr/local/bin/manager_repair"):
-            os.system("sudo rm /usr/local/bin/manager_repair")
+        try:
+            if os.path.exists(f"{self.home}/.config/manager/"):
+                rmtree(f"{self.home}/.config/manager/")
+        except PermissionError:
+            if os.path.exists("/usr/local/bin/manager_repair"):
+                os.system("sudo rm /usr/local/bin/manager_repair")
 
     def update_data(self, application: str, app: str, username: str, email, password: bytes):
         sql = "UPDATE Passwords SET Application=?, Username=?, Email=?, Password=? WHERE Application=?"

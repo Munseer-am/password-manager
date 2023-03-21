@@ -1,7 +1,6 @@
 #! /usr/bin/env python
 import argparse
 import logging
-import pyfiglet
 import os
 import json
 import datetime
@@ -72,11 +71,16 @@ class Main(Main):
         print(f"Data saved to file: dump.json")
 
 try:
-    if __name__ == "__main__":
-        Main()
-    end = time.time()
-    print(f"Execution Time: {end-start}")
-    time.sleep(4)
+    if os.geteuid() !=  0:
+        if __name__ == "__main__":
+            Main()
+        end = time.time()
+        print(f"Execution Time: {end-start}")
+        time.sleep(4)
+    else:
+        raise PermissionError
+except PermissionError:
+    print("Can't run script as superuser")
 except Exception as e:
     logging.basicConfig(filename=f"{os.path.expanduser('~')}/.config/manager/log/error.log", level=logging.DEBUG, format='%(asctime)s %(levelname)s %(name)s %(message)s')
     logger = logging.getLogger(__name__)
