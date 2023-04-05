@@ -10,7 +10,7 @@ from rich.console import Console
 
 try:
     sys.path.insert(0, f"{os.path.expanduser('~')}/.config/manager/")
-    from essentials import Main, is_not_configured, uninstall_script, decrypt, config, sub_print
+    from essentials import Main, is_not_configured, uninstall_script, decrypt, config, sub_print, __author__
 except ImportError:
     os.system("sudo rm /usr/local/bin/manager")
     os.system("manager_repair")
@@ -19,7 +19,7 @@ except ImportError:
 console = Console()
 console.clear()
 os.system("figlet -c -f Bloody 'Manager' | lolcat")
-sub_print("Created By Munseer", 0)
+sub_print(f"Created By {__author__}", 0)
 x = str(datetime.datetime.now().strftime("%H:%M:%S %b %d %Y"))
 console.print(x.replace(":", "[blink]:[/blink]"))
 
