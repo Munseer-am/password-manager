@@ -19,7 +19,7 @@ except ImportError:
 console = Console()
 console.clear()
 os.system("figlet -c -f Bloody 'Manager' | lolcat")
-sub_print(f"Created By {__author__}", 0)
+sub_print(f"Created By {__author__}", 50)
 x = str(datetime.datetime.now().strftime("%H:%M:%S %b %d %Y"))
 console.print(x.replace(":", "[blink]:[/blink]"))
 
