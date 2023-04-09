@@ -33,6 +33,7 @@ except ImportError:
 console = Console()
 x = str(datetime.datetime.now().strftime("%H:%M:%S %b %d %Y"))
 
+
 @cache
 def generate_password():
     sym = "!@#$%^&*()[]{}:;"
@@ -40,16 +41,17 @@ def generate_password():
     password = "".join(sample(all_chars, 20))
     return password
 
-def sub_print(text, leading_spaces = 0):
+
+def sub_print(text, leading_spaces=0):
     text_chars = list(text)
-    current, mutated = '', ''
-    for i in range(len(text)):            
+    current, mutated = "", ""
+    for i in range(len(text)):
         original = text_chars[i]
         current += original
-        mutated += f'\033[1;38;5;82m{text_chars[i].upper()}\033[0m'
-        print(f'\r{" " * leading_spaces}{mutated}', end = '')
+        mutated += f"\033[1;38;5;82m{text_chars[i].upper()}\033[0m"
+        print(f'\r{" " * leading_spaces}{mutated}', end="")
         time.sleep(0.05)
-        print(f'\r{" " * leading_spaces}{current}', end = '')
+        print(f'\r{" " * leading_spaces}{current}', end="")
         mutated = current
 
     print(f'\r{" " * leading_spaces}{text}\n')
@@ -93,6 +95,7 @@ def decrypt(key: bytes, password: bytes):
 def backup(db: str, path: str, dst: str):
     copyfile(path, os.path.join(dst + "/" + db))
 
+
 def is_valid_email(email):
     regex = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
     if re.match(regex, email):
@@ -107,7 +110,7 @@ class Main:
         self.home = os.path.expanduser("~")
         self.db_paths = [
             f"{self.home}/.config/manager/db.sqlite3",
-            f"{self.home}/.config/manager/backup/db.sqlite3.bak"
+            f"{self.home}/.config/manager/backup/db.sqlite3.bak",
         ]
         try:
             for path in self.db_paths:
@@ -120,7 +123,6 @@ class Main:
             self.create_tables()
         except FileNotFoundError:
             os.system("manager_repair")
-
 
     def create_tables(self):
         tables = """CREATE TABLE IF NOT EXISTS Passwords (
@@ -147,7 +149,9 @@ class Main:
         if master != val:
             console.print("[bold]Password does not match[/bold]")
             self.set_details()
-        email = Prompt.ask("Enter your email address(It will be used to reset password)")
+        email = Prompt.ask(
+            "Enter your email address(It will be used to reset password)"
+        )
         if not is_valid_email(email):
             console.print("Enter a valid email address")
             self.set_details()
@@ -168,12 +172,18 @@ config = {{
         with open(f"{self.home}/.config/manager/config.py", "w") as f:
             f.write(conf)
             f.close()
-        backup("config.bak", f"{self.home}/.config/manager/config.py",
-               f"{self.home}/.config/manager/backup")
+        backup(
+            "config.bak",
+            f"{self.home}/.config/manager/config.py",
+            f"{self.home}/.config/manager/backup",
+        )
         console.print("Please run the script again")
         self.conn.commit()
         self.conn.close()
-        copyfile(f"{self.home}/.config/manager/db.sqlite3", f"{self.home}/.config/manager/backup/db.sqlite3.bak")
+        copyfile(
+            f"{self.home}/.config/manager/db.sqlite3",
+            f"{self.home}/.config/manager/backup/db.sqlite3.bak",
+        )
         quit(0)
 
     def reset(self):
@@ -205,11 +215,16 @@ config = {{
     'PATH_TO_BACKUP': '{config["PATH_TO_BACKUP"]}',
     'PATH_TO_LOG': '{config["PATH_TO_LOG"]}'
 }}"""
-                with open(os.path.join(f"{self.home}/.config/manager/config.py"), "w") as f:
+                with open(
+                    os.path.join(f"{self.home}/.config/manager/config.py"), "w"
+                ) as f:
                     f.write(conf)
                     f.close()
-                backup("config.bak", f"{self.home}/.config/manager/config.py",
-                       f"{self.home}/.config/manager/backup")
+                backup(
+                    "config.bak",
+                    f"{self.home}/.config/manager/config.py",
+                    f"{self.home}/.config/manager/backup",
+                )
                 console.print("Password Changed Successfully")
                 quit(0)
 
@@ -236,7 +251,9 @@ config = {{
         log_file = os.path.join(config["PATH_TO_LOG"] + "/logs.log")
         handler = logging.FileHandler(log_file)
         handler.setLevel(logging.INFO)
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        formatter = logging.Formatter(
+            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        )
         handler.setFormatter(formatter)
         logger.addHandler(handler)
         logger.info(f"Time: {current_time} Script: {script} Application: {app.title()}")
@@ -259,12 +276,12 @@ config = {{
 
     def fetch(self, app: str):
         try:
-            self.cur.execute("SELECT * FROM Passwords WHERE Application LIKE ?", ('%' + app + '%',))
+            self.cur.execute(
+                "SELECT * FROM Passwords WHERE Application LIKE ?", ("%" + app + "%",)
+            )
             credentials = self.cur.fetchall()
             if len(credentials) != 0:
-                table = Table(
-                    title="Credentials"
-                )
+                table = Table(title="Credentials")
                 table.add_column("Application", style="cyan", no_wrap=True)
                 table.add_column("Username", style="cyan", no_wrap=True)
                 table.add_column("Email/Phone", style="cyan", no_wrap=True)
@@ -276,19 +293,22 @@ config = {{
                         copy(password)
                 console.print(table, justify="left")
             else:
-                console.print("[bold]Oops! looks like there are no results for you[/bold]")
+                console.print(
+                    "[bold]Oops! looks like there are no results for you[/bold]"
+                )
         except sqlite3.Error as e:
             console.print(f"An error occurred: {e}")
         finally:
             self.cur.close()
             self.conn.close()
 
-
     def email_search(self, email: str):
         if not email.strip():
             console.print("[bold]Invalid Input[/bold]")
         else:
-            self.cur.execute(f'SELECT APPLICATION FROM Passwords WHERE Email LIKE "%{email}%"')
+            self.cur.execute(
+                f'SELECT APPLICATION FROM Passwords WHERE Email LIKE "%{email}%"'
+            )
             emails = self.cur.fetchone()
             count = 0
             table = Table(title=f"Apps connected to {email}")
@@ -298,12 +318,13 @@ config = {{
                 count += 1
                 table.add_row(str(count), emails[0])
                 emails = self.cur.fetchone()
-            console.print(f"\nFound [bold][blink]{count}[/blink][/bold] apps connected to this email")
+            console.print(
+                f"\nFound [bold][blink]{count}[/blink][/bold] apps connected to this email"
+            )
             if count != 0:
                 console.print(table)
             else:
                 console.print("[bold]No apps found[/bold]")
-
 
     def delete(self):
         uninstall_script()
@@ -314,7 +335,9 @@ config = {{
             if os.path.exists("/usr/local/bin/manager_repair"):
                 os.system("sudo rm /usr/local/bin/manager_repair")
 
-    def update_data(self, application: str, app: str, username: str, email, password: bytes):
+    def update_data(
+        self, application: str, app: str, username: str, email, password: bytes
+    ):
         sql = "UPDATE Passwords SET Application=?, Username=?, Email=?, Password=? WHERE Application=?"
         self.cur.execute(sql, (app, username, email, password, application))
         self.conn.commit()
@@ -344,12 +367,16 @@ config = {{
         if not app.strip():
             console.print("Invalid Input")
         else:
-            self.cur.execute(f'SELECT Application FROM Passwords WHERE Application="{app.capitalize()}"')
+            self.cur.execute(
+                f'SELECT Application FROM Passwords WHERE Application="{app.capitalize()}"'
+            )
             _apps = self.cur.fetchall()
             if len(_apps) != 0:
                 for _app in _apps:
                     _app = "".join(_app)
-                    self.cur.execute(f'DELETE FROM Passwords WHERE Application LIKE "%{_app}%"')
+                    self.cur.execute(
+                        f'DELETE FROM Passwords WHERE Application LIKE "%{_app}%"'
+                    )
                     self.conn.commit()
                 return True
             else:
@@ -364,7 +391,14 @@ config = {{
                 if not app.strip():
                     console.print("Invalid Input")
                 else:
-                    thread = Thread(target=self.log, args=(app, x, __file__,))
+                    thread = Thread(
+                        target=self.log,
+                        args=(
+                            app,
+                            x,
+                            __file__,
+                        ),
+                    )
                     thread.daemon = True
                     thread.run()
                     self.fetch(app)
@@ -372,7 +406,9 @@ config = {{
             elif option == 2:
                 self.list_apps()
             elif option == 3:
-                email = Prompt.ask("Enter the email/phone that you want to search").strip()
+                email = Prompt.ask(
+                    "Enter the email/phone that you want to search"
+                ).strip()
                 self.email_search(email)
             elif option == 4:
                 app = Prompt.ask("Enter the name of the application").strip()
@@ -381,31 +417,61 @@ config = {{
                 else:
                     username = Prompt.ask("Enter username of the application").strip()
                     email = Prompt.ask("Enter your email address").strip()
-                    pas = Prompt.ask("Do you want to generate new password", choices=["y", "n"], default="y").strip()
+                    pas = Prompt.ask(
+                        "Do you want to generate new password",
+                        choices=["y", "n"],
+                        default="y",
+                    ).strip()
                     if pas == "y":
                         password = generate_password()
                         copy(password)
                     else:
                         password = Prompt.ask("Enter password", password=True).strip()
-                    self.add(app, username, email, encrypt(config['ENCRYPTION_KEY'], password))
-                    backup("db.sqlite3.bak", config["PATH_TO_DATABASE"], config["PATH_TO_BACKUP"])
+                    self.add(
+                        app,
+                        username,
+                        email,
+                        encrypt(config["ENCRYPTION_KEY"], password),
+                    )
+                    backup(
+                        "db.sqlite3.bak",
+                        config["PATH_TO_DATABASE"],
+                        config["PATH_TO_BACKUP"],
+                    )
             elif option == 5:
-                application = Prompt.ask("Enter the application that you want to update").strip().title()
-                self.cur.execute(f"SELECT * FROM Passwords WHERE Application='{application}'")
+                application = (
+                    Prompt.ask("Enter the application that you want to update")
+                    .strip()
+                    .title()
+                )
+                self.cur.execute(
+                    f"SELECT * FROM Passwords WHERE Application='{application}'"
+                )
                 _apps = self.cur.fetchone()
                 if _apps is not None:
-                    app = Prompt.ask(f"Enter name of app (leave blank to use {''.join(_apps[0])})").strip()
+                    app = Prompt.ask(
+                        f"Enter name of app (leave blank to use {''.join(_apps[0])})"
+                    ).strip()
                     if not app.strip():
                         app = "".join(_apps[0])
-                    username = Prompt.ask(f"Enter username (leave blank to use {''.join(_apps[1])})").strip()
+                    username = Prompt.ask(
+                        f"Enter username (leave blank to use {''.join(_apps[1])})"
+                    ).strip()
                     if not username.strip():
                         username = "".join(_apps[1])
-                    email = Prompt.ask(f"Enter email/phone (leave blank to use {''.join(_apps[2])})").strip()
+                    email = Prompt.ask(
+                        f"Enter email/phone (leave blank to use {''.join(_apps[2])})"
+                    ).strip()
                     if not email.strip():
                         email = "".join(_apps[2])
                     password = Prompt.ask("Enter password", password=True).strip()
-                    self.update_data(application, app, username, email,
-                                     encrypt(config["ENCRYPTION_KEY"], password))
+                    self.update_data(
+                        application,
+                        app,
+                        username,
+                        email,
+                        encrypt(config["ENCRYPTION_KEY"], password),
+                    )
                     console.print("Data updated successfully")
                 else:
                     console.print("[bold]No such app to update[/bold]")
@@ -426,4 +492,4 @@ config = {{
                 self.main()
         except ValueError:
             console.print("Enter int instead of str ")
-            self.main() 
+            self.main()
