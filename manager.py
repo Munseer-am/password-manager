@@ -60,16 +60,17 @@ class Main(Main):
             self.set_details()
 
     def dump(self):
-        credentials = {}
+        credentials = []
         self.cur.execute("SELECT * FROM Passwords")
         creds = self.cur.fetchall()
         creds.sort()
         for cred in creds:
             app, username, email, password = cred
-            credentials[app] = {"Application": app, "Username": username, "Email/Phone": email, "Password": decrypt(config["ENCRYPTION_KEY"], password)}
-        with open("credentials.json", "w") as f:
-            json.dump(credentials, f, indent=4)
-        print(f"Data saved to file: dump.json")
+            data = {"Application": app, "Username": username, "Email/Phone": email, "Password": decrypt(config["ENCRYPTION_KEY"], password)}
+            credentials.append(data)
+            with open("credentials.json", "w") as f:
+                json.dump(credentials, f, indent=4)
+        print(f"Data saved to file: credentials.json")
 
 try:
     if os.geteuid() !=  0:
@@ -77,7 +78,7 @@ try:
             Main()
         end = time.time()
         print(f"Execution Time: {end-start}")
-        time.sleep(4)
+        time.sleep(10)
     else:
         raise PermissionError
 except PermissionError:
@@ -87,5 +88,5 @@ except Exception as e:
     logger = logging.getLogger(__name__)
     logger.error(e)
 finally:
-    console.clear()
+    # console.clear()
     exit(0)
