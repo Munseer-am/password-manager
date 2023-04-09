@@ -88,5 +88,5 @@ except Exception as e:
     logger = logging.getLogger(__name__)
     logger.error(e)
 finally:
-    # console.clear()
+    console.clear()
     exit(0)
