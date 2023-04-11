@@ -1,6 +1,7 @@
 #! /usr/bin/python3
 import os
 import sys
+import json
 import platform
 import shutil
 import subprocess
@@ -8,7 +9,7 @@ from distutils.spawn import find_executable
 
 home = os.path.expanduser("~")
 
-def if_exists(path: str):
+def check_existence_of(path: str):
     return os.path.exists(path)
 
 
@@ -43,54 +44,53 @@ def install_tool(tool: str):
 
 
 def install_font():
-    if if_exists("/usr/share/figlet/fonts/"):
-        if not if_exists("/usr/share/figlet/fonts/Bloody.flf"):
+    if check_existence_of("/usr/share/figlet/fonts/"):
+        if not check_existence_of("/usr/share/figlet/fonts/Bloody.flf"):
             try:
                 shutil.copyfile("Bloody.flf", "/usr/share/figlet/fonts/Bloody.flf")
             except PermissionError:
                 os.system("sudo cp Bloody.flf /usr/share/figlet/fonts/")
-    elif if_exists("/usr/share/figlet/"):
-        if not if_exists("/usr/share/figlet/Bloody.flf"):
+    elif check_existence_of("/usr/share/figlet/"):
+        if not check_existence_of("/usr/share/figlet/Bloody.flf"):
             try:
                 shutil.copyfile("Bloody.flf", "/usr/share/figlet/Bloody.flf")
             except PermissionError:
                 os.system("sudo cp Bloody.flf /usr/share/figlet/")
 
-
 def main():
     data = {
-        f"{home}/.config/manager/config.py": "lib/config.py",
         f"{home}/.config/manager/insults.py": "lib/insults.py",
         f"{home}/.config/manager/essentials.py": "lib/essentials.py",
         f"{home}/.config/manager/menu.py": "lib/menu.py"
     }
     dirs = [f"{home}/.config/manager/", f"{home}/.config/manager/backup/", f"{home}/.config/manager/log/"]
+    transfer()
     install_tool("figlet")
     install_tool("lolcat")
-    if if_exists("requirements.txt"):
+    if check_existence_of("requirements.txt"):
         subprocess.call(["pip", "install", "-r", "requirements.txt"])
     else:
         print("Requirements File Missing")
     install_font()
     os.system("clear && figlet -c -f Bloody 'Munseer' | lolcat")
-    if not if_exists("/usr/local/bin/manager"):
+    if not check_existence_of("/usr/local/bin/manager"):
         print("Installing Script")
         os.system("sudo cp manager.py /usr/local/bin/manager && sudo chmod +rwx /usr/local/bin/manager")
         print("creating required directories".title())
         for dir in dirs:
-            if not if_exists(dir):
+            if not check_existence_of(dir):
                 os.mkdir(dir)
         print("Moving Files")
         for key, value in data.items():
-            if not if_exists(key):
+            if not check_existence_of(key):
                 shutil.copyfile(value, key)
-        if not if_exists("/usr/local/bin/manager_repair"):
+        if not check_existence_of("/usr/local/bin/manager_repair"):
             os.system("sudo cp setup.py /usr/local/bin/manager_repair && sudo chmod +rwx /usr/local/bin/manager_repair")
         print("to run the script type `manager`".title())
     else:
         try:
             for key, value in data.items():
-                if not if_exists(key):
+                if not check_existence_of(key):
                     shutil.copyfile(value, key)
             print("script already installed".title())
         except FileNotFoundError:

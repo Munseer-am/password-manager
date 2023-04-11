@@ -1,6 +1,7 @@
 #! /usr/bin/python3
 import datetime
 import clipboard
+import json
 import logging
 import os
 import re
@@ -10,6 +11,7 @@ import time
 from cryptography.fernet import Fernet
 from functools import cache
 from hashlib import sha256
+from pathlib import Path
 from random import sample
 from rich.console import Console
 from rich.prompt import Prompt
@@ -22,7 +24,6 @@ __author__ = "Munseer-am"
 
 try:
     sys.path.insert(0, f"{os.path.expanduser('~')}/.config/manager")
-    from config import config
     from menu import menu
     from insults import insult
 except ImportError:
@@ -33,6 +34,42 @@ except ImportError:
 console = Console()
 x = str(datetime.datetime.now().strftime("%H:%M:%S %b %d %Y"))
 
+home = os.path.expanduser("~")
+encoding = "UTF-8"
+config_file = f"{home}/.config/manager/config.json"
+
+def transfer():
+    def check(file: str):
+        return os.path.exists(file)
+    if check(f"{home}/.config/manager/config.py") and not check(config_file):
+        try:
+            from config import config
+            password = config["ENCRYPTION_KEY"].decode(encoding)
+            config["ENCRYPTION_KEY"] = password
+            with open(config_file, "w") as e:
+                json.dump(config, e, indent=4)
+                e.close()
+            print("Configuration Tranfer Completed! run the script again")
+            exit()
+        except:
+            raise Exception
+            
+
+@cache
+def read_config():
+    try:
+        with open(config_file) as f:
+            config = json.load(f)
+            f.close()
+        password = config["ENCRYPTION_KEY"]
+        config["ENCRYPTION_KEY"] = password.encode(encoding)
+        return config
+    except FileNotFoundError:
+        print("FileNotFoundError")
+        transfer()
+    except json.decoder.JSONDecodeError:
+        print("DEcode Error")
+        return None
 
 @cache
 def generate_password():
@@ -41,6 +78,7 @@ def generate_password():
     password = "".join(sample(all_chars, 20))
     return password
 
+config = read_config()
 
 def sub_print(text, leading_spaces=0):
     text_chars = list(text)
@@ -58,7 +96,7 @@ def sub_print(text, leading_spaces=0):
 
 
 def sha256_encoder(word: str):
-    enc = sha256(word.encode("utf-8")).hexdigest()
+    enc = sha256(word.encode(encoding)).hexdigest()
     return enc
 
 
@@ -69,7 +107,7 @@ def copy(word: str):
 
 @cache
 def is_not_configured():
-    if config is not None:
+    if read_config() is not None:
         return False
     else:
         return True
@@ -84,12 +122,12 @@ def uninstall_script():
 
 def encrypt(key: bytes, password: str):
     enc = Fernet(key)
-    return enc.encrypt(password.encode("utf-8"))
+    return enc.encrypt(password.encode(encoding))
 
 
 def decrypt(key: bytes, password: bytes):
     dec = Fernet(key)
-    return dec.decrypt(password).decode("utf-8")
+    return dec.decrypt(password).decode(encoding)
 
 
 def backup(db: str, path: str, dst: str):
@@ -107,10 +145,9 @@ def is_valid_email(email):
 class Main:
     def __init__(self):
         super(Main, self).__init__()
-        self.home = os.path.expanduser("~")
         self.db_paths = [
-            f"{self.home}/.config/manager/db.sqlite3",
-            f"{self.home}/.config/manager/backup/db.sqlite3.bak",
+            f"{home}/.config/manager/db.sqlite3",
+            f"{home}/.config/manager/backup/db.sqlite3.bak",
         ]
         try:
             for path in self.db_paths:
@@ -143,7 +180,7 @@ class Main:
     def set_details(self):
         master = Prompt.ask("Set a master password to use", password=True)
         val = Prompt.ask("Enter password again", password=True)
-        if len(master) != 6:
+        if len(master) < 6:
             console.print("[bold]Password Must Be Minimum 6 Characters Long[/bold]")
             self.set_details()
         if master != val:
@@ -156,35 +193,31 @@ class Main:
             console.print("Enter a valid email address")
             self.set_details()
         email = sha256_encoder(email)
-        key = Fernet.generate_key()
+        key = Fernet.generate_key().decode(encoding)
         enc = sha256_encoder(master)
-        conf = f"""# config file for manager used for many purpose
-# editing it may break the program
-# edit at your own risk\n
-config = {{
-    'KEY': '{enc}',
-    'ENCRYPTION_KEY': {key},
-    'EMAIL': '{email}',
-    'PATH_TO_DATABASE': '{self.home}/.config/manager/db.sqlite3',
-    'PATH_TO_BACKUP': '{self.home}/.config/manager/backup/',
-    'PATH_TO_LOG': '{self.home}/.config/manager/log/'            
-}}"""
-        with open(f"{self.home}/.config/manager/config.py", "w") as f:
-            f.write(conf)
+        conf = {
+    'KEY': enc,
+    'ENCRYPTION_KEY': key,
+    'EMAIL': email,
+    'PATH_TO_DATABASE': f'{home}/.config/manager/db.sqlite3',
+    'PATH_TO_BACKUP': f'{home}/.config/manager/backup/',
+    'PATH_TO_LOG': f'{home}/.config/manager/log/'            
+}
+        with open(f"{home}/.config/manager/config.json", "w") as f:
+            json.dump(conf, f, indent=4)
             f.close()
         backup(
-            "config.bak",
-            f"{self.home}/.config/manager/config.py",
-            f"{self.home}/.config/manager/backup",
+            "config.json.bak",
+            f"{home}/.config/manager/config.json",
+            f"{home}/.config/manager/backup",
         )
         console.print("Please run the script again")
         self.conn.commit()
         self.conn.close()
         copyfile(
-            f"{self.home}/.config/manager/db.sqlite3",
-            f"{self.home}/.config/manager/backup/db.sqlite3.bak",
+            f"{home}/.config/manager/db.sqlite3",
+            f"{home}/.config/manager/backup/db.sqlite3.bak",
         )
-        quit(0)
 
     def reset(self):
         email = Prompt.ask("Enter email address")
@@ -204,26 +237,23 @@ config = {{
                 console.print("Password does not match")
             else:
                 key = sha256_encoder(master)
-                conf = f"""# config file for manager used for many purpose
-# editing it may break the program
-# edit at your own risk\n
-config = {{
-    'KEY': '{key}',
-    'ENCRYPTION_KEY': {config["ENCRYPTION_KEY"]},
-    'EMAIL': '{config["EMAIL"]}',
-    'PATH_TO_DATABASE': '{config["PATH_TO_DATABASE"]}',
-    'PATH_TO_BACKUP': '{config["PATH_TO_BACKUP"]}',
-    'PATH_TO_LOG': '{config["PATH_TO_LOG"]}'
-}}"""
+                conf = {
+    'KEY': key,
+    'ENCRYPTION_KEY': config["ENCRYPTION_KEY"],
+    'EMAIL': config["EMAIL"],
+    'PATH_TO_DATABASE': config["PATH_TO_DATABASE"],
+    'PATH_TO_BACKUP': config["PATH_TO_BACKUP"],
+    'PATH_TO_LOG': config["PATH_TO_LOG"]
+}
                 with open(
-                    os.path.join(f"{self.home}/.config/manager/config.py"), "w"
+                    os.path.join(f"{home}/.config/manager/config.py"), "w"
                 ) as f:
                     f.write(conf)
                     f.close()
                 backup(
                     "config.bak",
-                    f"{self.home}/.config/manager/config.py",
-                    f"{self.home}/.config/manager/backup",
+                    f"{home}/.config/manager/config.py",
+                    f"{home}/.config/manager/backup",
                 )
                 console.print("Password Changed Successfully")
                 quit(0)
@@ -329,8 +359,8 @@ config = {{
     def delete(self):
         uninstall_script()
         try:
-            if os.path.exists(f"{self.home}/.config/manager/"):
-                rmtree(f"{self.home}/.config/manager/")
+            if os.path.exists(f"{home}/.config/manager/"):
+                rmtree(f"{home}/.config/manager/")
         except PermissionError:
             if os.path.exists("/usr/local/bin/manager_repair"):
                 os.system("sudo rm /usr/local/bin/manager_repair")

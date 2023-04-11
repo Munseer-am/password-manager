@@ -19,7 +19,7 @@ try:
         sub_print,
         __author__,
     )
-except ImportError:
+except Exception as e:
     os.system("sudo rm /usr/local/bin/manager")
     os.system("manager_repair")
     exit()
@@ -119,6 +119,7 @@ except Exception as e:
     )
     logger = logging.getLogger(__name__)
     logger.error(e)
+    print(e)
 finally:
     console.clear()
     exit(0)
