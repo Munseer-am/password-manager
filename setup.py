@@ -64,7 +64,6 @@ def main():
         f"{home}/.config/manager/menu.py": "lib/menu.py"
     }
     dirs = [f"{home}/.config/manager/", f"{home}/.config/manager/backup/", f"{home}/.config/manager/log/"]
-    transfer()
     install_tool("figlet")
     install_tool("lolcat")
     if check_existence_of("requirements.txt"):
