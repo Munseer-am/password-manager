@@ -11,14 +11,15 @@ import time
 from cryptography.fernet import Fernet
 from functools import cache
 from hashlib import sha256
-from pathlib import Path
 from random import sample
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.table import Table
+from rich.traceback import install
 from shutil import copyfile, rmtree
 from string import ascii_lowercase, ascii_uppercase, digits
 from threading import Thread
+install(show_locals=True)
 
 __author__ = "Munseer-am"
 
@@ -41,22 +42,31 @@ config_file = f"{home}/.config/manager/config.json"
 def transfer():
     def check(file: str):
         return os.path.exists(file)
-    if check(f"{home}/.config/manager/config.py") and not check(config_file):
+    if check(f"{home}/.config/manager/config.py") and not check(config_file) or check(f"{home}/.config/manager/config.py") and os.path.getsize(config_file) <= 200:
         try:
             from config import config
-            password = config["ENCRYPTION_KEY"].decode(encoding)
-            config["ENCRYPTION_KEY"] = password
+            try:
+                password = config["ENCRYPTION_KEY"].decode(encoding)
+                config["ENCRYPTION_KEY"] = password
+            except:
+                pass
             with open(config_file, "w") as e:
                 json.dump(config, e, indent=4)
                 e.close()
             print("Configuration Tranfer Completed! run the script again")
             exit()
-        except:
+        except Exception as e:
+            console.log(e, log_locals=True)
             raise Exception
+    elif not check(config_file):
+        open(config_file, "w").close()
             
 
-@cache
 def read_config():
+    try:
+        transfer()
+    except Exception as e:
+        console.log(e, log_locals=True)
     try:
         with open(config_file) as f:
             config = json.load(f)
@@ -64,11 +74,7 @@ def read_config():
         password = config["ENCRYPTION_KEY"]
         config["ENCRYPTION_KEY"] = password.encode(encoding)
         return config
-    except FileNotFoundError:
-        print("FileNotFoundError")
-        transfer()
     except json.decoder.JSONDecodeError:
-        print("DEcode Error")
         return None
 
 @cache
@@ -152,10 +158,10 @@ class Main:
         try:
             for path in self.db_paths:
                 if os.path.exists(path):
-                    self.conn = sqlite3.connect(path)
+                    self.conn = sqlite3.connect(path, check_same_thread=False)
                     break
             else:
-                self.conn = sqlite3.connect(self.db_paths[0])
+                self.conn = sqlite3.connect(self.db_paths[0], check_same_thread=False)
             self.cur = self.conn.cursor()
             self.create_tables()
         except FileNotFoundError:
@@ -203,12 +209,12 @@ class Main:
     'PATH_TO_BACKUP': f'{home}/.config/manager/backup/',
     'PATH_TO_LOG': f'{home}/.config/manager/log/'            
 }
-        with open(f"{home}/.config/manager/config.json", "w") as f:
+        with open(config_file, "w") as f:
             json.dump(conf, f, indent=4)
             f.close()
         backup(
             "config.json.bak",
-            f"{home}/.config/manager/config.json",
+            config_file,
             f"{home}/.config/manager/backup",
         )
         console.print("Please run the script again")
@@ -239,20 +245,20 @@ class Main:
                 key = sha256_encoder(master)
                 conf = {
     'KEY': key,
-    'ENCRYPTION_KEY': config["ENCRYPTION_KEY"],
+    'ENCRYPTION_KEY': config["ENCRYPTION_KEY"].decode(encoding),
     'EMAIL': config["EMAIL"],
     'PATH_TO_DATABASE': config["PATH_TO_DATABASE"],
     'PATH_TO_BACKUP': config["PATH_TO_BACKUP"],
     'PATH_TO_LOG': config["PATH_TO_LOG"]
 }
                 with open(
-                    os.path.join(f"{home}/.config/manager/config.py"), "w"
+                    config_file, "w"
                 ) as f:
-                    f.write(conf)
+                    json.dump(conf, f, indent=4)
                     f.close()
                 backup(
-                    "config.bak",
-                    f"{home}/.config/manager/config.py",
+                    "config.json.bak",
+                    config_file,
                     f"{home}/.config/manager/backup",
                 )
                 console.print("Password Changed Successfully")
@@ -290,6 +296,13 @@ class Main:
         inserter = f"""INSERT INTO Log VALUES (?, ?, ?)"""
         self.cur.execute(inserter, (app.title(), current_time, script))
         self.conn.commit()
+
+
+    def timeout(self):
+        time.sleep(10)
+        self.conn.close()
+        console.print("[bold]Timeout[/bold]", style="red")
+        os._exit(0)
 
     @cache
     def list_apps(self):
@@ -417,6 +430,9 @@ class Main:
         try:
             option = int(input("Choose one option: "))
             if option == 1:
+                t = Thread(target=self.timeout)
+                t.daemon = True
+                t.start()
                 app = Prompt.ask("Enter the name of the application").strip()
                 if not app.strip():
                     console.print("Invalid Input")

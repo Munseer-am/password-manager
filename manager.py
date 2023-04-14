@@ -6,7 +6,9 @@ import json
 import datetime
 import time
 import sys
+from rich.traceback import install
 from rich.console import Console
+install(show_locals=True)
 
 try:
     sys.path.insert(0, f"{os.path.expanduser('~')}/.config/manager/")
@@ -121,5 +123,6 @@ except Exception as e:
     logger.error(e)
     print(e)
 finally:
-    console.clear()
-    exit(0)
+    # console.clear()
+    # exit(0)
+    pass
