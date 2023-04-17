@@ -84,7 +84,7 @@ def main():
             if not check_existence_of(key):
                 shutil.copyfile(value, key)
         if not check_existence_of("/usr/local/bin/manager_repair"):
-            os.system("sudo cp setup.py /usr/local/bin/manager_repair && sudo chmod +rwx /usr/local/bin/manager_repair")
+            os.system("sudo cp setup.py /usr/local/bin/manager_repair && sudo chmod +x /usr/local/bin/manager_repair")
         print("to run the script type `manager`".title())
     else:
         try:

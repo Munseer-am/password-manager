@@ -121,8 +121,6 @@ except Exception as e:
     )
     logger = logging.getLogger(__name__)
     logger.error(e)
-    print(e)
 finally:
-    # console.clear()
-    # exit(0)
-    pass
+    console.clear()
+    exit(0)
