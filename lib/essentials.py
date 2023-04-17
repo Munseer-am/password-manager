@@ -11,6 +11,7 @@ import time
 from cryptography.fernet import Fernet
 from functools import cache
 from hashlib import sha256
+from pynput import keyboard
 from random import sample
 from rich.console import Console
 from rich.prompt import Prompt
@@ -297,13 +298,6 @@ class Main:
         self.cur.execute(inserter, (app.title(), current_time, script))
         self.conn.commit()
 
-
-    def timeout(self):
-        time.sleep(10)
-        self.conn.close()
-        console.print("[bold]Timeout[/bold]", style="red")
-        os._exit(0)
-
     @cache
     def list_apps(self):
         self.cur.execute("SELECT Application FROM Passwords")
@@ -430,9 +424,6 @@ class Main:
         try:
             option = int(input("Choose one option: "))
             if option == 1:
-                t = Thread(target=self.timeout)
-                t.daemon = True
-                t.start()
                 app = Prompt.ask("Enter the name of the application").strip()
                 if not app.strip():
                     console.print("Invalid Input")
