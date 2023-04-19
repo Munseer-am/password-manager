@@ -67,7 +67,7 @@ def read_config():
     try:
         transfer()
     except Exception as e:
-        console.log(e, log_locals=True)
+        pass
     try:
         with open(config_file) as f:
             config = json.load(f)
