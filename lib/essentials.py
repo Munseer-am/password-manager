@@ -39,11 +39,12 @@ x = str(datetime.datetime.now().strftime("%H:%M:%S %b %d %Y"))
 home = os.path.expanduser("~")
 encoding = "UTF-8"
 config_file = f"{home}/.config/manager/config.json"
+old_config_file = f"{home}/.config/manager/config.py"
 
 def transfer():
     def check(file: str):
         return os.path.exists(file)
-    if check(f"{home}/.config/manager/config.py") and not check(config_file) or check(f"{home}/.config/manager/config.py") and os.path.getsize(config_file) <= 200:
+    if check(old_config_file) and not check(config_file) or check(old_config_file) and os.path.getsize(config_file) <= 200:
         try:
             from config import config
             try:
