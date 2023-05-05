@@ -11,7 +11,6 @@ import time
 from cryptography.fernet import Fernet
 from functools import cache
 from hashlib import sha256
-from pynput import keyboard
 from random import sample
 from rich.console import Console
 from rich.prompt import Prompt
@@ -39,12 +38,11 @@ x = str(datetime.datetime.now().strftime("%H:%M:%S %b %d %Y"))
 home = os.path.expanduser("~")
 encoding = "UTF-8"
 config_file = f"{home}/.config/manager/config.json"
-old_config_file = f"{home}/.config/manager/config.py"
 
 def transfer():
     def check(file: str):
         return os.path.exists(file)
-    if check(old_config_file) and not check(config_file) or check(old_config_file) and os.path.getsize(config_file) <= 200:
+    if check(f"{home}/.config/manager/config.py") and not check(config_file) or check(f"{home}/.config/manager/config.py") and os.path.getsize(config_file) <= 200:
         try:
             from config import config
             try:
@@ -68,7 +66,7 @@ def read_config():
     try:
         transfer()
     except Exception as e:
-        pass
+        console.log(e, log_locals=True)
     try:
         with open(config_file) as f:
             config = json.load(f)
