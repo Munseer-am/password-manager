@@ -1,6 +1,7 @@
 #! /usr/bin/python3
 import os
 import sys
+import json
 import platform
 import shutil
 import subprocess
@@ -8,7 +9,7 @@ from distutils.spawn import find_executable
 
 home = os.path.expanduser("~")
 
-def if_exists(path: str):
+def check_existence_of(path: str):
     return os.path.exists(path)
 
 
@@ -17,14 +18,20 @@ def is_installed(tool: str):
 
 
 def install(tool: str):
-    if is_installed("apt") is not None:
-        os.system(f"sudo apt install {tool} -y")
-    elif is_installed("pacman") is not None:
-        os.system(f"sudo pacman -Sy {tool}")
-    elif is_installed("dnf") is not None:
-        os.system("sudo dnf install {tool}")
+    package_managers = {
+        "apt": f"sudo apt install {tool} -y",
+        "pacman": f"sudo pacman -Sy {tool}",
+        "dnf": f"sudo dnf install {tool}"
+    }
+    for key, value in package_managers.items():
+        installed_package_manager = is_installed(key)
+        if installed_package_manager is not None:
+            command = package_managers[key].format(tool=tool)
+            subprocess.run(command, shell=True, check=True)
+            break
     else:
         print("No Installation Candidate Found")
+
 
 
 def install_tool(tool: str):
@@ -37,69 +44,53 @@ def install_tool(tool: str):
 
 
 def install_font():
-    if if_exists("/usr/share/figlet/fonts/"):
-        if not if_exists("/usr/share/figlet/fonts/Bloody.flf"):
+    if check_existence_of("/usr/share/figlet/fonts/"):
+        if not check_existence_of("/usr/share/figlet/fonts/Bloody.flf"):
             try:
                 shutil.copyfile("Bloody.flf", "/usr/share/figlet/fonts/Bloody.flf")
             except PermissionError:
                 os.system("sudo cp Bloody.flf /usr/share/figlet/fonts/")
-    elif if_exists("/usr/share/figlet/"):
-        if not if_exists("/usr/share/figlet/Bloody.flf"):
+    elif check_existence_of("/usr/share/figlet/"):
+        if not check_existence_of("/usr/share/figlet/Bloody.flf"):
             try:
                 shutil.copyfile("Bloody.flf", "/usr/share/figlet/Bloody.flf")
             except PermissionError:
                 os.system("sudo cp Bloody.flf /usr/share/figlet/")
 
-
 def main():
+    data = {
+        f"{home}/.config/manager/insults.py": "lib/insults.py",
+        f"{home}/.config/manager/essentials.py": "lib/essentials.py",
+        f"{home}/.config/manager/menu.py": "lib/menu.py"
+    }
+    dirs = [f"{home}/.config/manager/", f"{home}/.config/manager/backup/", f"{home}/.config/manager/log/"]
     install_tool("figlet")
     install_tool("lolcat")
-    if if_exists("requirements.txt"):
+    if check_existence_of("requirements.txt"):
         subprocess.call(["pip", "install", "-r", "requirements.txt"])
     else:
         print("Requirements File Missing")
     install_font()
     os.system("clear && figlet -c -f Bloody 'Munseer' | lolcat")
-    if not if_exists("/usr/local/bin/manager"):
+    if not check_existence_of("/usr/local/bin/manager"):
         print("Installing Script")
         os.system("sudo cp manager.py /usr/local/bin/manager && sudo chmod +rwx /usr/local/bin/manager")
         print("creating required directories".title())
-        if not if_exists(f"{home}/.config/manager/"):
-            os.mkdir(f"{home}/.config/manager/")
-        if not if_exists(f"{home}/.config/manager/log/"):
-            os.mkdir(f"{home}/.config/manager/log/")
-        if not if_exists(f"{home}/.config/manager/backup/"):
-            os.mkdir(f"{home}/.config/manager/backup/")
+        for dir in dirs:
+            if not check_existence_of(dir):
+                os.mkdir(dir)
         print("Moving Files")
-        if if_exists(f"{home}/.config/manager/config.py"):
-            print("Found Existing Configurations")
-        else:
-            shutil.copyfile("lib/config.py", f"{home}/.config/manager/config.py")
-        if not if_exists(f"{home}/.config/manager/db.sqlite3"):
-            print("Found Existing Database")
-        if not if_exists(f"{home}/.config/manager/menu.py"):
-            shutil.copyfile("lib/menu.py", f"{home}/.config/manager/menu.py")
-        if not if_exists(f"{home}/.config/manager/insults.py"):
-            shutil.copyfile("lib/insults.py", f"{home}/.config/manager/insults.py")
-        if if_exists(f"{home}/.config/manager/essentials.py"):
-            confirm = input("do you want to update script[y/n]: ".title().lower())
-            if confirm == "y":
-                shutil.copyfile("lib/essentials.py", f"{home}/.config/manager/essentials.py")
-        else:
-            shutil.copyfile("lib/essentials.py", f"{home}/.config/manager/essentials.py")
-        if not if_exists("/usr/local/bin/manager_repair"):
-            os.system("sudo cp setup.py /usr/local/bin/manager_repair && sudo chmod +rwx /usr/local/bin/manager_repair")
+        for key, value in data.items():
+            if not check_existence_of(key):
+                shutil.copyfile(value, key)
+        if not check_existence_of("/usr/local/bin/manager_repair"):
+            os.system("sudo cp setup.py /usr/local/bin/manager_repair && sudo chmod +x /usr/local/bin/manager_repair")
         print("to run the script type `manager`".title())
     else:
         try:
-            if not if_exists(f"{home}/.config/manager/config.py"):
-                shutil.copyfile("lib/config.py", f"{home}/.config/manager/config.py")
-            if not if_exists(f"{home}/.config/manager/menu.py"):
-                shutil.copyfile("lib/menu.py", f"{home}/.config/manager/menu.py")
-            if not if_exists(f"{home}/.config/manager/essentials.py"):
-                shutil.copyfile("lib/essentials.py", f"{home}/.config/manager/essentials.py")
-            if not if_exists(f"{home}/.config/manager/insults.py"):
-                shutil.copyfile("lib/insults.py", f"{home}/.config/manager/insults.py")
+            for key, value in data.items():
+                if not check_existence_of(key):
+                    shutil.copyfile(value, key)
             print("script already installed".title())
         except FileNotFoundError:
             os.system("sudo rm /usr/local/bin/manager")

@@ -1,5 +1,4 @@
 import numpy as np
-import random
 
 """Insults are taken from sudo source code on github"""
 """Offensive insults are not taken"""
@@ -12,6 +11,7 @@ insults = np.array([
     "Sorry about this, I know it's a bit silly.",
     "Take a stress pill and think things over.",
     "This mission is too important for me to allow you to jeopardize it.",
+    "You're the reason God created the middle finger!",
     "I feel much better now.",
     "Wrong!  You cheating scum!",
     "And you call yourself a Rocket Scientist!",
@@ -50,4 +50,4 @@ insults = np.array([
 
 
 def insult():
-    return "".join(insults[random.choice(range(len(insults)))])
+    return "".join(insults[np.random.randint(len(insults))])

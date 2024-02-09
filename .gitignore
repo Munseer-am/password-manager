@@ -18,3 +18,5 @@ tests/
 migrate.py
 .fleet/
 error.log
+*.json
+*.txt
