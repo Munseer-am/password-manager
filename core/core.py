@@ -70,3 +70,4 @@ def security(key: bytes, func: Callable, *args, **kwargs) -> None:
 
 def backup(src_path: str, dst_path: str) -> None:
     copyfile(src_path, dst_path)
+
