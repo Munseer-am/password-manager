@@ -25,8 +25,9 @@ class Config:
 		return True
 
 	def storeToken(self, token: bytes) -> None:
-		self.__services.append(token.decode())
-		self.__addToKeyring(*self.__services)
+		self.__localServices = self.__services.copy()
+		self.__localServices.append(token.decode())
+		self.__addToKeyring(*self.__localServices)
 
 	def getToken(self) -> bytes:
 		return self.__retriveFromKeyring(*self.__services).encode()
@@ -42,6 +43,7 @@ class Config:
 		kr.set_password(*args)
 
 	def __retriveFromKeyring(self, *args) -> str:
+		print(args)
 		kr = keyring.get_keyring()
 		return kr.get_password(*args)
 
