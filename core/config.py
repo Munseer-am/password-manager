@@ -61,9 +61,3 @@ class Config:
 				f.close()
 		except FileNotFoundError:
 			self.checkConfig()
-
-conf = Config()
-# conf.writeConfig({"python": "best language"})
-# print(conf.readConfig())
-# conf.storeToken("Hello".encode())
-print(conf.deleteToken())
