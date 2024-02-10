@@ -22,6 +22,9 @@ def dateTime() -> None:
     x = str(datetime.datetime.now().strftime("%H:%M:%S %b %d %Y"))
     print(x)
 
+def ask(*args, **kwargs):
+    return Prompt.ask(*args, **kwargs)
+
 def passGen(length=20) -> str:
     chars: str = ascii_lowercase + ascii_uppercase + digits + "!@#$%^&*()_+:|~"
     return "".join(random.sample(chars, length))
@@ -55,7 +58,7 @@ def isValidEmail(email: str) -> bool:
 
 def security(key: bytes, func: Callable, *args, **kwargs) -> None:
     i: int = 0
-    inp: str = Prompt.ask("Enter password", password=True)
+    inp: str = ask("Enter password", password=True)
     enc: bytes = encoder(inp, "sha256", salt)
     while enc != key:
         i += 1
@@ -64,7 +67,7 @@ def security(key: bytes, func: Callable, *args, **kwargs) -> None:
             break
         else:
             console.print(insult())
-            inp: str = Prompt.ask("\nTry again", password=True)
+            inp: str = ask("\nTry again", password=True)
             enc: bytes = encoder(inp, "sha256", salt)
     else:
         console.print("Access Granted!")
@@ -74,16 +77,16 @@ def backup(src_path: str, dst_path: str) -> None:
     copyfile(src_path, dst_path)
 
 def printTable(title: str, columns: list, data: list) -> Table:
-    table = Table(title=title)
+    table: Table = Table(title=title)
     for column in columns:
         table.add_column(column, style="cyan", no_wrap=True)
     for d in data:
-        d = [str(t) for t in d]
+        d: list = [str(t) for t in d]
         table.add_row(*d)
     return table
 
 def sub_print(text, leading_spaces=0):
-    text_chars = list(text)
+    text_chars: list = list(text)
     current, mutated = "", ""
     for i in range(len(text)):
         original = text_chars[i]
