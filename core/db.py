@@ -12,6 +12,11 @@ class DataBase:
 		tables = [table[0] for table in tables]
 		return tables
 
+	def list_columns(self, table: str) -> list:
+		self.__cur.execute("PRAGMA table_info({})".format(table))
+		columns = self.__cur.fetchall()
+		return [column[1] for column in columns]
+
 	def __connect(self):
 		conn: sqlite3.Connection = sqlite3.connect(self.db)
 		cur: sqlite3.Cursor = conn.cursor()
@@ -22,9 +27,9 @@ class DataBase:
 		self.__cur.execute(_insert_query)
 		self.__conn.commit()
 
-	def fetch(self, table, fields="*", filter_obj=None, filter_val=None, filter_mode="strict") -> list:
+	def fetch(self, table, fields="*", filter_obj=None, filter_val=None, strict_filter=True) -> list:
 		if filter_obj and filter_val:
-			if filter_mode=="Strict":
+			if strict_filter:
 				self.__cur.execute(f"SELECT {fields} FROM {table} WHERE {filter_obj}='{filter_val}'")
 			else:
 				self.__cur.execute(f"SELECT {fields} FROM {table} WHERE {filter_obj} LIkE '%{filter_val}%'")

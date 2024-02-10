@@ -1,5 +1,6 @@
 import os
 import re
+import db
 import random
 import base64
 import hashlib
@@ -9,6 +10,7 @@ from string import *
 from insults import insult
 from shutil import copyfile
 from typing import Callable
+from rich.table import Table
 from rich.prompt import Prompt
 from rich.console import Console
 from cryptography.fernet import Fernet
@@ -71,3 +73,25 @@ def security(key: bytes, func: Callable, *args, **kwargs) -> None:
 def backup(src_path: str, dst_path: str) -> None:
     copyfile(src_path, dst_path)
 
+def printTable(title: str, columns: list, data: list) -> Table:
+    table = Table(title=title)
+    for column in columns:
+        table.add_column(column, style="cyan", no_wrap=True)
+    for d in data:
+        d = [str(t) for t in d]
+        table.add_row(*d)
+    return table
+
+def sub_print(text, leading_spaces=0):
+    text_chars = list(text)
+    current, mutated = "", ""
+    for i in range(len(text)):
+        original = text_chars[i]
+        current += original
+        mutated += f"\033[1;38;5;82m{text_chars[i].upper()}\033[0m"
+        print(f'\r{" " * leading_spaces}{mutated}', end="")
+        time.sleep(0.05)
+        print(f'\r{" " * leading_spaces}{current}', end="")
+        mutated = current
+
+    print(f'\r{" " * leading_spaces}{text}\n')
