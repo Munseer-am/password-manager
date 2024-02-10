@@ -1,7 +1,7 @@
 import os
 import json
 import keyring
-from core import b64_decode
+from lib import b64_decode
 
 class Config:
 	def __init__(self):
