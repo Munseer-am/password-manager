@@ -1,6 +1,5 @@
 import os
 import re
-import db
 import random
 import base64
 import hashlib

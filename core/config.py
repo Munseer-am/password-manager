@@ -17,6 +17,12 @@ class Config:
 			"config": os.path.join(self.conf_dir, "manager", 'config.json')
 		}
 
+	def getPath(self, dst: str) -> str:
+		try:
+			return self.files[dst]
+		except KeyError:
+			return None
+
 	def checkConfig(self) -> bool:
 		for _, file in self.files.items():
 			if not os.path.exists(file):
