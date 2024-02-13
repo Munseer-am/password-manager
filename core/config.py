@@ -13,6 +13,7 @@ class Config:
 		self.files: dict = {
 			"config_dir": os.path.join(self.conf_dir, "manager"),
 			"logs": os.path.join(self.conf_dir, "manager", 'log'),
+			"logs_file": os.path.join(self.conf_dir, "manager", 'log', 'logs.log'),
 			"backups": os.path.join(self.conf_dir, "manager", 'backup'),
 			"config": os.path.join(self.conf_dir, "manager", 'config.json')
 		}
