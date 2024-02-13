@@ -1,4 +1,5 @@
 import os
+import logging
 from config import Config
 from lib import printTable, decrypt
 from database import DataBase
@@ -11,6 +12,7 @@ class Core:
     def __init__(self) -> None:
         self.config: Config = Config()
         self.base_dir: str = self.config.getPath("config_dir")
+        self.logFile: str = self.config.getPath("logs_file")
         self.db: DataBase = DataBase(os.path.join(self.base_dir, "db.sqlite3")) 
         self.conf = self.config.readConfig()
 
@@ -50,4 +52,18 @@ class Core:
         table: Table = printTable("Credentials", self.db.list_columns(t), apps)
         console.print(table, justify="left")
 
-Core().getCreds("goo")
+    def log(self, app: str, current_time: str, script: str):
+        logger = logging.getLogger(__name__)
+        logger.setLevel(logging.INFO)
+        log_file = self.logFile
+        handler = logging.FileHandler(log_file)
+        handler.setLevel(logging.INFO)
+        formatter = logging.Formatter(
+            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        )
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+        logger.info(f"Time: {current_time} Script: {script} Application: {app.title()}")
+        self.db.insert("Log", (app, str(current_time), script))
+
+
