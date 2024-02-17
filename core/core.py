@@ -1,10 +1,12 @@
 import os
+import json
 import logging
 from config import Config
-from lib import printTable, decrypt
 from database import DataBase
 from rich.table import Table
 from rich.console import Console
+from cryptography.fernet import Fernet
+from lib import printTable, decrypt, ask, checkMatch, isValidEmail, encoder, backup
 
 console: Console = Console()
 
@@ -12,8 +14,11 @@ class Core:
     def __init__(self) -> None:
         self.config: Config = Config()
         self.base_dir: str = self.config.getPath("config_dir")
+        self.config_file: str = self.config.getPath("config")
         self.logFile: str = self.config.getPath("logs_file")
-        self.db: DataBase = DataBase(os.path.join(self.base_dir, "db.sqlite3")) 
+        self.backups: str = self.config.getPath("backups")
+        self.db_path: str = os.path.join(self.base_dir, "db.sqlite3")
+        self.db: DataBase = DataBase(self.db_path) 
         self.conf = self.config.readConfig()
 
     def listApps(self) -> None:
@@ -67,3 +72,64 @@ class Core:
         self.db.insert("Log", (app, str(current_time), script))
 
 
+    def setDetails(self):
+        master: str = ask("Set A Master Password", password=True)
+        val: str = ask("Enter Password Again", password=True)
+        if not checkMatch(master, val):
+            console.print("[bold]Password Does Not Match[/bold]")
+            return None
+        if len(master) < 6:
+            console.print("[bold]Password Must Be Minimum 6 Characters Long[/bold]")
+            return None
+        email: str = ask("Enter Your Email Address")
+        if not isValidEmail(email):
+            console.print("[bold]Enter A Valid Email[/bold]")
+            return None
+        salt: bytes = os.urandom(16)
+        encEmail: str = encoder(email, "sha256", salt)
+        encPass: str = encoder(master, "sha256", salt)
+        key: bytes = Fernet.generate_key()
+        self.config.storeToken(key)
+        print(salt)
+        conf = {"KEY": encPass, "SALT": str(salt), "EMAIL": encEmail}
+        with open(self.config_file, "w") as f:
+            json.dump(conf, f, indent=4)
+            f.close()
+        backup(self.config_file, os.path.join(self.backups, "config.json.bak"))
+        backup(self.db_path, os.path.join(self.backups, "db.sqlite3.bak"))
+        console.print("Please re-run the script")
+        quit()
+
+    def resetPassword(self):
+        email: str = ask("Enter email address")
+        if not isValidEmail(email):
+            console.print("[bold]Enter A Valid Email[/bold]")
+            return None
+        salt = bytes(self.conf['SALT'].encode( ))
+        encEmail: str = encoder(email, "sha256", salt)
+        print(self.conf["EMAIL"])
+        print(encEmail)
+        print(salt)
+        if str(self.conf["EMAIL"]) != encEmail:
+            console.print("Email Doesn't Match")
+            return None
+        master = ask("Set A Master Password", password=True)
+        val = ask("Enter Password Again", password=True)
+        if not checkMatch(master, val):
+            console.print(console.print("[bold]Password Does Not Match[/bold]"))
+            return None
+        if len(master) < 6:
+            console.print("[bold]Password Must Be Minimum 6 Characters Long[/bold]")
+            return None
+        self.conf['KEY'] = encoder(master, "sha256", salt)
+        with open(self.config_file, "w") as f:
+            json.dump(self.conf, f, indent=4)
+            f.close()
+        backup(self.config_file, os.path.join(self.backups, "config.json.bak"))
+        backup(self.db_path, os.path.join(self.backups, "db.sqlite3.bak"))
+        console.print("Password Reset Successful")
+        quit()
+
+core = Core()
+# core.setDetails()
+core.resetPassword()
