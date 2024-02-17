@@ -1,5 +1,5 @@
-import os
 import re
+import time
 import random
 import base64
 import hashlib
@@ -15,7 +15,6 @@ from rich.console import Console
 from cryptography.fernet import Fernet
 
 console: Console = Console()
-salt: bytes = os.urandom(16)
 
 def dateTime() -> None:
     x = str(datetime.datetime.now().strftime("%H:%M:%S %b %d %Y"))
@@ -29,11 +28,16 @@ def passGen(length=20) -> str:
     return "".join(random.sample(chars, length))
 
 def encoder(word: str, hash: str, salt: bytes) -> bytes:
-    return hashlib.pbkdf2_hmac(hash, word.encode("UTF-8"), salt, 1000)
+    return hashlib.pbkdf2_hmac(hash, word.encode("UTF-8"), salt, 1000).hex()
 
 def copy(word: str) -> None:
     clipboard.copy(word)
     clipboard.paste()
+
+def checkMatch(w1, w2):
+    if w1 == w2:
+        return True
+    return False
 
 def encrypt(key: bytes, password: str) -> bytes:
     enc: Fernet = Fernet(key)
@@ -55,7 +59,7 @@ def isValidEmail(email: str) -> bool:
         return True
     return False
 
-def security(key: bytes, func: Callable, *args, **kwargs) -> None:
+def security(key: bytes, salt: bytes, func: Callable, *args, **kwargs) -> None:
     i: int = 0
     inp: str = ask("Enter password", password=True)
     enc: bytes = encoder(inp, "sha256", salt)
