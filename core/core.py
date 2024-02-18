@@ -125,5 +125,3 @@ class Core:
         quit()
 
 
-core = Core()
-core.resetPassword()
