@@ -19,7 +19,7 @@ class Core:
         self.backups: str = self.config.getPath("backups")
         self.db_path: str = os.path.join(self.base_dir, "db.sqlite3")
         self.db: DataBase = DataBase(self.db_path) 
-        self.conf = self.config.readConfig()
+        self.conf: dict = self.config.readConfig()
 
     def listApps(self) -> None:
         t: str = "Passwords"
@@ -85,13 +85,11 @@ class Core:
         if not isValidEmail(email):
             console.print("[bold]Enter A Valid Email[/bold]")
             return None
-        salt: bytes = os.urandom(16)
-        encEmail: str = encoder(email, "sha256", salt)
-        encPass: str = encoder(master, "sha256", salt)
+        encEmail: str = encoder(email)
+        encPass: str = encoder(master)
         key: bytes = Fernet.generate_key()
         self.config.storeToken(key)
-        print(salt)
-        conf = {"KEY": encPass, "SALT": str(salt), "EMAIL": encEmail}
+        conf = {"KEY": encPass, "EMAIL": encEmail}
         with open(self.config_file, "w") as f:
             json.dump(conf, f, indent=4)
             f.close()
@@ -105,11 +103,7 @@ class Core:
         if not isValidEmail(email):
             console.print("[bold]Enter A Valid Email[/bold]")
             return None
-        salt = bytes(self.conf['SALT'].encode( ))
-        encEmail: str = encoder(email, "sha256", salt)
-        print(self.conf["EMAIL"])
-        print(encEmail)
-        print(salt)
+        encEmail: str = encoder(email)
         if str(self.conf["EMAIL"]) != encEmail:
             console.print("Email Doesn't Match")
             return None
@@ -121,7 +115,7 @@ class Core:
         if len(master) < 6:
             console.print("[bold]Password Must Be Minimum 6 Characters Long[/bold]")
             return None
-        self.conf['KEY'] = encoder(master, "sha256", salt)
+        self.conf['KEY'] = encoder(master)
         with open(self.config_file, "w") as f:
             json.dump(self.conf, f, indent=4)
             f.close()
@@ -131,3 +125,5 @@ class Core:
         quit()
 
 
+core = Core()
+core.resetPassword()

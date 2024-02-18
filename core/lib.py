@@ -27,8 +27,8 @@ def passGen(length=20) -> str:
     chars: str = ascii_lowercase + ascii_uppercase + digits + "!@#$%^&*()_+:|~"
     return "".join(random.sample(chars, length))
 
-def encoder(word: str, hash: str, salt: bytes) -> bytes:
-    return hashlib.pbkdf2_hmac(hash, word.encode("UTF-8"), salt, 1000).hex()
+def encoder(word: str) -> str:
+    return hashlib.sha256(word.encode('utf-8')).hexdigest()    
 
 def copy(word: str) -> None:
     clipboard.copy(word)
