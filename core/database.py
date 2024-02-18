@@ -18,7 +18,7 @@ class DataBase:
 		return [column[1] for column in columns]
 
 	def __connect(self):
-		conn: sqlite3.Connection = sqlite3.connect(self.db)
+		conn: sqlite3.Connection = sqlite3.connect(self.db, check_same_thread=False)
 		cur: sqlite3.Cursor = conn.cursor()
 		return conn, cur 
 
