@@ -124,3 +124,6 @@ class Core:
         console.print("Password Reset Successful")
         quit()
 
+
+core = Core()
+core.resetPassword()
